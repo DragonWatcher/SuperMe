@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ahav.system.entity.Result;
+import com.ahav.system.entity.SystemResult;
 import com.ahav.system.entity.User;
 import com.ahav.system.service.LoginService;
 import com.ahav.system.service.UserService;
@@ -61,7 +61,7 @@ public class UserController {
             @ApiImplicitParam(name = "username", paramType = "form"),
             @ApiImplicitParam(name = "password", paramType = "form") })
     @PostMapping("/login")
-    public Result login(@FormParam("username") String username, @FormParam("password") String password) {
+    public SystemResult login(@FormParam("username") String username, @FormParam("password") String password) {
         logger.info("请求登录...");
         return loginService.login(username, password);
     }
@@ -73,7 +73,7 @@ public class UserController {
      */
     @ApiOperation(value = "用户登出")
     @GetMapping("/logout")
-    public Result logout() {
+    public SystemResult logout() {
         logger.info("用户登出...");
         return loginService.logout();
     }
@@ -85,7 +85,7 @@ public class UserController {
      */
     @ApiOperation(value = "用户名查重")
     @GetMapping("/username/{username}")
-    public Result checkUsername(@PathVariable String username) {
+    public SystemResult checkUsername(@PathVariable String username) {
         return userService.checkUsername(username);
     }
     
@@ -97,7 +97,7 @@ public class UserController {
     @ApiOperation(value = "添加用户")
     @PostMapping
 //    @RequiresRoles("admin") TODO:超级管理员角色拦截
-    public Result createUser(@RequestBody User user) {
+    public SystemResult createUser(@RequestBody User user) {
         return userService.createOrUpdUser(user);
     }
     
@@ -108,7 +108,7 @@ public class UserController {
      */
     @ApiOperation(value = "更新用户")
     @PutMapping
-    public Result updateUser(@RequestBody User user) {
+    public SystemResult updateUser(@RequestBody User user) {
         return userService.createOrUpdUser(user);
     }
     
@@ -119,7 +119,7 @@ public class UserController {
      */
     @ApiOperation(value = "重置密码")
     @PutMapping("/{userId}")
-    public Result resetPassword(@PathVariable Integer userId) {
+    public SystemResult resetPassword(@PathVariable Integer userId) {
         return userService.resetPassword(userId);
     }
     /**
@@ -129,7 +129,7 @@ public class UserController {
      */
     @ApiOperation(value = "查询用户列表")
     @GetMapping
-    public Result selectUsers(@RequestParam(defaultValue = SystemConstant.FIRST_PAGE) Integer pageNum,
+    public SystemResult selectUsers(@RequestParam(defaultValue = SystemConstant.FIRST_PAGE) Integer pageNum,
             @RequestParam(defaultValue = SystemConstant.PAGE_SIZE) Integer pageSize, Integer roleId, Integer deptId,
             String username) {
         return userService.selectUsers(pageNum, pageSize, roleId, deptId, username);
@@ -142,7 +142,7 @@ public class UserController {
      */
     @ApiOperation(value = "id查找用户")
     @GetMapping("/{userId}")
-    public Result selectUser(@PathVariable Integer userId) {
+    public SystemResult selectUser(@PathVariable Integer userId) {
         return userService.getUserById(userId);
     }
     
@@ -153,7 +153,7 @@ public class UserController {
      */
     @ApiOperation(value = "删除用户")
     @DeleteMapping("/{userId}")
-    public Result deleteUser(@PathVariable Integer userId) {
+    public SystemResult deleteUser(@PathVariable Integer userId) {
         return userService.deleteUser(userId);
     }
     
@@ -164,7 +164,7 @@ public class UserController {
      */
     @ApiOperation(value = "获得当前用户")
     @GetMapping("/current")
-    public Result getCurrentUser() {
+    public SystemResult getCurrentUser() {
         return userService.getCurrentUser();
     }
     
@@ -175,7 +175,7 @@ public class UserController {
      */
     @ApiOperation(value = "校验用户原密码")
     @PostMapping("/{password}")
-    public Result checkPassword(@PathVariable String password) {
+    public SystemResult checkPassword(@PathVariable String password) {
         return userService.checkPassword(password);
     }
     
@@ -186,7 +186,7 @@ public class UserController {
      */
     @ApiOperation(value = "修改用户密码")
     @PutMapping("/password")
-    public Result updatePassword(@RequestBody User user) {
+    public SystemResult updatePassword(@RequestBody User user) {
         return userService.updatePassword(user);
     }
 }

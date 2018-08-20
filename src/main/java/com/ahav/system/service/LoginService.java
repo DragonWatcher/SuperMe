@@ -1,6 +1,6 @@
 package com.ahav.system.service;
 
-import com.ahav.system.entity.Result;
+import com.ahav.system.entity.SystemResult;
 
 /**
  * 登录服务
@@ -17,7 +17,7 @@ public interface LoginService {
      * @param password
      * @return
      */
-    Result login(String username, String password);
+    SystemResult login(String username, String password);
     
     /**
      * 当前用户登出
@@ -25,6 +25,6 @@ public interface LoginService {
      * 时间：2018年8月3日-下午3:51:50<br>
      * @return
      */
-    Result logout();
+    SystemResult logout();
 
 }

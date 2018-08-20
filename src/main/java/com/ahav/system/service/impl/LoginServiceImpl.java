@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.ahav.system.entity.Result;
+import com.ahav.system.entity.SystemResult;
 import com.ahav.system.entity.SimpleUser;
 import com.ahav.system.entity.User;
 import com.ahav.system.service.LoginService;
@@ -26,8 +26,8 @@ public class LoginServiceImpl implements LoginService{
     private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 
     @Override
-    public Result login(String username, String password) {
-        Result loginResult = null;
+    public SystemResult login(String username, String password) {
+        SystemResult loginResult = null;
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);
         // 通过shiro获取当前用户
         Subject currentUser = SecurityUtils.getSubject();
@@ -35,11 +35,11 @@ public class LoginServiceImpl implements LoginService{
             // 登录提交
             currentUser.login(token);
             // 封装登录结果
-            loginResult = new Result(HttpStatus.OK.value(), "登录成功！",
+            loginResult = new SystemResult(HttpStatus.OK.value(), "登录成功！",
                     new SimpleUser((User) SecurityUtils.getSubject().getPrincipal()));
         } catch (AuthenticationException e) {
             logger.info("用户名或密码错误>>>username:{},password:{}", username, password);
-            loginResult = new Result(HttpStatus.FORBIDDEN.value(), "用户名或密码错误，登录失败！", null);
+            loginResult = new SystemResult(HttpStatus.FORBIDDEN.value(), "用户名或密码错误，登录失败！", null);
         }
         logger.info("用户登录成功>>>username:{}", username);
 
@@ -47,11 +47,11 @@ public class LoginServiceImpl implements LoginService{
     }
 
     @Override
-    public Result logout() {
+    public SystemResult logout() {
         Subject currentUser = SecurityUtils.getSubject();
         currentUser.logout();
         
-        return new Result(HttpStatus.OK.value(), "用户已登出！", null);
+        return new SystemResult(HttpStatus.OK.value(), "用户已登出！", null);
     }
 
 }

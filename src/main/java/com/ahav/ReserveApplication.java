@@ -10,10 +10,8 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
-import com.ahav.system.PermissionApplication;
-
 @SpringBootApplication
-@MapperScan("com.ahav.system.dao")//扫描 mybatis 包
+@MapperScan("com.ahav.reserve.mapper")//扫描 mybatis 包
 public class ReserveApplication {
     private static final Logger logger = LoggerFactory.getLogger(ReserveApplication.class);
 

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.ahav.system.dao.UserDao">
-	<resultMap type="com.ahav.entity.User" id="UsernameMap">
+	<resultMap type="com.ahav.system.entity.User" id="UsernameMap">
     	<result column="username" property="username"/>
     </resultMap>
     <!-- 根据userId查找用户-->
@@ -11,7 +11,7 @@
     </select>
 
     <!-- 根据username查询整个user对象 -->
-    <select id="getUserByName" resultType="User">
+    <select id="getUserByName" resultType="com.ahav.system.entity.User">
         SELECT * FROM sys_user
         WHERE username = #{username}
     </select>
@@ -22,7 +22,7 @@
         WHERE username = #{username}
     </select>
     <!-- 添加新成员 -->
-    <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="userId">
+    <insert id="insertUser" parameterType="com.ahav.system.entity.User" useGeneratedKeys="true" keyProperty="userId">
         INSERT INTO sys_user
             (username, pwd, true_name, email, salt, create_time, creator, description, department_id)
         VALUES
@@ -30,7 +30,7 @@
     </insert>
     
     <!-- 更新成员 -->
-    <update id="updateUser" parameterType="User" useGeneratedKeys="true" keyProperty="userId">
+    <update id="updateUser" parameterType="com.ahav.system.entity.User" useGeneratedKeys="true" keyProperty="userId">
         UPDATE sys_user
         SET username = #{username},true_name = #{trueName},department_id = #{dept.deptId},edit_time = #{editTime},editor = #{editor}
         WHERE user_id = #{userId}
@@ -98,13 +98,13 @@
             <result column="enable_delete" property="enableDelete"/>
         </association>
     </resultMap>
-    <resultMap type="com.ahav.entity.User" id="BaseResultMap">
+    <resultMap type="com.ahav.system.entity.User" id="BaseResultMap">
     	<id column="user_id" property="userId"/>
     	<result column="username" property="username"/>
     	<result column="true_name" property="trueName"/>
     	<result column="color" property="color"/>
     	<association property="role" column="user_id"                       
-            select="com.ahav.dao.RoleMapper.selectRoleByUserId" />
+            select="com.ahav.system.dao.RoleMapper.selectRoleByUserId" />
     </resultMap>
     <select id="findByName" parameterType="java.lang.String" resultMap="BaseResultMap">
 	  select 

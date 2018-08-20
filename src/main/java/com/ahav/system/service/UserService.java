@@ -2,7 +2,7 @@ package com.ahav.system.service;
 
 import java.util.List;
 
-import com.ahav.system.entity.Result;
+import com.ahav.system.entity.SystemResult;
 import com.ahav.system.entity.User;
 
 /**
@@ -19,7 +19,7 @@ public interface UserService {
      * @param userId
      * @return
      */
-    Result getUserById(Integer userId);
+    SystemResult getUserById(Integer userId);
     
     /**
      * 通过用户名获得账户信息
@@ -28,7 +28,7 @@ public interface UserService {
      * @param username
      * @return
      */
-    Result getUserByName(String username);
+    SystemResult getUserByName(String username);
     /**
      * 用户账号查重
      * <br>作者： mht<br> 
@@ -36,7 +36,7 @@ public interface UserService {
      * @param username
      * @return
      */
-    Result checkUsername(String username);
+    SystemResult checkUsername(String username);
     /**
      * 添加或更新用户
      * <br>作者： mht<br> 
@@ -44,7 +44,7 @@ public interface UserService {
      * @param user
      * @return
      */
-    Result createOrUpdUser(User user);
+    SystemResult createOrUpdUser(User user);
     /**
      * 根据角色ID查询对应用户的集合
      * <br>作者： mht<br> 
@@ -62,7 +62,7 @@ public interface UserService {
      * @param username
      * @return
      */
-    Result selectUsers(Integer pageNum, Integer pageSize, Integer roleId, Integer deptId, String username);
+    SystemResult selectUsers(Integer pageNum, Integer pageSize, Integer roleId, Integer deptId, String username);
     
     /**
      * 根据用户id删除用户以及用户-角色对应关系
@@ -71,7 +71,7 @@ public interface UserService {
      * @param userId
      * @return
      */
-    Result deleteUser(Integer userId);
+    SystemResult deleteUser(Integer userId);
     
     /**
      * 重置指定用户id的用户密码和盐值
@@ -80,7 +80,7 @@ public interface UserService {
      * @param userId
      * @return
      */
-    Result resetPassword(Integer userId);
+    SystemResult resetPassword(Integer userId);
     
     /**
      * 更新用户密码
@@ -89,7 +89,7 @@ public interface UserService {
      * @param user
      * @return
      */
-    Result updatePassword(User user);
+    SystemResult updatePassword(User user);
     
     /**
      * 校验用户输入原密码是否正确<br>
@@ -99,7 +99,7 @@ public interface UserService {
      * @param password
      * @return
      */
-    Result checkPassword(String password);
+    SystemResult checkPassword(String password);
     
     /**
      * 获取当前用户简单信息
@@ -107,7 +107,7 @@ public interface UserService {
      * 时间：2018年8月11日-下午9:06:22<br>
      * @return
      */
-    Result getCurrentUser();
+    SystemResult getCurrentUser();
     
     /**
      * 通过用户名查找用户

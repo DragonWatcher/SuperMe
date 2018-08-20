@@ -5,7 +5,7 @@ package com.ahav.system.entity;
  * 作者： mht<br>
  * 日期： 2018年8月3日-下午1:51:12<br>
  */
-public class Result {
+public class SystemResult {
     /** 返回状态码，为http状态码*/
     private Integer statusCode;
     /** 返回消息*/
@@ -13,10 +13,10 @@ public class Result {
     /** 返回数据*/
     private Object data;
     
-    public Result() {
+    public SystemResult() {
     }
     
-    public Result(Integer statusCode, String message, Object data) {
+    public SystemResult(Integer statusCode, String message, Object data) {
         this.statusCode = statusCode;
         this.message = message;
         this.data = data;

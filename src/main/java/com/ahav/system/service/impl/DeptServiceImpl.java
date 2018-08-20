@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.ahav.system.dao.DeptDao;
 import com.ahav.system.entity.Dept;
-import com.ahav.system.entity.Result;
+import com.ahav.system.entity.SystemResult;
 import com.ahav.system.service.DeptService;
 
 @Service
@@ -17,9 +17,9 @@ public class DeptServiceImpl implements DeptService{
     private DeptDao deptDao;
 
     @Override
-    public Result allDepts() {
+    public SystemResult allDepts() {
         List<Dept> depts = deptDao.allDepts();
-        Result res = new Result(HttpStatus.OK.value(), null, depts);
+        SystemResult res = new SystemResult(HttpStatus.OK.value(), null, depts);
         
         return res;
     }
@@ -45,7 +45,7 @@ public class DeptServiceImpl implements DeptService{
     }
     
     @Override
-    public Result saveDeptSettings(DeptSettings depts) {
+    public SystemResult saveDeptSettings(DeptSettings depts) {
         List<Dept> deptList = depts.getDeptList();
         List<Dept> delDeptList = depts.getDelDeptList();
         // 执行删除
@@ -61,7 +61,7 @@ public class DeptServiceImpl implements DeptService{
             }
         }
 
-        return new Result(HttpStatus.OK.value(), "保存部门设置成功！", deptDao.allDepts());
+        return new SystemResult(HttpStatus.OK.value(), "保存部门设置成功！", deptDao.allDepts());
     }
 
     @Override

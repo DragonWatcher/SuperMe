@@ -1,7 +1,7 @@
 package com.ahav.system.service;
 
 import com.ahav.system.entity.Dept;
-import com.ahav.system.entity.Result;
+import com.ahav.system.entity.SystemResult;
 import com.ahav.system.service.impl.DeptServiceImpl.DeptSettings;
 
 public interface DeptService {
@@ -11,7 +11,7 @@ public interface DeptService {
      * 时间：2018年8月9日-下午8:58:06<br>
      * @return
      */
-    Result allDepts();
+    SystemResult allDepts();
     
     /**
      * 更新已有部门、添加新增部门、删除废弃部门
@@ -20,7 +20,7 @@ public interface DeptService {
      * @param deptsJo
      * @return
      */
-    Result saveDeptSettings(DeptSettings depts);
+    SystemResult saveDeptSettings(DeptSettings depts);
     
     /**
      * 根据部门id查找部门

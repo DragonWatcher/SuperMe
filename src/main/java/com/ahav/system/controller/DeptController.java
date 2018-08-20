@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ahav.system.entity.Result;
+import com.ahav.system.entity.SystemResult;
 import com.ahav.system.service.DeptService;
 import com.ahav.system.service.impl.DeptServiceImpl.DeptSettings;
 
@@ -21,13 +21,13 @@ public class DeptController {
     
     @ApiOperation(value = "查询部门列表")
     @GetMapping
-    public Result findAllDepts() {
+    public SystemResult findAllDepts() {
         return deptService.allDepts();
     }
     
     @ApiOperation(value = "更新部门设置")
     @PostMapping
-    public Result saveDeptSettings(@RequestBody DeptSettings depts) {
+    public SystemResult saveDeptSettings(@RequestBody DeptSettings depts) {
         return deptService.saveDeptSettings(depts);
     }
     
