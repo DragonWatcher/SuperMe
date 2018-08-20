@@ -15,6 +15,15 @@
         SELECT * FROM sys_user
         WHERE username = #{username}
     </select>
+    
+    <!-- 根据真实姓名模糊查询 -->
+    <select id="findUserByTrueName" resultType="com.ahav.system.entity.SimpleUser">
+        SELECT
+            user_id, username, true_name
+        FROM sys_user
+        WHERE true_name LIKE "%"#{trueName}"%"
+    </select>
+
     <!-- 用户账号查重 -->
     <select id="checkUsername" resultType="String">
         SELECT username

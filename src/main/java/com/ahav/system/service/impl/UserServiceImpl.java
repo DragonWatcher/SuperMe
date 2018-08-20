@@ -256,4 +256,11 @@ public class UserServiceImpl implements UserService {
         
         return new SystemResult(HttpStatus.OK.value(), "当前用户", simpleUser);
     }
+
+    @Override
+    public SystemResult getUserByTrueName(String trueName) {
+        List<SimpleUser> users = userDao.findUserByTrueName(trueName);
+        SystemResult result = new SystemResult(HttpStatus.OK.value(), "用户列表", users);
+        return result;
+    }
 }

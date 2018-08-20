@@ -192,4 +192,10 @@ public class UserController {
     public SystemResult updatePassword(@RequestBody User user) {
         return userService.updatePassword(user);
     }
+    
+    @ApiOperation(value = "预订人姓名模糊查询")
+    @GetMapping("/truename/{trueName}")
+    public SystemResult getUserByTrueName(@PathVariable String trueName) {
+        return userService.getUserByTrueName(trueName);
+    }
 }

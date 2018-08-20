@@ -35,6 +35,15 @@ public interface UserDao {
     SimpleUser getUserById(Integer userId);
     
     /**
+     * 根据真实姓名模糊查询
+     * <br>作者： mht<br> 
+     * 时间：2018年8月20日-下午3:33:45<br>
+     * @param trueName
+     * @return
+     */
+    List<SimpleUser> findUserByTrueName(String trueName);
+    
+    /**
      * 通过用户名查找账号信息
      * <br>作者： mht<br> 
      * 时间：2018年8月3日-上午10:44:19<br>

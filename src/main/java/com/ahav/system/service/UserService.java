@@ -29,6 +29,16 @@ public interface UserService {
      * @return
      */
     SystemResult getUserByName(String username);
+    
+    /**
+     * 通过用户姓名（trueName）模糊查询用户列表
+     * <br>作者： mht<br> 
+     * 时间：2018年8月20日-下午3:31:31<br>
+     * @param trueName
+     * @return
+     */
+    SystemResult getUserByTrueName(String trueName);
+    
     /**
      * 用户账号查重
      * <br>作者： mht<br> 
@@ -116,4 +126,6 @@ public interface UserService {
      * @return
      */
     User findByName(String username);
+    
+    
 }
