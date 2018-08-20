@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahav.system.dao.RoleMapper">
+  <resultMap id="BaseResultMap" type="com.ahav.system.entity.Role">
+    <id column="role_id" jdbcType="INTEGER" property="roleId" />
+    <result column="china_role" jdbcType="VARCHAR" property="chinaRole" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    <result column="enable_delete" jdbcType="TINYINT" property="enableDelete" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+    <result column="editor" jdbcType="VARCHAR" property="editor" />
+    <!-- <collection property="permissions" column="role_id" select="com.ahav.dao.PermissionMapper.selectPermissionByRoleId"></collection> -->
+  </resultMap>
+  <sql id="Base_Column_List">
+    role_id, china_role, role_name, enable_delete, description, create_time, creator, edit_time, 
+    editor
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_role
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sys_role
+    where role_id = #{roleId,jdbcType=INTEGER}
+    and enable_delete = true
+  </delete>
+  <insert id="insert" parameterType="com.ahav.system.entity.Role">
+    insert into sys_role (china_role, role_name, 
+      enable_delete, description, create_time, 
+      creator, edit_time, editor
+      )
+    values (#{chinaRole,jdbcType=VARCHAR}, #{roleName,jdbcType=VARCHAR}, 
+      #{enableDelete,jdbcType=TINYINT}, #{description,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{creator,jdbcType=VARCHAR}, #{editTime,jdbcType=TIMESTAMP}, #{editor,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ahav.system.entity.Role">
+    insert into sys_role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="chinaRole != null">
+        china_role,
+      </if>
+      <if test="roleName != null">
+        role_name,
+      </if>
+      <if test="enableDelete != null">
+        enable_delete,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="editTime != null">
+        edit_time,
+      </if>
+      <if test="editor != null">
+        editor,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="roleId != null">
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="chinaRole != null">
+        #{chinaRole,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null">
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="enableDelete != null">
+        #{enableDelete,jdbcType=TINYINT},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="editTime != null">
+        #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null">
+        #{editor,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ahav.system.entity.Role">
+    update sys_role
+    <set>
+      <if test="chinaRole != null">
+        china_role = #{chinaRole,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null">
+        role_name = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="enableDelete != null">
+        enable_delete = #{enableDelete,jdbcType=TINYINT},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="editTime != null">
+        edit_time = #{editTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null">
+        editor = #{editor,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ahav.system.entity.Role">
+    update sys_role
+    set china_role = #{chinaRole,jdbcType=VARCHAR},
+      role_name = #{roleName,jdbcType=VARCHAR},
+      enable_delete = #{enableDelete,jdbcType=TINYINT},
+      description = #{description,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      creator = #{creator,jdbcType=VARCHAR},
+      edit_time = #{editTime,jdbcType=TIMESTAMP},
+      editor = #{editor,jdbcType=VARCHAR}
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </update>
+  <select id="selectRoles" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_role
+    where role_id != 1
+  </select>
+  <select id="selectRoleByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_role r
+    where r.role_id = (select ur.role_id from sys_user_role ur where ur.user_id = #{userId,jdbcType=INTEGER})
+  </select>
+</mapper>

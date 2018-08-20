@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahav.system.dao.MenuMapper">
+  <resultMap id="BaseResultMap" type="com.ahav.system.entity.Menu">
+    <id column="menu_id" jdbcType="VARCHAR" property="menuId" />
+    <result column="menu" jdbcType="VARCHAR" property="menu" />
+    <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+    <result column="menu_level" jdbcType="INTEGER" property="menuLevel" />
+    <result column="menu_num" jdbcType="INTEGER" property="menuNum" />
+    <result column="parent_menu_id" jdbcType="VARCHAR" property="parentMenuId" />
+    <result column="classes" jdbcType="VARCHAR" property="classes" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    menu_id, menu, menu_name, menu_level, menu_num, parent_menu_id, classes, title, url
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_menu
+    where menu_id = #{menuId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from sys_menu
+    where menu_id = #{menuId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ahav.system.entity.Menu">
+    insert into sys_menu (menu_id, menu, menu_name, 
+      menu_level, menu_num, parent_menu_id, classes, title, url
+      )
+    values (#{menuId,jdbcType=VARCHAR}, #{menu,jdbcType=VARCHAR}, #{menuName,jdbcType=VARCHAR}, 
+      #{menuLevel,jdbcType=INTEGER}, #{menuNum,jdbcType=INTEGER}, #{parentMenuId,jdbcType=VARCHAR},
+      #{classes,jdbcType=VARCHAR},#{title,jdbcType=VARCHAR},#{url,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ahav.system.entity.Menu">
+    insert into sys_menu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="menuId != null">
+        menu_id,
+      </if>
+      <if test="menu != null">
+        menu,
+      </if>
+      <if test="menuName != null">
+        menu_name,
+      </if>
+      <if test="menuLevel != null">
+        menu_level,
+      </if>
+      <if test="menuNum != null">
+        menu_num,
+      </if>
+      <if test="parentMenuId != null">
+        parent_menu_id,
+      </if>
+      <if test="classes != null">
+        classes,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="url != null">
+        url,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="menuId != null">
+        #{menuId,jdbcType=VARCHAR},
+      </if>
+      <if test="menu != null">
+        #{menu,jdbcType=VARCHAR},
+      </if>
+      <if test="menuName != null">
+        #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="menuLevel != null">
+        #{menuLevel,jdbcType=INTEGER},
+      </if>
+      <if test="menuNum != null">
+        #{menuNum,jdbcType=INTEGER},
+      </if>
+      <if test="parentMenuId != null">
+        #{parentMenuId,jdbcType=VARCHAR},
+      </if>
+      <if test="classes != null">
+        #{classes,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        #{url,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ahav.system.entity.Menu">
+    update sys_menu
+    <set>
+      <if test="menu != null">
+        menu = #{menu,jdbcType=VARCHAR},
+      </if>
+      <if test="menuName != null">
+        menu_name = #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="menuLevel != null">
+        menu_level = #{menuLevel,jdbcType=INTEGER},
+      </if>
+      <if test="menuNum != null">
+        menu_num = #{menuNum,jdbcType=INTEGER},
+      </if>
+      <if test="parentMenuId != null">
+        parent_menu_id = #{parentMenuId,jdbcType=VARCHAR},
+      </if>
+      <if test="classes != null">
+        classes = #{classes,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where menu_id = #{menuId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ahav.system.entity.Menu">
+    update sys_menu
+    set menu = #{menu,jdbcType=VARCHAR},
+      menu_name = #{menuName,jdbcType=VARCHAR},
+      menu_level = #{menuLevel,jdbcType=INTEGER},
+      menu_num = #{menuNum,jdbcType=INTEGER},
+      parent_menu_id = #{parentMenuId,jdbcType=VARCHAR},
+      classes = #{classes,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR}
+    where menu_id = #{menuId,jdbcType=VARCHAR}
+  </update>
+  <select id="findMenusByIds1" parameterType="java.util.ArrayList" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_menu
+    where menu_id in 
+    <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+    	#{item}
+    </foreach> 
+    and menu_level=1
+    order by menu_num asc
+  </select>
+  <select id="findMenusByIds2" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_menu
+    where menu_id in 
+    <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+    	#{item}
+    </foreach>
+    and menu_level=2
+    order by menu_num asc
+  </select>
+</mapper>

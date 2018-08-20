@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahav.system.dao.PermissionMapper">
+  <resultMap id="BaseResultMap" type="com.ahav.system.entity.Permission">
+    <id column="permission_id" jdbcType="INTEGER" property="permissionId" />
+    <result column="permission" jdbcType="VARCHAR" property="permission" />
+    <result column="expression" jdbcType="VARCHAR" property="expression" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="menu_id" jdbcType="INTEGER" property="menuId" />
+    <result column="parent_permission_id" jdbcType="INTEGER" property="parentPermissionId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    permission_id, permission, expression, description, menu_id, parent_permission_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_permission
+    where permission_id = #{permissionId,jdbcType=INTEGER}
+  </select>
+  <select id="selectPermissionByPermissionIds" parameterType="java.util.ArrayList" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_permission
+    where permission_id in 
+    <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+    	#{item}
+    </foreach>
+  </select>
+  <select id="selectPermissionByRoleId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_permission p
+    where p.permission_id in
+    <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+    	#{item}
+    </foreach>
+  </select>
+  <select id="selectPid" parameterType="java.lang.Integer" resultType="java.util.ArrayList">
+  	select rp.permission_id from sys_role_permission rp where rp.role_id = #{roleId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sys_permission
+    where permission_id = #{permissionId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ahav.system.entity.Permission">
+    insert into sys_permission (permission_id, permission, expression, 
+      description, menu_id, parent_permission_id
+      )
+    values (#{permissionId,jdbcType=INTEGER}, #{permission,jdbcType=VARCHAR}, #{expression,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{menuId,jdbcType=INTEGER}, #{parentPermissionId,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ahav.system.entity.Permission">
+    insert into sys_permission
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="permissionId != null">
+        permission_id,
+      </if>
+      <if test="permission != null">
+        permission,
+      </if>
+      <if test="expression != null">
+        expression,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="menuId != null">
+        menu_id,
+      </if>
+      <if test="parentPermissionId != null">
+        parent_permission_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="permissionId != null">
+        #{permissionId,jdbcType=INTEGER},
+      </if>
+      <if test="permission != null">
+        #{permission,jdbcType=VARCHAR},
+      </if>
+      <if test="expression != null">
+        #{expression,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="menuId != null">
+        #{menuId,jdbcType=INTEGER},
+      </if>
+      <if test="parentPermissionId != null">
+        #{parentPermissionId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ahav.system.entity.Permission">
+    update sys_permission
+    <set>
+      <if test="permission != null">
+        permission = #{permission,jdbcType=VARCHAR},
+      </if>
+      <if test="expression != null">
+        expression = #{expression,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="menuId != null">
+        menu_id = #{menuId,jdbcType=INTEGER},
+      </if>
+      <if test="parentPermissionId != null">
+        parent_permission_id = #{parentPermissionId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where permission_id = #{permissionId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ahav.system.entity.Permission">
+    update sys_permission
+    set permission = #{permission,jdbcType=VARCHAR},
+      expression = #{expression,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      menu_id = #{menuId,jdbcType=INTEGER},
+      parent_permission_id = #{parentPermissionId,jdbcType=INTEGER}
+    where permission_id = #{permissionId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectPermissions" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_permission
+  </select>
+</mapper>

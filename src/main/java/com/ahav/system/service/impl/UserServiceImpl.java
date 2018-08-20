@@ -1,0 +1,259 @@
+package com.ahav.system.service.impl;
+
+import java.util.Date;
+import java.util.List;
+
+import org.apache.shiro.SecurityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import com.ahav.system.dao.UserDao;
+import com.ahav.system.dao.UserRoleDao;
+import com.ahav.system.entity.Result;
+import com.ahav.system.entity.SimpleUser;
+import com.ahav.system.entity.User;
+import com.ahav.system.service.LoginService;
+import com.ahav.system.service.UserService;
+import com.ahav.system.util.Encrypt;
+import com.ahav.system.util.SystemConstant;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+
+/**
+ * UserService实现类
+ * <br>类名：UserServiceImpl<br>
+ * 作者： mht<br>
+ * 日期： 2018年8月5日-下午7:10:12<br>
+ */
+@Service
+public class UserServiceImpl implements UserService {
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
+    @Autowired
+    private UserDao userDao;
+    @Autowired
+    private UserRoleDao userRoleDao;
+    @Autowired
+    private LoginService loginService;
+    
+    /**
+     * @author wxh
+     */
+    @Override
+    public User findByName(String username) {
+		User user = userDao.findByName(username);
+		return user;
+	}
+    
+    @Override
+    public Result getUserById(Integer userId) {
+        SimpleUser userDB = userDao.getUserById(userId);
+        Result res = new Result(HttpStatus.OK.value(), null, userDB);
+        return res;
+    }
+
+    @Override
+    public Result getUserByName(String username) {
+        User userDB = userDao.getUserByName(username);
+        Result res = new Result(HttpStatus.OK.value(), null, userDB);
+        return res;
+    }
+
+    @Override
+    public Result checkUsername(String username) {
+        boolean unused = true;
+        // 查询指定用户账号
+        String usernameDB = userDao.checkUsername(username);
+        if (usernameDB != null) {
+            unused = false;
+            return new Result(HttpStatus.OK.value(), "用户名重复！", unused);
+        }
+
+        return new Result(HttpStatus.OK.value(), "用户名可用！", unused);
+    }
+
+    
+    @Override
+    public Result createOrUpdUser(User user) {
+        Result res = new Result();
+        if (user.getUserId() == null) {
+            res = insertNewUser(user);
+        } else {
+            res = updUser(user);
+        }
+        return res;
+    }
+    
+    
+    /**
+     * 原型中只有：角色(roleId)、部门(deptId)、姓名(trueName)、账号(username)<br>
+     * 这四项，因此存库的时候需要进行细化用户处理
+     */
+    private Result insertNewUser(User newUser) {
+        // 细化用户信息，包括初始密码、加密盐值、创建时间、创建人
+        // 散列原始密码
+        String[] hashedCredentials = Encrypt.encryptPassword(newUser.getUsername(), newUser.getTrueName(),
+                SystemConstant.ORIGINAL_PASSWORD);
+        // 封装密码与盐值
+        newUser.setPwd(hashedCredentials[0]);
+        newUser.setSalt(hashedCredentials[1]);
+        // 封装其他信息
+        newUser.setCreateTime(new Date());
+
+        // 从当前用户的认证信息中获取身份认证信息，登录时添加的身份认证信息为一个从数据库中查出的user对象。
+        User currUser = (User) SecurityUtils.getSubject().getPrincipal();
+        newUser.setCreator(currUser.getUsername());
+
+        // 持久化新成员
+        boolean executeResult = true;
+        try {
+            executeResult = userDao.insertUser(newUser);
+            // 添加成员-角色之间对应关系
+            userRoleDao.insertUserRole(newUser);
+            
+            logger.info("创建新用户：{}", newUser.toString());
+            // 以User作为数据库存储对象，以SimpleUser作为返回值对象，将User对象转型为父类，为了防止页面获得敏感信息
+            Result result = new Result(HttpStatus.CREATED.value(), "添加新成员成功！", new SimpleUser(newUser));
+            if (!executeResult) {
+                // 执行结果为false则添加成员失败！
+                result = new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), "添加新成员失败！", null);
+            }
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 出现异常则添加成员失败！
+            return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), "添加新成员失败！", null);
+        }
+    }
+    
+    /**
+     * 更新用户
+     * <br>
+     * 将会更新的信息有：角色(role关联关系)、部门(department_id)、姓名(true_name)、账号(username)
+     * 以及：更新时间(edit_time)和更新人(editor)
+     * 作者： mht<br> 
+     * 时间：2018年8月11日-下午4:48:14<br>
+     */
+    private Result updUser(User user) {
+        // 修改时间
+        user.setEditTime(new Date());
+        // 从当前用户的认证信息中获取身份认证信息，登录时添加的身份认证信息为一个从数据库中查出的user对象。
+        User currUser = (User) SecurityUtils.getSubject().getPrincipal();
+        user.setEditor(currUser.getUsername());
+        // 持久化新成员
+        boolean executeResult = true;
+        try {
+            // 更新用户表
+            executeResult = userDao.updateUser(user);
+            // 更新用户-角色对应关系
+            userRoleDao.updateUserRole(user);
+
+            logger.info("更新用户：{}", user.toString());
+            // 以User作为数据库存储对象，以SimpleUser作为返回值对象，将User对象转型为父类，为了防止页面获得敏感信息
+            Result result = new Result(HttpStatus.OK.value(), "更新用户成功！", new SimpleUser(user));
+            if (!executeResult) {
+                // 执行结果为false则添加成员失败！
+                result = new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), "更新用户失败！", null);
+            }
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 出现异常失败！
+            return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), "更新用户失败！", null);
+        }
+    }
+
+    @Override
+    public List<User> findUsersByRoleId(Integer roleId) {
+        return userDao.findUsersByRoleId(roleId);
+    }
+
+    @Override
+    public Result selectUsers(Integer pageNum, Integer pageSize, Integer roleId, Integer deptId, String username) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<SimpleUser> users = userDao.selectUsers(roleId, deptId, username);
+        PageInfo<SimpleUser> pageInfo = new PageInfo<>(users);
+        Result res = new Result(HttpStatus.OK.value(), null, pageInfo);
+        
+        return res;
+    }
+
+    @Override
+    public Result deleteUser(Integer userId) {
+        try {
+            // 删除用户表对应id用户
+            boolean executeResult = userDao.deleteUser(userId);
+            // 删除用户-角色表中对应用户id的关联关系
+            userRoleDao.deleteUserRoleByUserId(userId);
+            if (!executeResult) {
+                // 如果executeResult为false 则删除失败
+                return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), "用户删除失败！", null);
+            }
+            return new Result(HttpStatus.OK.value(), "用户删除成功！", userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 如果出现异常，则删除失败
+            return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), "用户删除失败！", null);
+        }
+    }
+
+    @Override
+    public Result resetPassword(Integer userId) {
+        SimpleUser userDB = userDao.getUserById(userId);
+        User user = new User(userDB);
+        // 散列原始密码
+        String[] hashedCredentials = Encrypt.encryptPassword(user.getUsername(), user.getTrueName(),
+                SystemConstant.ORIGINAL_PASSWORD);
+        // 封装密码与盐值
+        user.setPwd(hashedCredentials[0]);
+        user.setSalt(hashedCredentials[1]);
+
+        try {
+            userDao.updatePassword(user);
+            logger.info("需要重置密码成功！用户名:{}", user.getUsername());
+            return new Result(HttpStatus.OK.value(), "重置密码成功!", user.getUsername());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), "重置密码失败!", null);
+        }
+    }
+    
+    @Override
+    public Result updatePassword(User user) {
+        String[] hashedCredentials = Encrypt.encryptPassword(user.getUsername(), user.getTrueName(),
+                user.getPwd());
+        user.setPwd(hashedCredentials[0]);
+        user.setSalt(hashedCredentials[1]);
+        boolean executeResult = userDao.updatePassword(user);
+        if (executeResult) {
+            loginService.logout();
+            return new Result(HttpStatus.OK.value(), "密码修改成功，请重新登录！", executeResult);
+        }
+        return new Result(HttpStatus.OK.value(), "密码修改失败！", executeResult);
+    }
+
+    @Override
+    public Result checkPassword(String password) {
+        // 获得用户的身份信息，包括salt等
+        User currUser = (User) SecurityUtils.getSubject().getPrincipal();
+        // 待校验密码加密
+        String hashedPwd = Encrypt.encryptPassword(password, currUser.getSalt());
+        
+        if (hashedPwd.equals(currUser.getPwd())) {
+            return new Result(HttpStatus.OK.value(), "原密码正确", true);
+        } else {
+            return new Result(HttpStatus.OK.value(), "原密码不正确!", false);
+        }
+    }
+
+    @Override
+    public Result getCurrentUser() {
+        User currUser = (User) SecurityUtils.getSubject().getPrincipal();
+        SimpleUser simpleUser = new SimpleUser(currUser);
+        
+        return new Result(HttpStatus.OK.value(), "当前用户", simpleUser);
+    }
+}

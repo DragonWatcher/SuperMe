@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ahav.system.dao.UserDao">
+	<resultMap type="com.ahav.entity.User" id="UsernameMap">
+    	<result column="username" property="username"/>
+    </resultMap>
+    <!-- 根据userId查找用户-->
+    <select id="getUserById" resultType="com.ahav.system.entity.SimpleUser">
+        SELECT * FROM sys_user WHERE user_id = #{userId}
+    </select>
+
+    <!-- 根据username查询整个user对象 -->
+    <select id="getUserByName" resultType="User">
+        SELECT * FROM sys_user
+        WHERE username = #{username}
+    </select>
+    <!-- 用户账号查重 -->
+    <select id="checkUsername" resultType="String">
+        SELECT username
+        FROM sys_user
+        WHERE username = #{username}
+    </select>
+    <!-- 添加新成员 -->
+    <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO sys_user
+            (username, pwd, true_name, email, salt, create_time, creator, description, department_id)
+        VALUES
+            (#{username},#{pwd},#{trueName},#{email},#{salt},#{createTime},#{creator},#{description},#{dept.deptId})
+    </insert>
+    
+    <!-- 更新成员 -->
+    <update id="updateUser" parameterType="User" useGeneratedKeys="true" keyProperty="userId">
+        UPDATE sys_user
+        SET username = #{username},true_name = #{trueName},department_id = #{dept.deptId},edit_time = #{editTime},editor = #{editor}
+        WHERE user_id = #{userId}
+    </update>
+    
+    <!-- 查找成员 此SQL必须用left join，因为如果将关联条件写在where中，分支将会忽略未执行的关联条件，导致查询结果出错-->
+    <select id="selectUsers" resultMap="selectUsers_ResultMap">
+	    SELECT *
+		FROM (
+		    SELECT u.*, ur.role_id
+		    FROM sys_user u, sys_user_role ur
+		    WHERE u.user_id = ur.user_id
+		) u_role
+		    LEFT JOIN sys_role r ON u_role.role_id = r.role_id
+		    LEFT JOIN sys_dept d ON u_role.department_id = d.dept_id
+        <where>
+            <if test="roleId != null and roleId != 0">
+                AND r.role_id = #{roleId}
+            </if>
+            <if test="deptId != null and deptId != 0">
+                AND u_role.department_id = #{deptId}
+            </if>
+            <if test="username != null and username != ''">
+                AND u_role.username = #{username}
+            </if>
+        </where>
+    </select>
+    <!-- 根据角色ID查询对应用户的集合-->
+    <select id="findUsersByRoleId" resultType="java.util.HashMap">
+        SELECT u.username FROM sys_user u, sys_role r, sys_user_role ur
+        WHERE ur.user_id = u.user_id
+        AND ur.role_id = r.role_id
+        AND r.role_id = #{roleId}
+    </select>
+    
+    <!-- 根据用户id删除用户 -->
+    <delete id="deleteUser" parameterType="int">
+        DELETE FROM sys_user
+        WHERE user_id = #{userId}
+    </delete>
+    
+    <!-- 重置或修改用户密码 -->
+    <update id="updatePassword" parameterType="com.ahav.system.entity.User">
+        UPDATE sys_user
+        SET pwd = #{pwd}, salt = #{salt}
+        WHERE user_id = #{userId}
+    </update>
+    
+    <!-- 查找成员resultMap -->
+    <resultMap type="com.ahav.system.entity.SimpleUser" id="selectUsers_ResultMap">
+        <id column="user_id" property="userId"/>
+        <result column="username" property="username"/>
+        <result column="true_name" property="trueName"/>
+        <!-- 部门关联对象 -->
+        <association property="dept" javaType="com.ahav.system.entity.Dept">
+            <id column="dept_id" property="deptId"/>
+            <result column="dept_name" property="deptName"/>
+            <result column="describe" property="describe"/>
+        </association>
+        <!-- 角色关联对象 -->
+        <association property="role" javaType="com.ahav.system.entity.Role">
+            <id column="role_id" property="roleId"/>
+            <result column="china_role" property="chinaRole"/>
+            <result column="role_name" property="roleName"/>
+            <result column="enable_delete" property="enableDelete"/>
+        </association>
+    </resultMap>
+    <resultMap type="com.ahav.entity.User" id="BaseResultMap">
+    	<id column="user_id" property="userId"/>
+    	<result column="username" property="username"/>
+    	<result column="true_name" property="trueName"/>
+    	<result column="color" property="color"/>
+    	<association property="role" column="user_id"                       
+            select="com.ahav.dao.RoleMapper.selectRoleByUserId" />
+    </resultMap>
+    <select id="findByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+	  select 
+	  *
+	  from sys_user
+	  where username = #{username,jdbcType=VARCHAR}
+	</select>
+</mapper>        

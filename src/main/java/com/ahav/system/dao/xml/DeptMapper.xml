@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ahav.system.dao.DeptDao">
+    <!-- 查询全部部门信息 -->
+    <select id="allDepts" resultType="com.ahav.system.entity.Dept">
+        SELECT * FROM sys_dept
+    </select>
+    
+    <!-- 根据部门id删除对应部门信息 -->
+    <delete id="delDeptById" parameterType="int">
+        DELETE FROM sys_dept WHERE dept_id = #{deptId}
+    </delete>
+    
+    <!-- 添加部门 -->
+    <insert id="insertDept" parameterType="com.ahav.system.entity.Dept">
+        INSERT INTO sys_dept(dept_name)
+        VALUES(#{deptName})
+    </insert>
+    
+    <!-- 更新部门信息 -->
+    <update id="updateDept" parameterType="com.ahav.system.entity.Dept">
+        UPDATE sys_dept
+        SET dept_name = #{deptName}
+        WHERE dept_id = #{deptId}
+    </update>
+    <!-- 根据部门id查找部门信息 -->
+    <select id="getDeptById" resultType="com.ahav.system.entity.Dept">
+        SELECT * FROM sys_dept WHERE dept_id = #{deptId}
+    </select>
+    
+</mapper>        
