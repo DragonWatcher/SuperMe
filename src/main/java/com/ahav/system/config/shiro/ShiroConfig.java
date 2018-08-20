@@ -79,13 +79,13 @@ public class ShiroConfig {
      *	添加用户的时候使用了md5 加密，所以这里要告诉shiro加密规则，这样在subject.login(token);的时候shiro才能以同样的加密规则加密用户输入的password
      * @return
      */
-    @Bean
-    public HashedCredentialsMatcher hashedCredentialsMatcher() {
-        HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
-        hashedCredentialsMatcher.setHashAlgorithmName("md5");//散列算法:这里使用MD5算法;
-        hashedCredentialsMatcher.setHashIterations(1);//散列的次数，比如散列两次，相当于 md5(md5(""));
-        return hashedCredentialsMatcher;
-    }
+//    @Bean
+//    public HashedCredentialsMatcher hashedCredentialsMatcher() {
+//        HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
+//        hashedCredentialsMatcher.setHashAlgorithmName("md5");//散列算法:这里使用MD5算法;
+//        hashedCredentialsMatcher.setHashIterations(1);//散列的次数，比如散列两次，相当于 md5(md5(""));
+//        return hashedCredentialsMatcher;
+//    }
 	
     /**
      * cacheManager 缓存 redis实现
