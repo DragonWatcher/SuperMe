@@ -1,5 +1,7 @@
 package com.ahav.system.service.impl;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -26,7 +28,7 @@ public class LoginServiceImpl implements LoginService{
     private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 
     @Override
-    public SystemResult login(String username, String password) {
+    public SystemResult login(String username, String password, HttpServletResponse response) {
         SystemResult loginResult = null;
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);
         // 通过shiro获取当前用户
@@ -34,6 +36,9 @@ public class LoginServiceImpl implements LoginService{
         try {
             // 登录提交
             currentUser.login(token);
+            // 从定向单点登录网易邮箱
+            ntesLogin(username, response);
+            
             // 封装登录结果
             loginResult = new SystemResult(HttpStatus.OK.value(), "登录成功！",
                     new SimpleUser((User) SecurityUtils.getSubject().getPrincipal()));

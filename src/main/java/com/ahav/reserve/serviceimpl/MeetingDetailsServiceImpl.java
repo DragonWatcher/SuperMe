@@ -5,9 +5,7 @@ import com.ahav.reserve.mapper.RoomMapper;
 import com.ahav.reserve.pojo.*;
 import com.ahav.reserve.service.IMeetingDetailsService;
 import com.ahav.reserve.utils.meetingUtils;
-import com.ahav.system.entity.Dept;
-import com.ahav.system.entity.SimpleUser;
-import com.ahav.system.entity.SystemResult;
+import com.ahav.system.entity.*;
 import com.ahav.system.service.DeptService;
 import com.ahav.system.service.UserService;
 import com.alibaba.fastjson.JSON;
@@ -18,10 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -42,6 +37,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     private static int i = 0;//会议遍历序号
 
     //查询所有会议详情（初始化界面）
+    //
     @Override
     public Map findMeetingDetailsAll() {
         Result result = new Result();
@@ -51,10 +47,12 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
         //调用接口参数当前操作需要的权限，得到true或false
             /*flag = 调用是否有权限的接口*/
-        //调用接口token获得当前用户的id
-            /* deReserveId = 调用token；*/
+        //TODO:调用接口获得当前用户的id
+        SystemResult currentUser = userServiceImpl.getCurrentUser();
+        UserRoleKey user = (UserRoleKey)currentUser.getData();
+        int deReserveId = user.getUserId();
         Boolean flag = true;
-        int deReserveId = 3;  //预定人id
+/*        int deReserveId = 3;  //预定人id*/
 
         //查询出当天所有的会议
         MeetingDetails mDetails =  new MeetingDetails();
@@ -71,7 +69,6 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             //TODO：调用接口：根据部门id查询部门名称，并设置到MeetingDetails对象中
             Dept dept = deptServiceImpl.getDeptById(meetingDetails.getDeReserveDepartmentId());
             meetingDetails.setDeReserveDepartment(dept.getDeptName());
-
             /*TODO:调用接口：根据预订人id查询出预订人的姓名，并设置到MeetingDetails对象中*/
             SimpleUser userById = (SimpleUser)userServiceImpl.getUserById(meetingDetails.getDeReserveId()).getData();
             meetingDetails.setDeReserve(userById.getTrueName());
@@ -143,11 +140,11 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         JSONObject jsonObject = new JSONObject();
         List<Room> rooms = RoomMapperImpl.selectRoomAll();
         /*TODO:调用接口查询出所有部门*/
-       /* com.ahav.entity.Result result1 = deptServiceImpl.allDepts();
-        Object allDepts = result1.getData();*/
+        SystemResult systemResult = deptServiceImpl.allDepts();
+        List<Dept> allDepts =(List<Dept>) systemResult.getData();
         if(rooms.size() > 0){
             result.setStatus(200);
-            /*jsonObject.put("allDepts",allDepts);*/
+            jsonObject.put("allDepts",allDepts);
             jsonObject.put("rooms",rooms);
             jsonObject.put("result",result);
 
@@ -164,11 +161,9 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     public Map alterMeetingDetails(MeetingDetails meetingDetails) {
         Map map = new HashMap<String,Object>();
         Result result = new Result();
-        String deReserveName = meetingDetails.getDeReserve(); //预定人的姓名
         int deRoomId = meetingDetails.getDeRoomId();
-        /*TODO:调用接口，根据预订人姓名查询预定人的ID，精确查找
-        * int reserveId = */
-        int reserveId = findReserveId(deReserveName);
+        int reserveId = meetingDetails.getDeReserveId();
+
         if(reserveId > 0){
             meetingDetails.setDeReserveId(reserveId);
             Date stratTime = meetingDetails.getDeMeetingStart(); //修改为的会议开始时间
@@ -212,7 +207,11 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                     String roomName = RoomMapperImpl.selectRoomName(deRoomId1);
                     meetingDetails1.setDeRoomName(roomName);
                     /*TODO:调用接口：根据预订人的Id查询预定人姓名，并设置到MeetingDetails对象中*/
+                    SimpleUser userById = (SimpleUser)userServiceImpl.getUserById(meetingDetails.getDeReserveId()).getData();
+                    meetingDetails1.setDeReserve(userById.getTrueName());
                     /*TODO:调用接口：根据部门id查询出部门姓名，并设置到MeetingDetails对象中*/
+                    Dept dept = deptServiceImpl.getDeptById(meetingDetails.getDeReserveDepartmentId());
+                    meetingDetails1.setDeReserveDepartment(dept.getDeptName());
                     map.put("result",result);
                     map.put("meetingDetails1",meetingDetails1);
                     return map;
@@ -286,7 +285,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         MeetingTime meetingTime = new MeetingTime(); //会议时间
         String reserveName = meetingDetails.getDeReserve(); //获得前台传递的预定人姓名
         String meetingName = meetingDetails.getDeMeetingName(); //会议详情的名称
-        List<MeetingDetails> meetingDetailsList = null;
+        List<MeetingDetails> meetingDetailsList = new ArrayList<>();
 
         //根据条件查询出某一天的会议详情
         Date meetingStart = meetingDetails.getDeMeetingStart();
@@ -302,18 +301,18 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             meetingDetails.setDeReserve(reserveName);
         }
 
-        /*TODO:如果预订人不等于Null则调用接口：根据从前台获取的预定人姓名模糊查询出所有符合条件的预定人ID*/
-            /*思路遍历预定人的id
-               if(meetingName != null && "" != meetingName){
-                    for(int i=0;预定人id.length>i;i++){
-                        meetingDetails.setDeReserveId(预定人id);
-                        List<MeetingDetails> meetingDetailsList=meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
-                        meetingDetailsList.set(meetingDetailsList.get(0));
+       // TODO:如果预订人不等于Null则调用接口：根据从前台获取的预定人姓名模糊查询出所有符合条件的预定人ID
+            //思路遍历预定人的i
+               if(reserveName != null && "" != reserveName){
+                    List<SimpleUser> users = (List<SimpleUser>) userServiceImpl.getUserByTrueName(reserveName).getData();
+                    for(int i=0;users.size()>i;i++){
+                        meetingDetails.setDeReserveId(users.get(i).getUserId());
+                        List<MeetingDetails> meetingDetailsList1=meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
+                        meetingDetailsList.add(meetingDetailsList1.get(0));
                  }
              }else{
                 meetingDetailsList = meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
              }
-         */
 
 
         //  List<MeetingDetails> meetingDetailsList = meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
@@ -321,17 +320,21 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             //调用接口：根据会议室Id查询出会议室的名称，并设置到MeetingDetails对象中
             meetingDetails1.setDeRoomName(RoomMapperImpl.selectRoomName(meetingDetails1.getDeRoomId()));
             //TODO:调用接口：根据部门id查询部门名称，并设置到MeetingDetails对象中
-           /* Dept dept = deptServiceImpl.getDeptById(meetingDetails1.getDeReserveDepartmentId());
-            meetingDetails1.setDeReserveDepartment(dept.getDeptName());*/
-            meetingDetails1.setDeReserveDepartment("销售部");
+            Dept dept = deptServiceImpl.getDeptById(meetingDetails1.getDeReserveDepartmentId());
+            meetingDetails1.setDeReserveDepartment(dept.getDeptName());
+            /*meetingDetails1.setDeReserveDepartment("销售部");*/
             /*TODO:调用接口：根据预订人id查询出预定人的姓名，并设置到MeetingDetails对象中*/
+            SimpleUser userById = (SimpleUser)userServiceImpl.getUserById(meetingDetails1.getDeReserveId()).getData();
+            meetingDetails1.setDeReserve(userById.getTrueName());
         }
 
         //TODO:调用接口参数当前操作需要的权限，得到true或false
             /*flag = 调用是否有权限的接口*/
         //TODO:调用接口token获得当前用户的id
-            /* deReserveId = 调用token；*/
-            int deReserveId = 2;
+        SystemResult currentUser = userServiceImpl.getCurrentUser();
+        UserRoleKey user = (UserRoleKey)currentUser.getData();
+        int deReserveId = user.getUserId();
+        /*int deReserveId = 2;*/
 
         //获得上次会议时间
         MeetingDetails lastTime = meetingDetailsMapperImpl.selectLastTime(startTime);
@@ -414,14 +417,16 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         JSONObject jsonObject = new JSONObject();
         List<Room> rooms = RoomMapperImpl.selectRoomAll();
         //TODO:调用接口：查询出所有部门信息
+        SystemResult systemResult = deptServiceImpl.allDepts();
+        List<Dept> allDepts =(List<Dept>) systemResult.getData();
         if(rooms.size() > 0){
             result.setStatus(200);
+            jsonObject.put("allDepts",allDepts);
             jsonObject.put("rooms",rooms);
             jsonObject.put("result",result);
             return jsonObject;
         }else{
             result.setStatus(400);
-            jsonObject.put("rooms",rooms);
             jsonObject.put("result",result);
             return jsonObject;
         }
@@ -434,6 +439,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         Result result = new Result();
         MeetingDetails mDetails =  new MeetingDetails();
         int roomId = meetingDetails.getDeRoomId();
+        int deReserveId = meetingDetails.getDeReserveId();
+
         boolean flag = false;
         Date meetingStart = meetingDetails.getDeMeetingOver(); //添加新会议的开始时间
         Date meetingOver = meetingDetails.getDeMeetingStart();  //添加新会议的结束时间
@@ -464,14 +471,20 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
         if(flag){
             //没有冲突,添加会议
-            int update = meetingDetailsMapperImpl.insertSelective(meetingDetails);
-            if(update == 1){
-                result.setStatus(200);
-                return result;
-            }else {
+            if(deReserveId > 0){
+                int update = meetingDetailsMapperImpl.insertSelective(meetingDetails);
+                if(update == 1){
+                    result.setStatus(200);
+                    return result;
+                }else {
+                    result.setStatus(400);
+                    return result;
+                }
+            }else{
                 result.setStatus(400);
                 return result;
             }
+
         }else{
             result.setStatus(400);
             return result;

@@ -1,5 +1,6 @@
 package com.ahav.system.controller;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.FormParam;
 
 import org.slf4j.Logger;
@@ -63,10 +64,10 @@ public class UserController {
             @ApiImplicitParam(name = "username", paramType = "form"),
             @ApiImplicitParam(name = "password", paramType = "form") })
     @PostMapping("/login")
-    public SystemResult login(@FormParam("username") String username, @FormParam("password") String password) {
+    public SystemResult login(@FormParam("username") String username, @FormParam("password") String password, HttpServletResponse response) {
         logger.info("请求登录...");
         // 登录测试
-        return loginService.login(username, password);
+        return loginService.login(username, password, response);
     }
 
     /**
