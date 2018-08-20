@@ -65,6 +65,7 @@ public class UserController {
     @PostMapping("/login")
     public SystemResult login(@FormParam("username") String username, @FormParam("password") String password) {
         logger.info("请求登录...");
+        // 登录测试
         return loginService.login(username, password);
     }
 
