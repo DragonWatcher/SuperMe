@@ -32,7 +32,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.ahav.reserve.controller"))//扫描com路径下的api文档
+                .apis(RequestHandlerSelectors.basePackage("com.ahav.reserve.controller,com.ahav.system.controller"))//扫描com路径下的api文档
                 .paths(PathSelectors.any())//路径判断
                 .build();
     }
@@ -44,11 +44,12 @@ public class SwaggerConfig {
      */
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("《----我是title-----》")//标题
-                .description("《-----我是描述----》：http://www.google.com.hk")//描述
+                .title("springboot利用swagger构建api文档")//标题
+                .description(
+                        "王晓辉负责的模块有：菜单(menu-contorller)、角色(role-controller)、权限(permission-controller); \n 牟昊天负责的模块有：用户(user-contorller)、部门(dept-controller)")//描述
                 .termsOfServiceUrl("http://www.google.com.hk")//（不可见）条款地址
-                .contact("6666")//作者信息
-                .version("6.6.6")//版本号
+                .contact("王晓辉、孟凡营、牟昊天")//作者信息
+                .version("1.0")//版本号
                 .build();
     }
 }
