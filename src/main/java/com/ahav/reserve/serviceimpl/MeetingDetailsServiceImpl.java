@@ -5,6 +5,11 @@ import com.ahav.reserve.mapper.RoomMapper;
 import com.ahav.reserve.pojo.*;
 import com.ahav.reserve.service.IMeetingDetailsService;
 import com.ahav.reserve.utils.meetingUtils;
+import com.ahav.system.entity.Dept;
+import com.ahav.system.entity.SimpleUser;
+import com.ahav.system.entity.SystemResult;
+import com.ahav.system.service.DeptService;
+import com.ahav.system.service.UserService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +34,11 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
     @Autowired
     private RestTemplate restTemplate;
-/*  @Autowired
-    private DeptService deptServiceImpl;*/
+    @Autowired
+    private DeptService deptServiceImpl;
+    @Autowired
+    private UserService userServiceImpl;
+
     private static int i = 0;//会议遍历序号
 
     //查询所有会议详情（初始化界面）
@@ -60,12 +68,13 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             //根据会议室ID查询出会议室的名称，并设置到MeetingDetails对象中
             String roomName = RoomMapperImpl.selectRoomName(meetingDetails.getDeRoomId());
             meetingDetails.setDeRoomName(roomName);
-            //调用接口：根据部门id查询部门名称，并设置到MeetingDetails对象中
-           /* Dept dept = deptServiceImpl.getDeptById(meetingDetails.getDeReserveDepartmentId());
-            meetingDetails.setDeReserveDepartment(dept.getDeptName());*/
-            meetingDetails.setDeReserveDepartment("销售部");
-            /*调用接口：根据预订人id查询出预订人的姓名，并设置到MeetingDetails对象中*/
-            meetingDetails.getDeReserveId();
+            //TODO：调用接口：根据部门id查询部门名称，并设置到MeetingDetails对象中
+            Dept dept = deptServiceImpl.getDeptById(meetingDetails.getDeReserveDepartmentId());
+            meetingDetails.setDeReserveDepartment(dept.getDeptName());
+
+            /*TODO:调用接口：根据预订人id查询出预订人的姓名，并设置到MeetingDetails对象中*/
+            SimpleUser userById = (SimpleUser)userServiceImpl.getUserById(meetingDetails.getDeReserveId()).getData();
+            meetingDetails.setDeReserve(userById.getTrueName());
         }
 
 
@@ -87,7 +96,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         initPageMap.put("roomAll",roomAll);
         initPageMap.put("meetingTime",meetingTime);
 
-        /*调用接口查询会议室设备列表
+        /*TODO:调用接口查询会议室设备列表
         * initPageMap.put("会议室设备列表",会议室设备列表);*/
 
 
@@ -133,7 +142,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         Result result = new Result();
         JSONObject jsonObject = new JSONObject();
         List<Room> rooms = RoomMapperImpl.selectRoomAll();
-        /*查询出所有部门*/
+        /*TODO:调用接口查询出所有部门*/
        /* com.ahav.entity.Result result1 = deptServiceImpl.allDepts();
         Object allDepts = result1.getData();*/
         if(rooms.size() > 0){
@@ -157,7 +166,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         Result result = new Result();
         String deReserveName = meetingDetails.getDeReserve(); //预定人的姓名
         int deRoomId = meetingDetails.getDeRoomId();
-        /*调用接口，根据预订人姓名查询预定人的ID，精确查找
+        /*TODO:调用接口，根据预订人姓名查询预定人的ID，精确查找
         * int reserveId = */
         int reserveId = findReserveId(deReserveName);
         if(reserveId > 0){
@@ -202,8 +211,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                     Integer deRoomId1 = meetingDetails1.getDeRoomId();
                     String roomName = RoomMapperImpl.selectRoomName(deRoomId1);
                     meetingDetails1.setDeRoomName(roomName);
-                    /*调用接口：根据预订人的Id查询预定人姓名，并设置到MeetingDetails对象中*/
-                    /*调用接口：根据部门id查询出部门姓名，并设置到MeetingDetails对象中*/
+                    /*TODO:调用接口：根据预订人的Id查询预定人姓名，并设置到MeetingDetails对象中*/
+                    /*TODO:调用接口：根据部门id查询出部门姓名，并设置到MeetingDetails对象中*/
                     map.put("result",result);
                     map.put("meetingDetails1",meetingDetails1);
                     return map;
@@ -293,7 +302,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             meetingDetails.setDeReserve(reserveName);
         }
 
-        /*如果预订人不等于Null则调用接口：根据从前台获取的预定人姓名模糊查询出所有符合条件的预定人ID*/
+        /*TODO:如果预订人不等于Null则调用接口：根据从前台获取的预定人姓名模糊查询出所有符合条件的预定人ID*/
             /*思路遍历预定人的id
                if(meetingName != null && "" != meetingName){
                     for(int i=0;预定人id.length>i;i++){
@@ -311,16 +320,16 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         for(MeetingDetails meetingDetails1 :meetingDetailsList){
             //调用接口：根据会议室Id查询出会议室的名称，并设置到MeetingDetails对象中
             meetingDetails1.setDeRoomName(RoomMapperImpl.selectRoomName(meetingDetails1.getDeRoomId()));
-            //调用接口：根据部门id查询部门名称，并设置到MeetingDetails对象中
+            //TODO:调用接口：根据部门id查询部门名称，并设置到MeetingDetails对象中
            /* Dept dept = deptServiceImpl.getDeptById(meetingDetails1.getDeReserveDepartmentId());
             meetingDetails1.setDeReserveDepartment(dept.getDeptName());*/
             meetingDetails1.setDeReserveDepartment("销售部");
-            /*调用接口：根据预订人id查询出预定人的姓名，并设置到MeetingDetails对象中*/
+            /*TODO:调用接口：根据预订人id查询出预定人的姓名，并设置到MeetingDetails对象中*/
         }
 
-        //调用接口参数当前操作需要的权限，得到true或false
+        //TODO:调用接口参数当前操作需要的权限，得到true或false
             /*flag = 调用是否有权限的接口*/
-        //调用接口token获得当前用户的id
+        //TODO:调用接口token获得当前用户的id
             /* deReserveId = 调用token；*/
             int deReserveId = 2;
 
@@ -404,6 +413,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         Result result = new Result();
         JSONObject jsonObject = new JSONObject();
         List<Room> rooms = RoomMapperImpl.selectRoomAll();
+        //TODO:调用接口：查询出所有部门信息
         if(rooms.size() > 0){
             result.setStatus(200);
             jsonObject.put("rooms",rooms);
