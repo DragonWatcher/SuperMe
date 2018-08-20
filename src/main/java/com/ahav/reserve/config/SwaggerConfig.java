@@ -32,7 +32,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.ahav.reserve.controller,com.ahav.system.controller"))//扫描com路径下的api文档
+                .apis(RequestHandlerSelectors.basePackage("com.ahav"))//扫描com路径下的api文档
                 .paths(PathSelectors.any())//路径判断
                 .build();
     }

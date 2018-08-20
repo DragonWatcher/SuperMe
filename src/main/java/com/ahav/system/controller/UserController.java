@@ -21,6 +21,7 @@ import com.ahav.system.service.LoginService;
 import com.ahav.system.service.UserService;
 import com.ahav.system.util.SystemConstant;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -32,6 +33,7 @@ import springfox.documentation.annotations.ApiIgnore;
  * 作者： mht<br>
  * 日期： 2018年8月3日-下午10:42:57<br>
  */
+@Api("成员管理：牟昊天")
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -56,7 +58,7 @@ public class UserController {
      * <br>作者： mht<br> 
      * 时间：2018年8月3日-下午9:32:05<br>
      */
-    @ApiOperation(value = "用户登录")
+    @ApiOperation(value = "用户登录", notes = "用户名密码以formdata表单提交。可登陆用户名密码：mht,123456")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "username", paramType = "form"),
             @ApiImplicitParam(name = "password", paramType = "form") })

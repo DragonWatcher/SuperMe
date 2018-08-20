@@ -11,8 +11,10 @@ import com.ahav.system.entity.SystemResult;
 import com.ahav.system.service.DeptService;
 import com.ahav.system.service.impl.DeptServiceImpl.DeptSettings;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+@Api("部门设置：牟昊天")
 @RestController
 @RequestMapping("/depts")
 public class DeptController {

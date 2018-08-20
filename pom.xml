@@ -84,7 +84,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
-        <!-- swagger 不一样 -->
+        <!-- swagger依赖 -->
+<!--         <dependency>
+            <groupId>com.spring4all</groupId>
+            <artifactId>spring-boot-starter-swagger</artifactId>
+            <version>1.5.1.RELEASE</version>
+        </dependency> -->
         <!-- shiro -->
         <dependency>
             <groupId>org.apache.shiro</groupId>
