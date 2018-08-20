@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahav.reserve.mapper.MeetingDetailsMapper">
+  <resultMap id="BaseResultMap" type="com.ahav.reserve.pojo.MeetingDetails">
+    <id column="de_details_id" jdbcType="INTEGER" property="deDetailsId" />
+    <result column="de_grade" jdbcType="VARCHAR" property="deGrade" />
+    <result column="de_room_id" jdbcType="INTEGER" property="deRoomId" />
+    <result column="de_meeting_name" jdbcType="VARCHAR" property="deMeetingName" />
+    <result column="de_reserve_department_id" jdbcType="INTEGER" property="deReserveDepartmentId" />
+    <result column="de_reserve_id" jdbcType="INTEGER" property="deReserveId" />
+    <result column="de_reserve_phone" jdbcType="VARCHAR" property="deReservePhone" />
+    <result column="de_reserve_number" jdbcType="INTEGER" property="deReserveNumber" />
+    <result column="de_main" jdbcType="VARCHAR" property="deMain" />
+    <result column="de_meeting_over" jdbcType="TIMESTAMP" property="deMeetingOver" />
+    <result column="de_meeting_start" jdbcType="TIMESTAMP" property="deMeetingStart" />
+    <result column="de_department_reserve_person" jdbcType="VARCHAR" property="deDepartmentReservePerson" />
+    <result column="de_department_reserve_person_id" jdbcType="INTEGER" property="deDepartmentReservePersonId" />
+    <result column="de_meeting_status" jdbcType="VARCHAR" property="deMeetingStatus" />
+    <result column="de_date_count" jdbcType="TIMESTAMP" property="deDateCount" />
+    <result column="de_grade_id" jdbcType="INTEGER" property="deGradeId" />
+    <result column="de_show" jdbcType="INTEGER" property="deShow" />
+    <result column="de_pub_template" jdbcType="VARCHAR" property="dePubTemplate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    de_details_id, de_grade, de_room_id, de_meeting_name, de_reserve_department_id, de_reserve_id,
+    de_reserve_phone, de_reserve_number, de_main, de_meeting_over, de_meeting_start,
+    de_department_reserve_person, de_department_reserve_person_id, de_meeting_status, de_date_count,
+    de_grade_id,de_show,de_pub_template
+  </sql>
+  <!-- //查询下次会议时间-->
+  <select id="selectNextTime" parameterType="java.util.Date" resultMap="BaseResultMap">
+    SELECT de_meeting_start
+    FROM meeting_details
+    WHERE de_meeting_start &gt; #{endTime,jdbcType=TIMESTAMP} LIMIT 1
+  </select>
+
+  <!-- //查询上次会议时间-->
+  <select id="selectLastTime" parameterType="java.util.Date" resultMap="BaseResultMap">
+    SELECT de_meeting_start
+    FROM meeting_details
+    WHERE de_meeting_start &lt; #{startTime,jdbcType=TIMESTAMP} order by de_meeting_start DESC LIMIT 1
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from meeting_details
+    where de_details_id = #{deDetailsId,jdbcType=INTEGER}
+  </select>
+  <!--根据会议室ID查询会议详情-->
+  <select id="selectRoomIdMeetingDetails" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from meeting_details
+    WHERE de_room_id = #{deRoomId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectMeetingDetailsAll" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM meeting_details
+  </select>
+
+  <select id="selectMeetingDetails" parameterType="com.ahav.reserve.pojo.MeetingDetails" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM meeting_details
+    <where>
+      <if test="deDetailsId != null">
+        AND de_details_id&gt;#{deDetailsId,jdbcType=INTEGER}
+      </if>
+      <if test="deGrade != null">
+        AND de_grade=#{deGrade,jdbcType=VARCHAR}
+      </if>
+      <if test="deRoomId != null">
+        AND de_room_id=#{deRoomId,jdbcType=INTEGER}
+      </if>
+      <if test="deMeetingName != null">
+        AND de_meeting_name LIKE "%"#{deMeetingName,jdbcType=VARCHAR}"%"
+      </if>
+      <if test="deReserveDepartmentId != null">
+        AND de_reserve_department_id=#{deReserveDepartmentId,jdbcType=INTEGER}
+      </if>
+      <if test="deReserveId != null">
+        AND de_reserve_id=#{deReserveId,jdbcType=INTEGER}
+      </if>
+      <if test="deReservePhone != null">
+        AND de_reserve_phone=#{deReservePhone,jdbcType=VARCHAR}
+      </if>
+      <if test="deReserveNumber != null">
+        AND de_reserve_number=#{deReserveNumber,jdbcType=INTEGER}
+      </if>
+      <if test="deMain != null">
+        AND de_main=#{deMain,jdbcType=VARCHAR}
+      </if>
+      <!--      &lt;if test="deMeetingOver != null"&gt;
+              AND de_meeting_over=#{deMeetingOver,jdbcType=TIMESTAMP}
+            &lt;/if&gt;-->
+      <if test="deMeetingStart != null &amp;&amp; deMeetingOver != null">
+        AND de_meeting_start BETWEEN #{deMeetingStart,jdbcType=TIMESTAMP} AND #{deMeetingOver,jdbcType=TIMESTAMP}
+      </if>
+      <if test="deDepartmentReservePerson != null">
+        AND de_department_reserve_person=#{deDepartmentReservePerson,jdbcType=VARCHAR}
+      </if>
+      <if test="deDepartmentReservePersonId != null">
+        AND de_department_reserve_person_id=#{deDepartmentReservePersonId,jdbcType=INTEGER}
+      </if>
+      <if test="deMeetingStatus != null">
+        AND de_meeting_status=#{deMeetingStatus,jdbcType=VARCHAR}
+      </if>
+      <if test="deDateCount != null">
+        AND de_date_count=#{deDateCount,jdbcType=TIMESTAMP}
+      </if>
+      <if test="deGradeId != null">
+        AND de_grade_id=#{deGradeId,jdbcType=INTEGER}
+      </if>
+      <if test="deShow != null">
+        AND de_show=#{deShow,jdbcType=INTEGER}
+      </if>
+      <if test="dePubTemplate != null">
+        AND de_pub_template=#{dePubTemplate,jdbcType=VARCHAR}
+      </if>
+      ORDER BY de_meeting_start ASC
+    </where>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from meeting_details
+    where de_details_id = #{deDetailsId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ahav.reserve.pojo.MeetingDetails">
+    insert into meeting_details (de_details_id, de_grade, de_room_id,
+    de_meeting_name, de_reserve_department_id, de_reserve_id,
+    de_reserve_phone, de_reserve_number, de_main,
+    de_meeting_over, de_meeting_start, de_department_reserve_person, de_department_reserve_person_id,
+    de_meeting_status, de_date_count,
+    de_grade_id,de_show,de_pub_template)
+    values (#{deDetailsId,jdbcType=INTEGER}, #{deGrade,jdbcType=VARCHAR}, #{deRoomId,jdbcType=INTEGER},
+    #{deMeetingName,jdbcType=VARCHAR}, #{deReserveDepartmentId,jdbcType=INTEGER},
+    #{deReserveId,jdbcType=INTEGER}, #{deReservePhone,jdbcType=VARCHAR}, #{deReserveNumber,jdbcType=INTEGER}, #{deMain,jdbcType=VARCHAR},
+    #{deMeetingOver,jdbcType=TIMESTAMP}, #{deMeetingStart,jdbcType=TIMESTAMP}, #{deDepartmentReservePerson,jdbcType=VARCHAR}, #{deDepartmentReservePersonId,jdbcType=INTEGER}
+    #{deMeetingStatus,jdbcType=VARCHAR}, #{deDateCount,jdbcType=TIMESTAMP},
+    #{deGradeId,jdbcType=INTEGER},#{deShow,jdbcType=INTEGER},#{dePubTemplate,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ahav.reserve.pojo.MeetingDetails">
+    insert into meeting_details
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="deDetailsId != null">
+        de_details_id,
+      </if>
+      <if test="deGrade != null">
+        de_grade,
+      </if>
+      <if test="deRoomId != null">
+        de_room_id,
+      </if>
+      <if test="deMeetingName != null">
+        de_meeting_name,
+      </if>
+      <if test="deReserveDepartmentId != null">
+        de_reserve_department_id,
+      </if>
+      <if test="deReserveId != null">
+        de_reserve_id,
+      </if>
+      <if test="deReservePhone != null">
+        de_reserve_phone,
+      </if>
+      <if test="deReserveNumber != null">
+        de_reserve_number,
+      </if>
+      <if test="deMain != null">
+        de_main,
+      </if>
+      <if test="deMeetingOver != null">
+        de_meeting_over,
+      </if>
+      <if test="deMeetingStart != null">
+        de_meeting_start,
+      </if>
+      <if test="deDepartmentReservePerson != null">
+        de_department_reserve_person,
+      </if>
+      <if test="deDepartmentReservePersonId != null">
+        de_department_reserve_person_id,
+      </if>
+      <if test="deMeetingStatus != null">
+        de_meeting_status,
+      </if>
+      <if test="deDateCount != null">
+        de_date_count,
+      </if>
+      <if test="deGradeId != null">
+        de_grade_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="deDetailsId != null">
+        #{deDetailsId,jdbcType=INTEGER},
+      </if>
+      <if test="deGrade != null">
+        #{deGrade,jdbcType=VARCHAR},
+      </if>
+      <if test="deRoomId != null">
+        #{deRoomId,jdbcType=INTEGER},
+      </if>
+      <if test="deMeetingName != null">
+        #{deMeetingName,jdbcType=VARCHAR},
+      </if>
+      <if test="deReserveDepartmentId != null">
+        #{deReserveDepartmentId,jdbcType=INTEGER},
+      </if>
+      <if test="deReserveId != null">
+        #{deReserveId,jdbcType=INTEGER},
+      </if>
+      <if test="deReservePhone != null">
+        #{deReservePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="deReserveNumber != null">
+        #{deReserveNumber,jdbcType=INTEGER},
+      </if>
+      <if test="deMain != null">
+        #{deMain,jdbcType=VARCHAR},
+      </if>
+      <if test="deMeetingOver != null">
+        #{deMeetingOver,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deMeetingStart != null">
+        #{deMeetingStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deDepartmentReservePerson != null">
+        #{deDepartmentReservePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="deDepartmentReservePersonId != null">
+        #{deDepartmentReservePersonId,jdbcType=INTEGER},
+      </if>
+      <if test="deMeetingStatus != null">
+        #{deMeetingStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="deDateCount != null">
+        #{deDateCount,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deGradeId != null">
+        #{deGradeId,jdbcType=INTEGER},
+      </if>
+      <if test="deShow != null">
+        #{deShow,jdbcType=INTEGER},
+      </if>
+      <if test="dePubTemplate != null">
+        #{dePubTemplate,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ahav.reserve.pojo.MeetingDetails">
+    update meeting_details
+    <set>
+      <if test="deGrade != null">
+        de_grade = #{deGrade,jdbcType=VARCHAR},
+      </if>
+      <if test="deRoomId != null">
+        de_room_id = #{deRoomId,jdbcType=INTEGER},
+      </if>
+      <if test="deMeetingName != null">
+        de_meeting_name = #{deMeetingName,jdbcType=VARCHAR},
+      </if>
+      <if test="deReserveDepartmentId != null">
+        de_reserve_department_id = #{deReserveDepartmentId,jdbcType=INTEGER},
+      </if>
+      <if test="deReserveId != null">
+        de_reserve_id = #{deReserveId,jdbcType=INTEGER},
+      </if>
+      <if test="deReservePhone != null">
+        de_reserve_phone = #{deReservePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="deReserveNumber != null">
+        de_reserve_number = #{deReserveNumber,jdbcType=INTEGER},
+      </if>
+      <if test="deMain != null">
+        de_main = #{deMain,jdbcType=VARCHAR},
+      </if>
+      <if test="deMeetingOver != null">
+        de_meeting_over = #{deMeetingOver,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deMeetingStart != null">
+        de_meeting_start = #{deMeetingStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deDepartmentReservePerson != null">
+        de_department_reserve_person = #{deDepartmentReservePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="deDepartmentReservePersonId != null">
+        de_department_reserve_person_id = #{deDepartmentReservePersonId,jdbcType=INTEGER},
+      </if>
+      <if test="deMeetingStatus != null">
+        de_meeting_status = #{deMeetingStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="deDateCount != null">
+        de_date_count = #{deDateCount,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deGradeId != null">
+        de_grade_id = #{deGradeId,jdbcType=INTEGER},
+      </if>
+      <if test="deShow != null">
+        de_show = #{deShow,jdbcType=INTEGER},
+      </if>
+      <if test="dePubTemplate != null">
+        de_pub_template = #{dePubTemplate,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where de_details_id = #{deDetailsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ahav.reserve.pojo.MeetingDetails">
+    update meeting_details
+    set de_grade = #{deGrade,jdbcType=VARCHAR},
+    de_room_id = #{deRoomId,jdbcType=INTEGER},
+    de_meeting_name = #{deMeetingName,jdbcType=VARCHAR},
+    de_reserve_department_id = #{deReserveDepartmentId,jdbcType=INTEGER},
+    de_reserve_id = #{deReserveId,jdbcType=INTEGER},
+    de_reserve_phone = #{deReservePhone,jdbcType=VARCHAR},
+    de_reserve_number = #{deReserveNumber,jdbcType=INTEGER},
+    de_main = #{deMain,jdbcType=VARCHAR},
+    de_meeting_over = #{deMeetingOver,jdbcType=TIMESTAMP},
+    de_meeting_start = #{deMeetingStart,jdbcType=TIMESTAMP},
+    de_department_reserve_person = #{deDepartmentReservePerson,jdbcType=VARCHAR},
+    de_department_reserve_person_id = #{deDepartmentReservePersonId,jdbcType=INTEGER},
+    de_meeting_status = #{deMeetingStatus,jdbcType=VARCHAR},
+    de_meeting_count = #{deMeetingCount,jdbcType=INTEGER},
+    de_date_count = #{deDateCount,jdbcType=TIMESTAMP},
+    de_grade_id = #{deGradeId,jdbcType=INTEGER},
+    de_show = #{deShow,jdbcType=INTEGER},
+    de_pub_template = #{dePubTemplate,jdbcType=VARCHAR}
+    where de_details_id = #{deDetailsId,jdbcType=INTEGER}
+  </update>
+  <!--保持pub模板-->
+  <update id="updatePubTemplate">
+      UPDATE meeting_details
+      SET de_pub_template = #{jsonStringPubTemplate,jdbcType=VARCHAR}
+      WHERE de_details_id = #{deDetailsId,jdbcType=INTEGER}
+  </update>
+</mapper>
