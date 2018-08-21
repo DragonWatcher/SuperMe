@@ -44,8 +44,6 @@ public class LoginServiceImpl implements LoginService{
             // 封装登录结果
             loginResult = new SystemResult(HttpStatus.OK.value(), "登录成功！",
                     new SimpleUser((User) SecurityUtils.getSubject().getPrincipal()));
-            // 网易邮箱单点登录
-            ntesLogin(username, response);
         } catch (AuthenticationException e) {
             logger.info("用户名或密码错误>>>username:{},password:{}", username, password);
             loginResult = new SystemResult(HttpStatus.FORBIDDEN.value(), "用户名或密码错误，登录失败！", null);
