@@ -98,7 +98,7 @@ public class UserController {
      * <br>作者： mht<br> 
      * 时间：2018年8月9日-下午11:41:29<br>
      */
-    @ApiOperation(value = "添加用户")
+    @ApiOperation(value = "添加用户", notes = "格式：{\"dept\":{\"deptId\":1},\"role\":{\"roleId\":3},\"trueName\":\"小明\",\"username\":\"mfy1\"}")
     @PostMapping
 //    @RequiresRoles("admin") TODO:超级管理员角色拦截
     public SystemResult createUser(@RequestBody User user) {
