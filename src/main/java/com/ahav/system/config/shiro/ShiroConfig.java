@@ -27,6 +27,8 @@ public class ShiroConfig {
 		
 		//设置默认登录的url
 		filterChainMap.put("/users/login", "anon");
+		// 网易单点登录接口测试
+		filterChainMap.put("/ntes/login", "anon");
 
 		filterChainMap.put("/swagger-ui.html", "anon");
 		filterChainMap.put("/webjars/**", "anon");
