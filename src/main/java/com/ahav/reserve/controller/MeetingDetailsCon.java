@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@Api(value = "关于MeetingDetails表的操作")
+@Api(value = "预约管理，预约添加")
 public class MeetingDetailsCon {
     @Autowired
     private IMeetingDetailsService meetingDetailsServiceImpl;
@@ -43,7 +43,7 @@ public class MeetingDetailsCon {
     //按条件查询会议详情列表
     @RequestMapping(value = "/reserve/manage/selectMeetingDetailsList",method = RequestMethod.GET)
     @ResponseBody
-    @ApiOperation(value="查询会议详情列表", notes="根据条件预定人Id,会议详情的名称，会议所在当天的日期,查询出满足条件的会议详情")
+    @ApiOperation(value="查询会议详情列表", notes="根据条件预定人Id,会议详情的名称，会议所在当天的日期,查询出满足条件的会议详情，预定人姓名测试数据：牟昊天丶张建国丶无花果，会议名称测试数据：年度大会丶年度小会丶冬季会议丶内部会议丶外部会议丶年度小会2丶年度小会3丶年度小会4丶年度大会2")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType="query", name = "deReserve", value = "预订人姓名", required = false, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deMeetingName", value = "会议详情的名称", required = false, dataType = "String"),
