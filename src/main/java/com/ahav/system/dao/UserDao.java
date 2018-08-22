@@ -115,6 +115,14 @@ public interface UserDao {
      */
     boolean updatePassword(User user);
     
-    
+    /**
+     * 根据deptId 和 roleId 查询用户
+     * <br>作者： mht<br> 
+     * 时间：2018年8月22日-上午11:34:42<br>
+     * @param deptId
+     * @param roleId
+     * @return
+     */
+    List<User> selectUserByDeptIdAndRoleId(@Param("deptId") Integer deptId, @Param("roleId") Integer roleId);
 
 }

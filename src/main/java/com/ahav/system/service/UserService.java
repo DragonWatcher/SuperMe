@@ -127,5 +127,7 @@ public interface UserService {
      */
     User findByName(String username);
     
+    List<User> selectUserByDeptIdAndRoleId(Integer deptId, Integer roleId);
+    
     
 }

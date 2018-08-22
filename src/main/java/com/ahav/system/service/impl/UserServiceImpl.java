@@ -263,4 +263,10 @@ public class UserServiceImpl implements UserService {
         SystemResult result = new SystemResult(HttpStatus.OK.value(), "用户列表", users);
         return result;
     }
+
+    @Override
+    public List<User> selectUserByDeptIdAndRoleId(Integer deptId, Integer roleId) {
+        List<User> users = userDao.selectUserByDeptIdAndRoleId(deptId, roleId);
+        return users;
+    }
 }
