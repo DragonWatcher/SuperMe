@@ -23,10 +23,8 @@ import java.util.*;
 public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     @Autowired
     private MeetingDetailsMapper meetingDetailsMapperImpl;
-
     @Autowired
     private RoomMapper RoomMapperImpl;
-
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
@@ -209,7 +207,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
             if(flag){
                 //TODO:调用接口根据部门id查询出部门预订人的id
-                /*meetingDetails.setDeDepartmentReservePersonId(部门预订人的id)*/
+                List<User> users = userServiceImpl.selectUserByDeptIdAndRoleId(meetingDetails.getDeReserveDepartmentId(), 3);
+                meetingDetails.setDeDepartmentReservePersonId(users.get(0).getUserId());
                 //时间没有冲突可以修改
                 int i = meetingDetailsMapperImpl.updateByPrimaryKeySelective(meetingDetails);
                 if(i>0){
@@ -460,7 +459,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         Date meetingOver = meetingDetails.getDeMeetingStart();  //添加新会议的结束时间
         
         //TODO:调用接口根据部门id查询出部门预订人的id
-        /*meetingDetails.setDeDepartmentReservePersonId(部门预订人的id)*/
+        List<User> users = userServiceImpl.selectUserByDeptIdAndRoleId(meetingDetails.getDeReserveDepartmentId(), 3);
+        meetingDetails.setDeDepartmentReservePersonId(users.get(0).getUserId());
         
         //查询出指定日期指定会议室的会议详情
         Date startTime = meetingUtils.getStartTime(meetingStart); //获得指定日期的开始时间
