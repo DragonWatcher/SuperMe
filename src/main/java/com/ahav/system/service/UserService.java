@@ -127,6 +127,14 @@ public interface UserService {
      */
     User findByName(String username);
     
+    /**
+     * 根据部门编号，以及角色编号查找响应的成员列表
+     * <br>作者： mht<br> 
+     * 时间：2018年8月22日-下午12:28:49<br>
+     * @param deptId
+     * @param roleId
+     * @return
+     */
     List<User> selectUserByDeptIdAndRoleId(Integer deptId, Integer roleId);
     
     
