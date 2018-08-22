@@ -13,7 +13,6 @@
     <result column="de_main" jdbcType="VARCHAR" property="deMain" />
     <result column="de_meeting_over" jdbcType="TIMESTAMP" property="deMeetingOver" />
     <result column="de_meeting_start" jdbcType="TIMESTAMP" property="deMeetingStart" />
-    <result column="de_department_reserve_person" jdbcType="VARCHAR" property="deDepartmentReservePerson" />
     <result column="de_department_reserve_person_id" jdbcType="INTEGER" property="deDepartmentReservePersonId" />
     <result column="de_meeting_status" jdbcType="VARCHAR" property="deMeetingStatus" />
     <result column="de_date_count" jdbcType="TIMESTAMP" property="deDateCount" />
@@ -24,7 +23,7 @@
   <sql id="Base_Column_List">
     de_details_id, de_grade, de_room_id, de_meeting_name, de_reserve_department_id, de_reserve_id,
     de_reserve_phone, de_reserve_number, de_main, de_meeting_over, de_meeting_start,
-    de_department_reserve_person, de_department_reserve_person_id, de_meeting_status, de_date_count,
+    de_department_reserve_person_id, de_meeting_status, de_date_count,
     de_grade_id,de_show,de_pub_template
   </sql>
   <!-- //查询下次会议时间-->
@@ -39,6 +38,14 @@
     SELECT de_meeting_start
     FROM meeting_details
     WHERE de_meeting_start &lt; #{startTime,jdbcType=TIMESTAMP} order by de_meeting_start DESC LIMIT 1
+  </select>
+  
+  <!-- 根据预订人id查询会议详情 -->
+  <select id="byReserveIdselectMeetingDetails" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        from meeting_details
+        where de_reserve_id = #{deReserveId,jdbcType=INTEGER}
   </select>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -60,14 +67,17 @@
     <include refid="Base_Column_List" />
     FROM meeting_details
   </select>
-
+    <!-- 修改会议时根据条件查询会议有没有冲突：排除当前正在修改的会议 -->
   <select id="selectMeetingDetails" parameterType="com.ahav.reserve.pojo.MeetingDetails" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List" />
     FROM meeting_details
     <where>
-      <if test="deDetailsId != null">
+      <!-- <if test="deDetailsId != null">
         AND de_details_id&gt;#{deDetailsId,jdbcType=INTEGER}
+      </if> -->
+      <if test="deDetailsId != null">
+        AND de_details_id != #{deDetailsId,jdbcType=INTEGER}
       </if>
       <if test="deGrade != null">
         AND de_grade=#{deGrade,jdbcType=VARCHAR}
@@ -99,9 +109,6 @@
       <if test="deMeetingStart != null &amp;&amp; deMeetingOver != null">
         AND de_meeting_start BETWEEN #{deMeetingStart,jdbcType=TIMESTAMP} AND #{deMeetingOver,jdbcType=TIMESTAMP}
       </if>
-      <if test="deDepartmentReservePerson != null">
-        AND de_department_reserve_person=#{deDepartmentReservePerson,jdbcType=VARCHAR}
-      </if>
       <if test="deDepartmentReservePersonId != null">
         AND de_department_reserve_person_id=#{deDepartmentReservePersonId,jdbcType=INTEGER}
       </if>
@@ -132,13 +139,13 @@
     insert into meeting_details (de_details_id, de_grade, de_room_id,
     de_meeting_name, de_reserve_department_id, de_reserve_id,
     de_reserve_phone, de_reserve_number, de_main,
-    de_meeting_over, de_meeting_start, de_department_reserve_person, de_department_reserve_person_id,
+    de_meeting_over, de_meeting_start, de_department_reserve_person_id,
     de_meeting_status, de_date_count,
     de_grade_id,de_show,de_pub_template)
     values (#{deDetailsId,jdbcType=INTEGER}, #{deGrade,jdbcType=VARCHAR}, #{deRoomId,jdbcType=INTEGER},
     #{deMeetingName,jdbcType=VARCHAR}, #{deReserveDepartmentId,jdbcType=INTEGER},
     #{deReserveId,jdbcType=INTEGER}, #{deReservePhone,jdbcType=VARCHAR}, #{deReserveNumber,jdbcType=INTEGER}, #{deMain,jdbcType=VARCHAR},
-    #{deMeetingOver,jdbcType=TIMESTAMP}, #{deMeetingStart,jdbcType=TIMESTAMP}, #{deDepartmentReservePerson,jdbcType=VARCHAR}, #{deDepartmentReservePersonId,jdbcType=INTEGER}
+    #{deMeetingOver,jdbcType=TIMESTAMP}, #{deMeetingStart,jdbcType=TIMESTAMP}, #{deDepartmentReservePersonId,jdbcType=INTEGER}
     #{deMeetingStatus,jdbcType=VARCHAR}, #{deDateCount,jdbcType=TIMESTAMP},
     #{deGradeId,jdbcType=INTEGER},#{deShow,jdbcType=INTEGER},#{dePubTemplate,jdbcType=VARCHAR})
   </insert>
@@ -177,9 +184,6 @@
       </if>
       <if test="deMeetingStart != null">
         de_meeting_start,
-      </if>
-      <if test="deDepartmentReservePerson != null">
-        de_department_reserve_person,
       </if>
       <if test="deDepartmentReservePersonId != null">
         de_department_reserve_person_id,
@@ -227,9 +231,6 @@
       </if>
       <if test="deMeetingStart != null">
         #{deMeetingStart,jdbcType=TIMESTAMP},
-      </if>
-      <if test="deDepartmentReservePerson != null">
-        #{deDepartmentReservePerson,jdbcType=VARCHAR},
       </if>
       <if test="deDepartmentReservePersonId != null">
         #{deDepartmentReservePersonId,jdbcType=INTEGER},
@@ -284,9 +285,6 @@
       <if test="deMeetingStart != null">
         de_meeting_start = #{deMeetingStart,jdbcType=TIMESTAMP},
       </if>
-      <if test="deDepartmentReservePerson != null">
-        de_department_reserve_person = #{deDepartmentReservePerson,jdbcType=VARCHAR},
-      </if>
       <if test="deDepartmentReservePersonId != null">
         de_department_reserve_person_id = #{deDepartmentReservePersonId,jdbcType=INTEGER},
       </if>
@@ -320,7 +318,6 @@
     de_main = #{deMain,jdbcType=VARCHAR},
     de_meeting_over = #{deMeetingOver,jdbcType=TIMESTAMP},
     de_meeting_start = #{deMeetingStart,jdbcType=TIMESTAMP},
-    de_department_reserve_person = #{deDepartmentReservePerson,jdbcType=VARCHAR},
     de_department_reserve_person_id = #{deDepartmentReservePersonId,jdbcType=INTEGER},
     de_meeting_status = #{deMeetingStatus,jdbcType=VARCHAR},
     de_meeting_count = #{deMeetingCount,jdbcType=INTEGER},

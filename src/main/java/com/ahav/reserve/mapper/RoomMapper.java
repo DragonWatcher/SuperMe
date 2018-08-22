@@ -24,4 +24,6 @@ public interface RoomMapper {
     List<Room> selectRoomAll();
     //根据会议室ID查询出会议室姓名
     String selectRoomName(Integer roomId);
+    //通过会议室名称查询会议室
+    Room selectRoomByName(String roomName);
 }

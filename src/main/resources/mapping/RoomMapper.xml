@@ -30,6 +30,14 @@
       FROM room
       WHERE meeting_room_id = #{roomId,jdbcType=INTEGER}
   </select>
+  <!-- 根据会议室名称查询会议室 -->
+  <select id="selectRoomByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    FROM room
+    where meeting_room_name = #{meetingRoomName,jdbcType=VARCHAR}
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from room
     where meeting_room_id = #{meetingRoomId,jdbcType=INTEGER}
@@ -39,7 +47,7 @@
       meeting_room_name, meeting_equipment_list, meeting_room_status, pub_ip, presetmode_list
       )
     values (#{meetingRoomId,jdbcType=INTEGER}, #{meetingRoomScale,jdbcType=INTEGER}, 
-      #{meetingRoomName,jdbcType=VARCHAR}, #{meEquipmentList,jdbcType=VARCHAR}, #{meetingRoomStatus,jdbcType=INTEGER},
+      #{meetingRoomName,jdbcType=VARCHAR}, #{meetingEquipmentList,jdbcType=VARCHAR}, #{meetingRoomStatus,jdbcType=INTEGER},
       #{pubIp,jdbcType=VARCHAR},#{presetmodeList,jdbcType=VARCHAR}
       )
   </insert>
@@ -78,8 +86,8 @@
       <if test="meetingRoomName != null">
         #{meetingRoomName,jdbcType=VARCHAR},
       </if>
-      <if test="meEquipmentList != null">
-        #{meEquipmentList,jdbcType=VARCHAR},
+      <if test="meetingEquipmentList != null">
+        #{meetingEquipmentList,jdbcType=VARCHAR},
       </if>
       <if test="meetingRoomStatus != null">
         #{meetingRoomStatus,jdbcType=INTEGER},
@@ -102,7 +110,7 @@
         meeting_room_name = #{meetingRoomName,jdbcType=VARCHAR},
       </if>
       <if test="meetingEquipmentList != null">
-        meeting_equipment_list = #{meEquipmentList,jdbcType=VARCHAR},
+        meeting_equipment_list = #{meetingEquipmentList,jdbcType=VARCHAR},
       </if>
       <if test="meetingRoomStatus != null">
         meeting_room_status = #{meetingRoomStatus,jdbcType=INTEGER},

@@ -35,5 +35,7 @@ public interface MeetingDetailsMapper {
     public int updatePubTemplate(String jsonStringPubTemplate,int deDetailsId);
     //根据预定人姓名查询预定人ID
     public int selectReserveId(String reserveName);
+    //根据预订人id查询会议详情
+    public List<MeetingDetails> byReserveIdselectMeetingDetails(Integer ReserveId);
 
 }

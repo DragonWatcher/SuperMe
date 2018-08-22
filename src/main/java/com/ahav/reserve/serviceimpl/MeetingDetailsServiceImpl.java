@@ -37,7 +37,6 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     private static int i = 0;//会议遍历序号
 
     //查询所有会议详情（初始化界面）
-    //
     @Override
     public Map findMeetingDetailsAll() {
         Result result = new Result();
@@ -49,7 +48,9 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             /*flag = 调用是否有权限的接口*/
         //TODO:调用接口获得当前用户的id
         SystemResult currentUser = userServiceImpl.getCurrentUser();
-        UserRoleKey user = (UserRoleKey)currentUser.getData();
+        System.out.println(currentUser);
+        SimpleUser user = (SimpleUser)currentUser.getData();
+        System.out.println(user);
         int deReserveId = user.getUserId();
         Boolean flag = true;
 /*        int deReserveId = 3;  //预定人id*/
@@ -177,26 +178,38 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             mDetails.setDeMeetingStart(startTime);
             mDetails.setDeMeetingOver(endTime);
             mDetails.setDeRoomId(deRoomId);
+            //查询出不包含当前会议的所有会议
+            mDetails.setDeDetailsId(meetingDetails.getDeDetailsId());
             List<MeetingDetails> meetingDetailsAll = meetingDetailsMapperImpl.selectMeetingDetails(mDetails);
             //List<MeetingDetails> roomIdMeetingDetails = meetingDetailsMapperImpl.selectRoomIdMeetingDetails(deRoomId);
             //判断修改的会议时间跟以有的会议时间有没有冲突
-            for (MeetingDetails md:meetingDetailsAll){
-                if(md.getDeMeetingStart().compareTo(stratTime) == -1){
-                    if(md.getDeMeetingOver().compareTo(stratTime) == -1){
-                        flag=true;
+            
+            if(meetingDetailsAll.size()>0){
+                //如果查到了会议则按个比较会议时间有没有冲突
+                for (MeetingDetails md:meetingDetailsAll){
+                    if(md.getDeMeetingStart().compareTo(stratTime) == -1){
+                        if(md.getDeMeetingOver().compareTo(stratTime) == -1){
+                            flag=true;
+                        }else {
+                            flag=false;
+                        }
                     }else {
-                        flag=false;
-                    }
-                }else {
-                    if(md.getDeMeetingStart().compareTo(overTime) == 1){
-                        flag = true;
-                    }else {
-                        flag = false;
+                        if(md.getDeMeetingStart().compareTo(overTime) == 1){
+                            flag = true;
+                        }else {
+                            flag = false;
+                        }
                     }
                 }
+            }else{
+                //没有查到指定条件下有会议，所以可以直接修改
+                flag=true;
             }
+            
 
             if(flag){
+                //TODO:调用接口根据部门id查询出部门预订人的id
+                /*meetingDetails.setDeDepartmentReservePersonId(部门预订人的id)*/
                 //时间没有冲突可以修改
                 int i = meetingDetailsMapperImpl.updateByPrimaryKeySelective(meetingDetails);
                 if(i>0){
@@ -305,10 +318,11 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             //思路遍历预定人的i
                if(reserveName != null && "" != reserveName){
                     List<SimpleUser> users = (List<SimpleUser>) userServiceImpl.getUserByTrueName(reserveName).getData();
-                    for(int i=0;users.size()>i;i++){
-                        meetingDetails.setDeReserveId(users.get(i).getUserId());
-                        List<MeetingDetails> meetingDetailsList1=meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
-                        meetingDetailsList.add(meetingDetailsList1.get(0));
+                    List<MeetingDetails>  meetingDetails1 = meetingDetailsMapperImpl.byReserveIdselectMeetingDetails(users.get(i).getUserId());
+                    for(int i=0;meetingDetails1.size()>i;i++){
+                        /*meetingDetails.setDeReserveId(users.get(i).getUserId());
+                        List<MeetingDetails> meetingDetailsList1=meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);*/
+                        meetingDetailsList.add(meetingDetails1.get(i));
                  }
              }else{
                 meetingDetailsList = meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
@@ -332,7 +346,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             /*flag = 调用是否有权限的接口*/
         //TODO:调用接口token获得当前用户的id
         SystemResult currentUser = userServiceImpl.getCurrentUser();
-        UserRoleKey user = (UserRoleKey)currentUser.getData();
+        SimpleUser user = (SimpleUser)currentUser.getData();
         int deReserveId = user.getUserId();
         /*int deReserveId = 2;*/
 
@@ -444,7 +458,10 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         boolean flag = false;
         Date meetingStart = meetingDetails.getDeMeetingOver(); //添加新会议的开始时间
         Date meetingOver = meetingDetails.getDeMeetingStart();  //添加新会议的结束时间
-
+        
+        //TODO:调用接口根据部门id查询出部门预订人的id
+        /*meetingDetails.setDeDepartmentReservePersonId(部门预订人的id)*/
+        
         //查询出指定日期指定会议室的会议详情
         Date startTime = meetingUtils.getStartTime(meetingStart); //获得指定日期的开始时间
         Date endTime = meetingUtils.getEndTime(meetingOver);  //获得指定日期的结束时间
@@ -453,21 +470,26 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         mDetails.setDeRoomId(roomId);
         List<MeetingDetails> meetingDetailsAll = meetingDetailsMapperImpl.selectMeetingDetails(mDetails);
         //判断指定日期指定的会议室已有会议有没有跟新添加会议的时间冲突
-        for (MeetingDetails md:meetingDetailsAll){
-            if(md.getDeMeetingStart().compareTo(meetingStart) == -1){
-                if(md.getDeMeetingOver().compareTo(meetingStart) == -1){
-                    flag=true;
+        if(meetingDetailsAll.size()>0){
+            for (MeetingDetails md:meetingDetailsAll){
+                if(md.getDeMeetingStart().compareTo(meetingStart) == -1){
+                    if(md.getDeMeetingOver().compareTo(meetingStart) == -1){
+                        flag=true;
+                    }else {
+                        flag=false;
+                    }
                 }else {
-                    flag=false;
-                }
-            }else {
-                if(md.getDeMeetingStart().compareTo(meetingOver) == 1){
-                    flag = true;
-                }else {
-                    flag = false;
+                    if(md.getDeMeetingStart().compareTo(meetingOver) == 1){
+                        flag = true;
+                    }else {
+                        flag = false;
+                    }
                 }
             }
+        }else{
+            flag = true;
         }
+        
 
         if(flag){
             //没有冲突,添加会议

@@ -75,7 +75,7 @@ public class MeetingDetailsCon {
             @ApiImplicitParam(paramType="query", name = "deRoomId", value = "会议室Id", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deMeetingStart", value = "会议开始时间", required = true, dataType = "Date"),
             @ApiImplicitParam(paramType="query", name = "deMeetingOver", value = "会议结束时间", required = true, dataType = "Date"),
-            @ApiImplicitParam(paramType="query", name = "meMeetingName", value = "会议详情名称", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingName", value = "会议详情名称", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deReserveDepartmentId", value = "预定部门Id", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deReserve", value = "预定人", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deReserveId", value = "预定人id", required = true, dataType = "Integer"),
@@ -84,7 +84,7 @@ public class MeetingDetailsCon {
             @ApiImplicitParam(paramType="query", name = "deMain", value = "主要人员", required = true, dataType = "String"),
     })
     public Map updateMeetingDetails(MeetingDetails meetingDetails){
-
+           System.out.println(meetingDetails.getDeMeetingName());
         return meetingDetailsServiceImpl.alterMeetingDetails(meetingDetails);
     }
 
@@ -126,7 +126,7 @@ public class MeetingDetailsCon {
             @ApiImplicitParam(paramType="query", name = "deRoomId", value = "会议室Id", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deMeetingStart", value = "会议开始时间", required = true, dataType = "Date"),
             @ApiImplicitParam(paramType="query", name = "deMeetingOver", value = "会议结束时间", required = true, dataType = "Date"),
-            @ApiImplicitParam(paramType="query", name = "meMeetingName", value = "会议详情名称", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingName", value = "会议详情名称", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deReserveDepartmentId", value = "预定部门Id", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deReserve", value = "预定人", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deReserveId", value = "预定人id", required = true, dataType = "Integer"),
