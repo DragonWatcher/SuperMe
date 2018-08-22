@@ -18,8 +18,7 @@ import com.ahav.system.entity.SystemResult;
 import com.ahav.system.entity.User;
 import com.ahav.system.service.LoginService;
 import com.ahav.system.util.SystemConstant;
-
-import RSA_1_1_1.com.netease.domainmail.RSATool;
+import com.netease.domainmail.RSATool;
 
 
 /**
