@@ -274,13 +274,13 @@ public class RoomServiceImpl implements IRoomService {
             return jsonObject;
         }else{
             result.setStatus(400);
-            if((addMessage != null &&!"".equals(addMessage)) &&  ("".equals(updateMessage) || updateMessage == null)){
+            if((addMessage != null && !"".equals(addMessage)) &&  ("".equals(updateMessage) || updateMessage == null)){
                 result.setMessage("添加:"+addMessage+"失败可能是因为会议室重名，其他则添加成功");
             }
-            if((addMessage != null &&!"".equals(addMessage)) && (updateMessage != null &&!"".equals(updateMessage))){
+            if((addMessage != null && !"".equals(addMessage)) && (updateMessage != null && !"".equals(updateMessage))){
                 result.setMessage("添加:"+addMessage+"失败可能是因为会议室重名问题，其他则添加成功。修改："+updateMessage+"失败可能是因为修改会议室重名问题，其他则修改成功。");
             }
-            if((updateMessage != null &&!"".equals(updateMessage)) && ("".equals(addMessage) || addMessage == null)){
+            if((updateMessage != null && !"".equals(updateMessage)) && ("".equals(addMessage) || addMessage == null)){
                 result.setMessage("修改:"+updateMessage+"失败可能是因为会议室重名，其他则修改成功");
             }
             List<Room> allRoom = roomMapperImpl.selectRoomAll();
