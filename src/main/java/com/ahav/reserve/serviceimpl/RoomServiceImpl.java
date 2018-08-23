@@ -184,7 +184,7 @@ public class RoomServiceImpl implements IRoomService {
     public JSONObject saveRoomSettings(RoomSettings roomSettings) {
         String addMessage = "";//添加操作提示信息
         String updateMessage = "";//修改操作提示信息
-        Boolean flag = false;
+        Boolean flag = true;
         JSONObject jsonObject = new JSONObject();
         List<Room> deleteRoomList = roomSettings.getDeleteRoomList();
         Result result = new Result();
@@ -210,11 +210,10 @@ public class RoomServiceImpl implements IRoomService {
                             }
                         }*/
                         //修改的信息与原信息一致，所以不需要修改
-                        flag = true;
                     }else{
                         int update = roomMapperImpl.updateByPrimaryKeySelective(room);
                         if(update > 0){
-                            flag = true;
+                            //修改成功
                         }else {
                             flag = false;
                             updateMessage +=room.getMeetingRoomName()+",";
@@ -231,7 +230,7 @@ public class RoomServiceImpl implements IRoomService {
                         //修改会议室名称跟已有会议名称没有冲突，所以进行修改
                         int update = roomMapperImpl.updateByPrimaryKeySelective(room);
                         if(update > 0){
-                            flag = true;
+                            //修改成功
                         }else {
                             flag = false;
                             updateMessage +=room.getMeetingRoomName()+","; //将修改失败的会议室名称记录下来
@@ -246,7 +245,6 @@ public class RoomServiceImpl implements IRoomService {
                     int insert = roomMapperImpl.insertSelective(room);
                     if(insert > 0){
                         //添加成功
-                        flag = true;
                     }
                 }else {
                     //会议室重名，添加失败
