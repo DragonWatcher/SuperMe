@@ -79,7 +79,7 @@ public class SettingCon {
 
     //更新部门设置
     @RequestMapping(value = "/setting/roomSetting/redactRooms",method = RequestMethod.POST)
-    @ApiOperation(value = "编辑会议室",notes = "删除会议室，添加会议室，修改会议室")
+    @ApiOperation(value = "编辑会议室",notes = "删除会议室，添加会议室，修改会议室，可传参数：meetingRoomId，meetingRoomScale，meetingRoomName")
     @ResponseBody
     public JSONObject saveRoomSettings(@RequestBody RoomSettings roomSettings){
         return iRoomServiceImpl.saveRoomSettings(roomSettings);

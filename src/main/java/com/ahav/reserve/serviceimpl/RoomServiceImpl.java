@@ -215,7 +215,7 @@ public class RoomServiceImpl implements IRoomService {
                 Room room1 = roomMapperImpl.selectRoomByName(room.getMeetingRoomName());//通过会议室姓名查询会议室
                 if(room1 == null){
                     //会议室没有重名
-                    int insert = roomMapperImpl.insert(room);
+                    int insert = roomMapperImpl.insertSelective(room);
                     if(insert > 0){
                         //添加成功
                         flag = true;
