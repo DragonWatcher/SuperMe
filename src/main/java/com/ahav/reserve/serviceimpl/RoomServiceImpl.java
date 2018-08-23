@@ -182,13 +182,20 @@ public class RoomServiceImpl implements IRoomService {
     //保存会议室设置
     @Override
     public JSONObject saveRoomSettings(RoomSettings roomSettings) {
-        String addMessage = "";//添加操作提示信息
-        String updateMessage = "";//修改操作提示信息
+        String addMessage = null;//添加操作提示信息
+        String updateMessage = null;//修改操作提示信息
         Boolean flag = false;
         JSONObject jsonObject = new JSONObject();
         List<Room> deleteRoomList = roomSettings.getDeleteRoomList();
         Result result = new Result();
 
+        for(Room deleteRoom : deleteRoomList){
+            //根据id是否为空判断是否删除会议室
+            Integer meetingRoomId = deleteRoom.getMeetingRoomId();
+            if(meetingRoomId != null){
+                roomMapperImpl.deleteByPrimaryKey(meetingRoomId);
+            }
+        }
         List<Room> roomList = roomSettings.getRoomList();
         for (Room room : roomList){
             //根据会议室id是否为空，如果为空则执行添加操作，不为空执行更新操作
@@ -196,19 +203,8 @@ public class RoomServiceImpl implements IRoomService {
             if(meetingRoomId != null){
                 //更新会议室
                 Room room1 = roomMapperImpl.selectByPrimaryKey(meetingRoomId);
-                if(room1.getMeetingRoomName().equals(room.getMeetingRoomName()) ){
-                    if(room1.getMeetingRoomScale().equals(room.getMeetingRoomScale())){
-        /*                //TODO:如果增加了pubIP这里在进行判断
-                        if((room1.getPubIp()!=null && !"".equals(room1.getPubIp())) && (room.getPubIp()!=null && !"".equals(room.getPubIp())) ){
-                            //原有会议室和修改会议室的pubIP都不为空
-                            if(room1.getPubIp() == room.getPubIp()){
-                                //修改的信息与原信息一致，所以不需要修改
-                                flag = true;
-                            }else {
-                                int update = roomMapperImpl.updateByPrimaryKeySelective(room);
-                                flag = true;
-                            }
-                        }*/
+                if(room1.getMeetingRoomName()  == room.getMeetingRoomName()){
+                    if(room1.getMeetingRoomScale() == room.getMeetingRoomScale()){
                         //修改的信息与原信息一致，所以不需要修改
                         flag = true;
                     }else{
@@ -256,15 +252,6 @@ public class RoomServiceImpl implements IRoomService {
             }
 
         }
-
-        for(Room deleteRoom : deleteRoomList){
-            //根据id是否为空判断是否删除会议室
-            Integer meetingRoomId = deleteRoom.getMeetingRoomId();
-            if(meetingRoomId != null){
-                roomMapperImpl.deleteByPrimaryKey(meetingRoomId);
-            }
-        }
-
         if(flag){
             //添加，修改，删除全部成功
             result.setStatus(200);
@@ -274,13 +261,13 @@ public class RoomServiceImpl implements IRoomService {
             return jsonObject;
         }else{
             result.setStatus(400);
-            if((addMessage != null && !"".equals(addMessage)) &&  ("".equals(updateMessage) || updateMessage == null)){
+            if(addMessage != null && updateMessage == null){
                 result.setMessage("添加:"+addMessage+"失败可能是因为会议室重名，其他则添加成功");
             }
-            if((addMessage != null && !"".equals(addMessage)) && (updateMessage != null && !"".equals(updateMessage))){
+            if(addMessage != null && updateMessage != null){
                 result.setMessage("添加:"+addMessage+"失败可能是因为会议室重名问题，其他则添加成功。修改："+updateMessage+"失败可能是因为修改会议室重名问题，其他则修改成功。");
             }
-            if((updateMessage != null && !"".equals(updateMessage)) && ("".equals(addMessage) || addMessage == null)){
+            if(updateMessage != null && addMessage == null){
                 result.setMessage("修改:"+updateMessage+"失败可能是因为会议室重名，其他则修改成功");
             }
             List<Room> allRoom = roomMapperImpl.selectRoomAll();
