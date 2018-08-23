@@ -189,13 +189,7 @@ public class RoomServiceImpl implements IRoomService {
         List<Room> deleteRoomList = roomSettings.getDeleteRoomList();
         Result result = new Result();
 
-        for(Room deleteRoom : deleteRoomList){
-            //根据id是否为空判断是否删除会议室
-            Integer meetingRoomId = deleteRoom.getMeetingRoomId();
-            if(meetingRoomId != null){
-                roomMapperImpl.deleteByPrimaryKey(meetingRoomId);
-            }
-        }
+        
         List<Room> roomList = roomSettings.getRoomList();
         for (Room room : roomList){
             //根据会议室id是否为空，如果为空则执行添加操作，不为空执行更新操作
@@ -252,6 +246,15 @@ public class RoomServiceImpl implements IRoomService {
             }
 
         }
+        
+        for(Room deleteRoom : deleteRoomList){
+            //根据id是否为空判断是否删除会议室
+            Integer meetingRoomId = deleteRoom.getMeetingRoomId();
+            if(meetingRoomId != null){
+                roomMapperImpl.deleteByPrimaryKey(meetingRoomId);
+            }
+        }
+        
         if(flag){
             //添加，修改，删除全部成功
             result.setStatus(200);
