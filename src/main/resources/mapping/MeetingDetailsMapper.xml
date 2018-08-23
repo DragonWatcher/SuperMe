@@ -13,7 +13,7 @@
     <result column="de_main" jdbcType="VARCHAR" property="deMain" />
     <result column="de_meeting_over" jdbcType="TIMESTAMP" property="deMeetingOver" />
     <result column="de_meeting_start" jdbcType="TIMESTAMP" property="deMeetingStart" />
-    <result column="de_department_reserve_person_id" jdbcType="INTEGER" property="deDepartmentReservePersonId" />
+    <result column="de_department_reserve_person_id" jdbcType="VARCHAR" property="deDepartmentReservePersonId" />
     <result column="de_meeting_status" jdbcType="VARCHAR" property="deMeetingStatus" />
     <result column="de_date_count" jdbcType="TIMESTAMP" property="deDateCount" />
     <result column="de_grade_id" jdbcType="INTEGER" property="deGradeId" />
@@ -110,7 +110,7 @@
         AND de_meeting_start BETWEEN #{deMeetingStart,jdbcType=TIMESTAMP} AND #{deMeetingOver,jdbcType=TIMESTAMP}
       </if>
       <if test="deDepartmentReservePersonId != null">
-        AND de_department_reserve_person_id=#{deDepartmentReservePersonId,jdbcType=INTEGER}
+        AND de_department_reserve_person_id=#{deDepartmentReservePersonId,jdbcType=VARCHAR}
       </if>
       <if test="deMeetingStatus != null">
         AND de_meeting_status=#{deMeetingStatus,jdbcType=VARCHAR}
@@ -233,7 +233,7 @@
         #{deMeetingStart,jdbcType=TIMESTAMP},
       </if>
       <if test="deDepartmentReservePersonId != null">
-        #{deDepartmentReservePersonId,jdbcType=INTEGER},
+        #{deDepartmentReservePersonId,jdbcType=VARCHAR},
       </if>
       <if test="deMeetingStatus != null">
         #{deMeetingStatus,jdbcType=VARCHAR},
@@ -286,7 +286,7 @@
         de_meeting_start = #{deMeetingStart,jdbcType=TIMESTAMP},
       </if>
       <if test="deDepartmentReservePersonId != null">
-        de_department_reserve_person_id = #{deDepartmentReservePersonId,jdbcType=INTEGER},
+        de_department_reserve_person_id = #{deDepartmentReservePersonId,jdbcType=VARCHAR},
       </if>
       <if test="deMeetingStatus != null">
         de_meeting_status = #{deMeetingStatus,jdbcType=VARCHAR},
@@ -318,7 +318,7 @@
     de_main = #{deMain,jdbcType=VARCHAR},
     de_meeting_over = #{deMeetingOver,jdbcType=TIMESTAMP},
     de_meeting_start = #{deMeetingStart,jdbcType=TIMESTAMP},
-    de_department_reserve_person_id = #{deDepartmentReservePersonId,jdbcType=INTEGER},
+    de_department_reserve_person_id = #{deDepartmentReservePersonId,jdbcType=VARCHAR},
     de_meeting_status = #{deMeetingStatus,jdbcType=VARCHAR},
     de_meeting_count = #{deMeetingCount,jdbcType=INTEGER},
     de_date_count = #{deDateCount,jdbcType=TIMESTAMP},

@@ -46,7 +46,7 @@ public class MeetingDetails {
     @ApiModelProperty(value = "预定人Id")
     private Integer deReserveId;
     @ApiModelProperty(value = "部门预定人id")
-    private Integer deDepartmentReservePersonId;
+    private String deDepartmentReservePersonId;
     @ApiModelProperty(value = "是否展示会议")
     private Integer deShow;
     @ApiModelProperty(value = "pub模板")
@@ -212,11 +212,11 @@ public class MeetingDetails {
         this.deReserveId = deReserveId;
     }
 
-    public Integer getDeDepartmentReservePersonId() {
+    public String getDeDepartmentReservePersonId() {
         return deDepartmentReservePersonId;
     }
 
-    public void setDeDepartmentReservePersonId(Integer deDepartmentReservePersonId) {
+    public void setDeDepartmentReservePersonId(String deDepartmentReservePersonId) {
         this.deDepartmentReservePersonId = deDepartmentReservePersonId;
     }
 

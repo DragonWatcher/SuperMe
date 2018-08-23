@@ -182,7 +182,8 @@ public class RoomServiceImpl implements IRoomService {
     //保存会议室设置
     @Override
     public JSONObject saveRoomSettings(RoomSettings roomSettings) {
-
+        String addMessage = null;//添加操作提示信息
+        String updateMessage = null;//修改操作提示信息
         Boolean flag = false;
         JSONObject jsonObject = new JSONObject();
         List<Room> deleteRoomList = roomSettings.getDeleteRoomList();
@@ -201,14 +202,37 @@ public class RoomServiceImpl implements IRoomService {
             Integer meetingRoomId = room.getMeetingRoomId();
             if(meetingRoomId != null){
                 //更新会议室
-                int update = roomMapperImpl.updateByPrimaryKeySelective(room);
-                if (update > 0){
-                    //更新成功
-                    flag = true;
+                Room room1 = roomMapperImpl.selectByPrimaryKey(meetingRoomId);
+                if(room1.getMeetingRoomName()  == room.getMeetingRoomName()){
+                    if(room1.getMeetingRoomScale() == room.getMeetingRoomScale()){
+                        //修改的信息与原信息一致，所以不需要修改
+                        flag = true;
+                    }else{
+                        int update = roomMapperImpl.updateByPrimaryKeySelective(room);
+                        if(update > 0){
+                            flag = true;
+                        }else {
+                            flag = false;
+                            updateMessage +=room.getMeetingRoomName()+",";
+                        }
+                    }
                 }else {
-                    //更新失败
-                    flag = false;
-                    break;
+                    //修改的会议室名称与原会议室名称不一致，所以要修改
+                    Room room2 = roomMapperImpl.selectRoomByName(room.getMeetingRoomName());
+                    if(room2 != null){
+                        //修改会议室名称跟已有会议名称冲突
+                        flag = false;
+                        updateMessage +=room.getMeetingRoomName()+",";
+                    }else {
+                        //修改会议室名称跟已有会议名称没有冲突，所以进行修改
+                        int update = roomMapperImpl.updateByPrimaryKeySelective(room);
+                        if(update > 0){
+                            flag = true;
+                        }else {
+                            flag = false;
+                            updateMessage +=room.getMeetingRoomName()+","; //将修改失败的会议室名称记录下来
+                        }
+                    }
                 }
             }else {
                 //添加会议室
@@ -219,15 +243,11 @@ public class RoomServiceImpl implements IRoomService {
                     if(insert > 0){
                         //添加成功
                         flag = true;
-                    }else{
-                        //添加失败
-                        flag = false;
-                        break;
                     }
                 }else {
                     //会议室重名，添加失败
                     flag = false;
-                    break;
+                    addMessage+=room.getMeetingRoomName()+","; //将添加失败的会议室名称记录下来
                 }
             }
 
@@ -241,7 +261,15 @@ public class RoomServiceImpl implements IRoomService {
             return jsonObject;
         }else{
             result.setStatus(400);
-            result.setMessage("可能是因为会议室重名问题，导致操作失败");
+            if(addMessage != null && updateMessage == null){
+                result.setMessage("添加:"+addMessage+"失败可能是因为会议室重名，其他则添加成功");
+            }
+            if(addMessage != null && updateMessage != null){
+                result.setMessage("添加:"+addMessage+"失败可能是因为会议室重名问题，其他则添加成功。修改："+updateMessage+"失败可能是因为修改会议室重名问题，其他则修改成功。");
+            }
+            if(updateMessage != null && addMessage == null){
+                result.setMessage("修改:"+updateMessage+"失败可能是因为会议室重名，其他则修改成功");
+            }
             List<Room> allRoom = roomMapperImpl.selectRoomAll();
             jsonObject.put("result",result);
             jsonObject.put("allRoom",allRoom);

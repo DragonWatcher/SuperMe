@@ -158,6 +158,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     //保存修改会议详情
     @Override
     public Map alterMeetingDetails(MeetingDetails meetingDetails) {
+        String deptReservePersonId = null; //部门预定人的id
         Map map = new HashMap<String,Object>();
         Result result = new Result();
         int deRoomId = meetingDetails.getDeRoomId();
@@ -208,7 +209,16 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             if(flag){
                 //TODO:调用接口根据部门id查询出部门预订人的id
                 List<User> users = userServiceImpl.selectUserByDeptIdAndRoleId(meetingDetails.getDeReserveDepartmentId(), 3);
-                meetingDetails.setDeDepartmentReservePersonId(users.get(0).getUserId());
+                int count =0;
+                for(User user:users){
+                    if(count == 0){
+                        deptReservePersonId = user.getUserId()+"";
+                    }else{
+                        deptReservePersonId = deptReservePersonId+","+user.getUserId();
+                    }
+                    count++;
+                }
+                meetingDetails.setDeDepartmentReservePersonId(deptReservePersonId);
                 //时间没有冲突可以修改
                 int i = meetingDetailsMapperImpl.updateByPrimaryKeySelective(meetingDetails);
                 if(i>0){
@@ -449,6 +459,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     //保存添加会议详情
     @Override
     public Result addMeetingDetails(MeetingDetails meetingDetails) {
+        String deptReservePersonId = null; //部门预定人的id
         Result result = new Result();
         MeetingDetails mDetails =  new MeetingDetails();
         int roomId = meetingDetails.getDeRoomId();
@@ -460,7 +471,16 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         
         //TODO:调用接口根据部门id查询出部门预订人的id
         List<User> users = userServiceImpl.selectUserByDeptIdAndRoleId(meetingDetails.getDeReserveDepartmentId(), 3);
-        meetingDetails.setDeDepartmentReservePersonId(users.get(0).getUserId());
+        int count =0;
+        for(User user:users){
+            if(count == 0){
+                deptReservePersonId = user.getUserId()+"";
+            }else{
+                deptReservePersonId = deptReservePersonId+","+user.getUserId();
+            }
+            count++;
+        }
+        meetingDetails.setDeDepartmentReservePersonId(deptReservePersonId);
         
         //查询出指定日期指定会议室的会议详情
         Date startTime = meetingUtils.getStartTime(meetingStart); //获得指定日期的开始时间
