@@ -35,7 +35,7 @@ public class MeetingDetails {
     private Date deMeetingStart;
     @ApiModelProperty(value = "部门预定人")
     private String deDepartmentReservePerson;
-    @ApiModelProperty(value = "会议室占用状态")
+    @ApiModelProperty(value = "会议室占用状态，是否释放")
     private String deMeetingStatus;
     @ApiModelProperty(value = "场次共计")
     private Integer deMeetingCount;
@@ -46,7 +46,7 @@ public class MeetingDetails {
     @ApiModelProperty(value = "预定人Id")
     private Integer deReserveId;
     @ApiModelProperty(value = "部门预定人id")
-    private Integer deDepartmentReservePersonId;
+    private String deDepartmentReservePersonId;
     @ApiModelProperty(value = "是否展示会议")
     private Integer deShow;
     @ApiModelProperty(value = "pub模板")
@@ -212,11 +212,11 @@ public class MeetingDetails {
         this.deReserveId = deReserveId;
     }
 
-    public Integer getDeDepartmentReservePersonId() {
+    public String getDeDepartmentReservePersonId() {
         return deDepartmentReservePersonId;
     }
 
-    public void setDeDepartmentReservePersonId(Integer deDepartmentReservePersonId) {
+    public void setDeDepartmentReservePersonId(String deDepartmentReservePersonId) {
         this.deDepartmentReservePersonId = deDepartmentReservePersonId;
     }
 

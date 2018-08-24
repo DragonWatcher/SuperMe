@@ -10,6 +10,8 @@ import com.ahav.system.service.DeptService;
 import com.ahav.system.service.UserService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -23,10 +25,8 @@ import java.util.*;
 public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     @Autowired
     private MeetingDetailsMapper meetingDetailsMapperImpl;
-
     @Autowired
     private RoomMapper RoomMapperImpl;
-
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
@@ -160,6 +160,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     //保存修改会议详情
     @Override
     public Map alterMeetingDetails(MeetingDetails meetingDetails) {
+        String deptReservePersonId = null; //部门预定人的id
         Map map = new HashMap<String,Object>();
         Result result = new Result();
         int deRoomId = meetingDetails.getDeRoomId();
@@ -209,7 +210,17 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
             if(flag){
                 //TODO:调用接口根据部门id查询出部门预订人的id
-                /*meetingDetails.setDeDepartmentReservePersonId(部门预订人的id)*/
+                List<User> users = userServiceImpl.selectUserByDeptIdAndRoleId(meetingDetails.getDeReserveDepartmentId(), 3);
+                int count =0;
+                for(User user:users){
+                    if(count == 0){
+                        deptReservePersonId = user.getUserId()+"";
+                    }else{
+                        deptReservePersonId = deptReservePersonId+","+user.getUserId();
+                    }
+                    count++;
+                }
+                meetingDetails.setDeDepartmentReservePersonId(deptReservePersonId);
                 //时间没有冲突可以修改
                 int i = meetingDetailsMapperImpl.updateByPrimaryKeySelective(meetingDetails);
                 if(i>0){
@@ -447,9 +458,45 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
     }
 
+    //历史查询
+    @Override
+    public JSONObject selectHistory(MeetingDetails meetingDetails,Integer pageNum,Integer pageSize) {
+        long time = 0; //总时间
+        History history = new History();
+        JSONObject jsonObject = new JSONObject();
+        PageHelper.startPage(pageNum,pageSize); //开启分页并设置分页条件
+        List<MeetingDetails> historys = meetingDetailsMapperImpl.selectHistory(meetingDetails);
+        PageInfo<MeetingDetails> page = new PageInfo<>(historys);//吧查询到对象封装到page中
+        for(MeetingDetails his:historys){
+            //将查询到的所有会议的用时时间记录起来
+            time += (his.getDeMeetingOver().getTime() - his.getDeMeetingStart().getTime());
+        }
+        //计算用时多少天多少时多少分
+        long nd = 1000 * 24 * 60 * 60;
+        long nh = 1000 * 60 * 60;
+        long nm = 1000 * 60;
+        //天
+        long day = time / nd;
+        //时
+        long hour = time % nd / nh;
+        //分
+        long minute = time % nd % nh / nm;
+        String deDateCount = day + "天" + hour + "小时" + minute + "分"; //用时共计
+
+        history.setDeDateCount(deDateCount); //用时共计
+        history.setPage(page);//分页记录
+        history.setPages(page.getPages());//总页数
+        history.setTotal(page.getTotal());//总记录数
+        history.setDeMeetingCount(historys.size());//场次共计
+
+        jsonObject.put("history",history);
+        return jsonObject;
+    }
+
     //保存添加会议详情
     @Override
     public Result addMeetingDetails(MeetingDetails meetingDetails) {
+        String deptReservePersonId = null; //部门预定人的id
         Result result = new Result();
         MeetingDetails mDetails =  new MeetingDetails();
         int roomId = meetingDetails.getDeRoomId();
@@ -460,7 +507,17 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         Date meetingOver = meetingDetails.getDeMeetingStart();  //添加新会议的结束时间
         
         //TODO:调用接口根据部门id查询出部门预订人的id
-        /*meetingDetails.setDeDepartmentReservePersonId(部门预订人的id)*/
+        List<User> users = userServiceImpl.selectUserByDeptIdAndRoleId(meetingDetails.getDeReserveDepartmentId(), 3);
+        int count =0;
+        for(User user:users){
+            if(count == 0){
+                deptReservePersonId = user.getUserId()+"";
+            }else{
+                deptReservePersonId = deptReservePersonId+","+user.getUserId();
+            }
+            count++;
+        }
+        meetingDetails.setDeDepartmentReservePersonId(deptReservePersonId);
         
         //查询出指定日期指定会议室的会议详情
         Date startTime = meetingUtils.getStartTime(meetingStart); //获得指定日期的开始时间

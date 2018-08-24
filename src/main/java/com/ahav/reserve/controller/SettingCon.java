@@ -1,5 +1,6 @@
 package com.ahav.reserve.controller;
 
+import com.ahav.reserve.pojo.RoomSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +24,7 @@ public class SettingCon {
     @Autowired
     private IRoomService iRoomServiceImpl;
     
-    //添加会议室
+    /*//添加会议室
     @RequestMapping(value = "/setting/roomSetting/insertRoom",method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value="添加会议室", notes="添加会议室")
@@ -58,5 +59,29 @@ public class SettingCon {
     @ApiOperation(value="删除会议室", notes="根据会议室id删除会议室")
     public Result deleteRoom(@PathVariable int meetingRoomId){
         return iRoomServiceImpl.deleteRoom(meetingRoomId);
+    }*/
+
+    //查询所有会议室
+    @RequestMapping(value = "/setting/roomSetting/selectRoom",method = RequestMethod.GET)
+    @ApiOperation(value="初始化会议室设置界面", notes="查询所有会议室")
+    @ResponseBody
+    public JSONObject selectRoom(){
+        return iRoomServiceImpl.selectAllRoom();
+    }
+
+    //根据会议室id查询会议室
+    @RequestMapping(value = "/setting/roomSetting/selectRoomById/{meetingRoomId}",method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value="查询会议室", notes="根据会议室id查询会议室")
+    public JSONObject selectRoomById(@PathVariable int meetingRoomId){
+        return iRoomServiceImpl.selectRoomById(meetingRoomId);
+    }
+
+    //更新部门设置
+    @RequestMapping(value = "/setting/roomSetting/redactRooms",method = RequestMethod.POST)
+    @ApiOperation(value = "编辑会议室",notes = "删除会议室，添加会议室，修改会议室，可传参数：meetingRoomId，meetingRoomScale，meetingRoomName")
+    @ResponseBody
+    public JSONObject saveRoomSettings(@RequestBody RoomSettings roomSettings){
+        return iRoomServiceImpl.saveRoomSettings(roomSettings);
     }
 }

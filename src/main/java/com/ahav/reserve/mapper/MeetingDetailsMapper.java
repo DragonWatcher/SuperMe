@@ -37,5 +37,7 @@ public interface MeetingDetailsMapper {
     public int selectReserveId(String reserveName);
     //根据预订人id查询会议详情
     public List<MeetingDetails> byReserveIdselectMeetingDetails(Integer ReserveId);
+    //历史查询
+    List<MeetingDetails> selectHistory (MeetingDetails meetingDetails);
 
 }

@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModelProperty;
 public class Result {
     @ApiModelProperty(value = "结果状态")
     private  int status = 400;
+    /** 返回消息*/
+    private String message;
 
     public int getStatus() {
         return status;
@@ -16,10 +18,16 @@ public class Result {
         this.status = status;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     @Override
     public String toString() {
-        return "Result{" +
-                "status=" + status +
-                '}';
+        return "Result{" + "status=" + status + ", message='" + message + '\'' + '}';
     }
 }
