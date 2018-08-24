@@ -23,8 +23,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 /**
- * UserService实现类
- * <br>类名：UserServiceImpl<br>
+ * UserService实现类 <br>
+ * 类名：UserServiceImpl<br>
  * 作者： mht<br>
  * 日期： 2018年8月5日-下午7:10:12<br>
  */
@@ -38,16 +38,16 @@ public class UserServiceImpl implements UserService {
     private UserRoleDao userRoleDao;
     @Autowired
     private LoginService loginService;
-    
+
     /**
      * @author wxh
      */
     @Override
     public User findByName(String username) {
-		User user = userDao.findByName(username);
-		return user;
-	}
-    
+        User user = userDao.findByName(username);
+        return user;
+    }
+
     @Override
     public SystemResult getUserById(Integer userId) {
         SimpleUser userDB = userDao.getUserById(userId);
@@ -75,7 +75,6 @@ public class UserServiceImpl implements UserService {
         return new SystemResult(HttpStatus.OK.value(), "用户名可用！", unused);
     }
 
-    
     @Override
     public SystemResult createOrUpdUser(User user) {
         SystemResult res = new SystemResult();
@@ -86,8 +85,7 @@ public class UserServiceImpl implements UserService {
         }
         return res;
     }
-    
-    
+
     /**
      * 原型中只有：角色(roleId)、部门(deptId)、姓名(trueName)、账号(username)<br>
      * 这四项，因此存库的时候需要进行细化用户处理
@@ -113,7 +111,7 @@ public class UserServiceImpl implements UserService {
             executeResult = userDao.insertUser(newUser);
             // 添加成员-角色之间对应关系
             userRoleDao.insertUserRole(newUser);
-            
+
             logger.info("创建新用户：{}", newUser.toString());
             // 以User作为数据库存储对象，以SimpleUser作为返回值对象，将User对象转型为父类，为了防止页面获得敏感信息
             SystemResult result = new SystemResult(HttpStatus.CREATED.value(), "添加新成员成功！", new SimpleUser(newUser));
@@ -128,13 +126,11 @@ public class UserServiceImpl implements UserService {
             return new SystemResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), "添加新成员失败！", null);
         }
     }
-    
+
     /**
-     * 更新用户
-     * <br>
+     * 更新用户 <br>
      * 将会更新的信息有：角色(role关联关系)、部门(department_id)、姓名(true_name)、账号(username)
-     * 以及：更新时间(edit_time)和更新人(editor)
-     * 作者： mht<br> 
+     * 以及：更新时间(edit_time)和更新人(editor) 作者： mht<br>
      * 时间：2018年8月11日-下午4:48:14<br>
      */
     private SystemResult updUser(User user) {
@@ -172,12 +168,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public SystemResult selectUsers(Integer pageNum, Integer pageSize, Integer roleId, Integer deptId, String username) {
+    public SystemResult selectUsers(Integer pageNum, Integer pageSize, Integer roleId, Integer deptId,
+            String username) {
         PageHelper.startPage(pageNum, pageSize);
         List<SimpleUser> users = userDao.selectUsers(roleId, deptId, username);
         PageInfo<SimpleUser> pageInfo = new PageInfo<>(users);
         SystemResult res = new SystemResult(HttpStatus.OK.value(), null, pageInfo);
-        
+
         return res;
     }
 
@@ -220,11 +217,10 @@ public class UserServiceImpl implements UserService {
             return new SystemResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), "重置密码失败!", null);
         }
     }
-    
+
     @Override
     public SystemResult updatePassword(User user) {
-        String[] hashedCredentials = Encrypt.encryptPassword(user.getUsername(), user.getTrueName(),
-                user.getPwd());
+        String[] hashedCredentials = Encrypt.encryptPassword(user.getUsername(), user.getTrueName(), user.getPwd());
         user.setPwd(hashedCredentials[0]);
         user.setSalt(hashedCredentials[1]);
         boolean executeResult = userDao.updatePassword(user);
@@ -241,7 +237,7 @@ public class UserServiceImpl implements UserService {
         User currUser = (User) SecurityUtils.getSubject().getPrincipal();
         // 待校验密码加密
         String hashedPwd = Encrypt.encryptPassword(password, currUser.getSalt());
-        
+
         if (hashedPwd.equals(currUser.getPwd())) {
             return new SystemResult(HttpStatus.OK.value(), "原密码正确", true);
         } else {
@@ -253,7 +249,7 @@ public class UserServiceImpl implements UserService {
     public SystemResult getCurrentUser() {
         User currUser = (User) SecurityUtils.getSubject().getPrincipal();
         SimpleUser simpleUser = new SimpleUser(currUser);
-        
+
         return new SystemResult(HttpStatus.OK.value(), "当前用户", simpleUser);
     }
 
@@ -268,5 +264,15 @@ public class UserServiceImpl implements UserService {
     public List<User> selectUserByDeptIdAndRoleId(Integer deptId, Integer roleId) {
         List<User> users = userDao.selectUserByDeptIdAndRoleId(deptId, roleId);
         return users;
+    }
+
+    @Override
+    public void updUserColor(String color) {
+        User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
+        SimpleUser user = new SimpleUser();
+        user.setUserId(currentUser.getUserId());
+        user.setColor(color);
+
+        userDao.updUserColor(user);
     }
 }

@@ -19,7 +19,7 @@ public interface LoginService {
      * @param password
      * @return
      */
-    SystemResult login(String username, String password, HttpServletResponse response);
+    SystemResult login(String username, String password);
     
     /**
      * 当前用户登出

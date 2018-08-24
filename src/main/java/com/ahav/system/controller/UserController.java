@@ -1,6 +1,5 @@
 package com.ahav.system.controller;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.FormParam;
 
 import org.slf4j.Logger;
@@ -64,10 +63,10 @@ public class UserController {
             @ApiImplicitParam(name = "username", paramType = "form"),
             @ApiImplicitParam(name = "password", paramType = "form") })
     @PostMapping("/login")
-    public SystemResult login(@FormParam("username") String username, @FormParam("password") String password, HttpServletResponse response) {
+    public SystemResult login(@FormParam("username") String username, @FormParam("password") String password) {
         logger.info("请求登录...");
         // 登录测试
-        return loginService.login(username, password, response);
+        return loginService.login(username, password);
     }
 
     /**
@@ -198,5 +197,11 @@ public class UserController {
     @GetMapping("/truename/{trueName}")
     public SystemResult getUserByTrueName(@PathVariable String trueName) {
         return userService.getUserByTrueName(trueName);
+    }
+    
+    @ApiOperation(value = "设置当前用户的界面颜色", notes = "put请求，传入color字符串")
+    @PutMapping("/colors")
+    public void setUserColor(String color) {
+        userService.updUserColor(color);
     }
 }

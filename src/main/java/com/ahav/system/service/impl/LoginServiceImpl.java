@@ -33,7 +33,7 @@ public class LoginServiceImpl implements LoginService{
     private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 
     @Override
-    public SystemResult login(String username, String password, HttpServletResponse response) {
+    public SystemResult login(String username, String password) {
         SystemResult loginResult = null;
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);
         // 通过shiro获取当前用户

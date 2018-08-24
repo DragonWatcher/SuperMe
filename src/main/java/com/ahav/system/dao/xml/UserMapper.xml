@@ -134,4 +134,11 @@
 		    u.department_id = #{deptId}
 		AND r.role_id = #{roleId}
 	</select>
+	
+	<!-- 用户界面换肤 -->
+	<update id="updUserColor" parameterType="com.ahav.system.entity.SimpleUser">
+        UPDATE sys_user
+        SET color = #{color}
+        WHERE user_id = #{userId}
+	</update>
 </mapper>        

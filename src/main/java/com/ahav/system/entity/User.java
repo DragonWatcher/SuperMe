@@ -23,8 +23,6 @@ public class User extends SimpleUser{
     private Date editTime;
     private String editor;
     private String description;
-    /** 账号对应的界面颜色*/
-    private String color;
     
     public User() {
     }
@@ -90,11 +88,5 @@ public class User extends SimpleUser{
     }
     public void setDescription(String description) {
         this.description = description;
-    }
-    public String getColor() {
-        return color;
-    }
-    public void setColor(String color) {
-        this.color = color;
     }
 }

@@ -137,5 +137,11 @@ public interface UserService {
      */
     List<User> selectUserByDeptIdAndRoleId(Integer deptId, Integer roleId);
     
-    
+    /**
+     * 设置当前用户的界面颜色
+     * <br>作者： mht<br> 
+     * 时间：2018年8月24日-下午3:11:58<br>
+     * @param color
+     */
+    void updUserColor(String color);
 }

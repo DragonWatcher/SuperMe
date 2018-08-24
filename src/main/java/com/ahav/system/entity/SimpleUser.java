@@ -15,6 +15,8 @@ public class SimpleUser {
     protected String  username;
     /** 用户真实姓名*/
     protected String trueName;
+    /** 账号对应的界面颜色*/
+    private String color;
     /** 用户所在部门*/
     protected Dept dept;
     /** 用户角色*/
@@ -68,5 +70,11 @@ public class SimpleUser {
     }
     public void setRole(Role role) {
         this.role = role;
+    }
+    public String getColor() {
+        return color;
+    }
+    public void setColor(String color) {
+        this.color = color;
     }
 }

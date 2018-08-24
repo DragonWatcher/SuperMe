@@ -124,5 +124,12 @@ public interface UserDao {
      * @return
      */
     List<User> selectUserByDeptIdAndRoleId(@Param("deptId") Integer deptId, @Param("roleId") Integer roleId);
-
+    
+    /**
+     * 设置用户界面颜色
+     * <br>作者： mht<br> 
+     * 时间：2018年8月24日-下午3:11:11<br>
+     * @param user
+     */
+    public void updUserColor(SimpleUser user);
 }
