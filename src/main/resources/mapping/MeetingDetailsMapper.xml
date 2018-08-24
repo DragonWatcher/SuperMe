@@ -130,6 +130,42 @@
       ORDER BY de_meeting_start ASC
     </where>
   </select>
+  <!--历史查询-->
+  <select id="selectHistory" parameterType="com.ahav.reserve.pojo.MeetingDetails" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM meeting_details
+    <where>
+      <if test="deDetailsId != null">
+        AND de_details_id != #{deDetailsId,jdbcType=INTEGER}
+      </if>
+      <if test="deMeetingName != null">
+        AND de_meeting_name LIKE "%"#{deMeetingName,jdbcType=VARCHAR}"%"
+      </if>
+      <if test="deReserveDepartmentId != null">
+        AND de_reserve_department_id=#{deReserveDepartmentId,jdbcType=INTEGER}
+      </if>
+      <if test="deReserveId != null">
+        AND de_reserve_id=#{deReserveId,jdbcType=INTEGER}
+      </if>
+      <if test="deReservePhone != null">
+        AND de_reserve_phone=#{deReservePhone,jdbcType=VARCHAR}
+      </if>
+      <if test="deMeetingStart != null &amp;&amp; deMeetingOver != null">
+        AND de_meeting_start BETWEEN #{deMeetingStart,jdbcType=TIMESTAMP} AND #{deMeetingOver,jdbcType=TIMESTAMP}
+      </if>
+      <if test="deDepartmentReservePersonId != null">
+        AND de_department_reserve_person_id=#{deDepartmentReservePersonId,jdbcType=VARCHAR}
+      </if>
+      <if test="deMeetingStatus != null">
+        AND de_meeting_status=#{deMeetingStatus,jdbcType=VARCHAR}
+      </if>
+      <if test="deGradeId != null">
+        AND de_grade_id=#{deGradeId,jdbcType=INTEGER}
+      </if>
+      ORDER BY de_meeting_start DESC
+    </where>
+  </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from meeting_details

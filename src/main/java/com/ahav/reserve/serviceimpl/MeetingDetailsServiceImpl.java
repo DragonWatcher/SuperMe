@@ -10,6 +10,8 @@ import com.ahav.system.service.DeptService;
 import com.ahav.system.service.UserService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -454,6 +456,41 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             return jsonObject;
         }
 
+    }
+
+    //历史查询
+    @Override
+    public JSONObject selectHistory(MeetingDetails meetingDetails,Integer pageNum,Integer pageSize) {
+        long time = 0; //总时间
+        History history = new History();
+        JSONObject jsonObject = new JSONObject();
+        PageHelper.startPage(pageNum,pageSize); //开启分页并设置分页条件
+        List<MeetingDetails> historys = meetingDetailsMapperImpl.selectHistory(meetingDetails);
+        PageInfo<MeetingDetails> page = new PageInfo<>(historys);//吧查询到对象封装到page中
+        for(MeetingDetails his:historys){
+            //将查询到的所有会议的用时时间记录起来
+            time += (his.getDeMeetingOver().getTime() - his.getDeMeetingStart().getTime());
+        }
+        //计算用时多少天多少时多少分
+        long nd = 1000 * 24 * 60 * 60;
+        long nh = 1000 * 60 * 60;
+        long nm = 1000 * 60;
+        //天
+        long day = time / nd;
+        //时
+        long hour = time % nd / nh;
+        //分
+        long minute = time % nd % nh / nm;
+        String deDateCount = day + "天" + hour + "小时" + minute + "分"; //用时共计
+
+        history.setDeDateCount(deDateCount); //用时共计
+        history.setPage(page);//分页记录
+        history.setPages(page.getPages());//总页数
+        history.setTotal(page.getTotal());//总记录数
+        history.setDeMeetingCount(historys.size());//场次共计
+
+        jsonObject.put("history",history);
+        return jsonObject;
     }
 
     //保存添加会议详情

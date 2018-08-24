@@ -35,7 +35,7 @@ public class MeetingDetails {
     private Date deMeetingStart;
     @ApiModelProperty(value = "部门预定人")
     private String deDepartmentReservePerson;
-    @ApiModelProperty(value = "会议室占用状态")
+    @ApiModelProperty(value = "会议室占用状态，是否释放")
     private String deMeetingStatus;
     @ApiModelProperty(value = "场次共计")
     private Integer deMeetingCount;

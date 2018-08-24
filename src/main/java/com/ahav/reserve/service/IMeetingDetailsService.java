@@ -39,4 +39,6 @@ public interface IMeetingDetailsService {
     JSONObject alterMeetingDetails();
     //添加会议详情
     JSONObject addMeetingDetails();
+    //历史查询
+    JSONObject selectHistory(MeetingDetails meetingDetails,Integer pageNum,Integer pageSize);
 }
