@@ -143,5 +143,5 @@ public interface UserService {
      * 时间：2018年8月24日-下午3:11:58<br>
      * @param color
      */
-    void updUserColor(String color);
+    SystemResult updUserColor(String color);
 }

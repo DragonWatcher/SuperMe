@@ -131,5 +131,5 @@ public interface UserDao {
      * 时间：2018年8月24日-下午3:11:11<br>
      * @param user
      */
-    public void updUserColor(SimpleUser user);
+    boolean updUserColor(SimpleUser user);
 }

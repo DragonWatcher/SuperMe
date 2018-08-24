@@ -201,7 +201,7 @@ public class UserController {
     
     @ApiOperation(value = "设置当前用户的界面颜色", notes = "put请求，传入color字符串")
     @PutMapping("/colors")
-    public void setUserColor(String color) {
-        userService.updUserColor(color);
+    public SystemResult setUserColor(@RequestParam(required = true) String color) {
+        return userService.updUserColor(color);
     }
 }

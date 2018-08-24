@@ -267,12 +267,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updUserColor(String color) {
+    public SystemResult updUserColor(String color) {
         User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
         SimpleUser user = new SimpleUser();
         user.setUserId(currentUser.getUserId());
         user.setColor(color);
 
-        userDao.updUserColor(user);
+        boolean updUserColor = userDao.updUserColor(user);
+        if (!updUserColor) {
+            return new SystemResult(HttpStatus.OK.value(), "界面颜色设置失败", false);
+        }
+        return new SystemResult(HttpStatus.OK.value(), "界面颜色设置成功", true);
     }
 }
