@@ -15,10 +15,13 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.awt.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
 
 @Service
@@ -466,8 +469,28 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         JSONObject jsonObject = new JSONObject();
         PageHelper.startPage(pageNum,pageSize); //开启分页并设置分页条件
         List<MeetingDetails> historys = meetingDetailsMapperImpl.selectHistory(meetingDetails);
+
         PageInfo<MeetingDetails> page = new PageInfo<>(historys);//吧查询到对象封装到page中
         for(MeetingDetails his:historys){
+            //根据预定人id查询出预定人的姓名，并设置到his对象中
+            SimpleUser userById = (SimpleUser)userServiceImpl.getUserById(his.getDeReserveId()).getData();
+            his.setDeReserve(userById.getTrueName());
+            his.getDeReserveDepartmentId();
+            //根据部门id查询部门的姓名，并设置到his对象中
+            Dept dept = deptServiceImpl.getDeptById(his.getDeReserveDepartmentId());
+            his.setDeReserveDepartment(dept.getDeptName());
+            //根据部门预定人的id查询出部门预定人的姓名（）
+            String deDepartmentReservePersonId = his.getDeDepartmentReservePersonId();
+            String[] split = deDepartmentReservePersonId.split(",");  //将部门预定人的id分割
+            String [] departmentReservePerson = new String [split.length];
+            for(int i = 0;split.length>0;i++){
+                int departmentReservePersonId = Integer.parseInt(split[i]);
+                //TODO:调用方法：根据部门预定人的id查询出部门预定人的名称
+                SimpleUser user = (SimpleUser)userServiceImpl.getUserById(departmentReservePersonId).getData();
+                departmentReservePerson[i]=user.getTrueName();
+            }
+            his.setDeDepartmentReservePerson(departmentReservePerson);
+
             //将查询到的所有会议的用时时间记录起来
             time += (his.getDeMeetingOver().getTime() - his.getDeMeetingStart().getTime());
         }
