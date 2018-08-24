@@ -2,13 +2,11 @@ package com.ahav.reserve.pojo;
 
 import com.github.pagehelper.PageInfo;
 
-import java.util.Date;
-
 public class History {
     private PageInfo<MeetingDetails> page;  //分页记录
     private long total; //总记录数
     private int pages; //总页数
-    private Integer deMeetingCount; //场次共计
+    private long deMeetingCount; //场次共计
     private String  deDateCount; //用时共计
 
     public PageInfo<MeetingDetails> getPage() {
@@ -35,11 +33,11 @@ public class History {
         this.pages = pages;
     }
 
-    public Integer getDeMeetingCount() {
+    public long getDeMeetingCount() {
         return deMeetingCount;
     }
 
-    public void setDeMeetingCount(Integer deMeetingCount) {
+    public void setDeMeetingCount(long deMeetingCount) {
         this.deMeetingCount = deMeetingCount;
     }
 

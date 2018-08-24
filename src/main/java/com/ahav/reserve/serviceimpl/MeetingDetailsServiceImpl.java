@@ -473,6 +473,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         PageInfo<MeetingDetails> page = new PageInfo<>(historys);//吧查询到对象封装到page中
         for(MeetingDetails his:historys){
             //根据预定人id查询出预定人的姓名，并设置到his对象中
+            System.out.println(his.getDeReserveId());
             SimpleUser userById = (SimpleUser)userServiceImpl.getUserById(his.getDeReserveId()).getData();
             his.setDeReserve(userById.getTrueName());
             his.getDeReserveDepartmentId();
@@ -482,8 +483,9 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             //根据部门预定人的id查询出部门预定人的姓名（）
             String deDepartmentReservePersonId = his.getDeDepartmentReservePersonId();
             String[] split = deDepartmentReservePersonId.split(",");  //将部门预定人的id分割
+            System.out.println(split.length);
             String [] departmentReservePerson = new String [split.length];
-            for(int i = 0;split.length>0;i++){
+            for(int i = 0;split.length>i;i++){
                 int departmentReservePersonId = Integer.parseInt(split[i]);
                 //TODO:调用方法：根据部门预定人的id查询出部门预定人的名称
                 SimpleUser user = (SimpleUser)userServiceImpl.getUserById(departmentReservePersonId).getData();
@@ -510,7 +512,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         history.setPage(page);//分页记录
         history.setPages(page.getPages());//总页数
         history.setTotal(page.getTotal());//总记录数
-        history.setDeMeetingCount(historys.size());//场次共计
+        history.setDeMeetingCount(page.getTotal());//场次共计
 
         jsonObject.put("history",history);
         return jsonObject;
