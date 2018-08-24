@@ -34,6 +34,7 @@ public class SimpleUser {
         this.dept = user.getDept();
         this.trueName = user.getTrueName();
         this.role = user.role;
+        this.color = user.getColor();
     }
     
     @Override
