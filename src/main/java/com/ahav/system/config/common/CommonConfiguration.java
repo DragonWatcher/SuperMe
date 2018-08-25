@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class CommonConfiguration {
 
     /**
-     * 文件上传配置
+     * 文件上传配置，在application配置文件中设置不起作用！
      */
     @Bean
     public MultipartConfigElement multipartConfigElement() {
