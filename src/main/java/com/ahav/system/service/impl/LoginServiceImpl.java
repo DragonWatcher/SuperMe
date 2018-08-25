@@ -20,16 +20,14 @@ import com.ahav.system.service.LoginService;
 import com.ahav.system.util.SystemConstant;
 import com.netease.domainmail.RSATool;
 
-
-
 /**
- * LoginService实现类
- * <br>类名：LoginServiceImpl<br>
+ * LoginService实现类 <br>
+ * 类名：LoginServiceImpl<br>
  * 作者： mht<br>
  * 日期： 2018年8月5日-下午7:10:32<br>
  */
 @Service
-public class LoginServiceImpl implements LoginService{
+public class LoginServiceImpl implements LoginService {
     private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 
     @Override
@@ -41,7 +39,7 @@ public class LoginServiceImpl implements LoginService{
         try {
             // 登录提交
             currentUser.login(token);
-            
+
             // 封装登录结果
             loginResult = new SystemResult(HttpStatus.OK.value(), "登录成功！",
                     new SimpleUser((User) SecurityUtils.getSubject().getPrincipal()));
@@ -58,7 +56,7 @@ public class LoginServiceImpl implements LoginService{
     public SystemResult logout() {
         Subject currentUser = SecurityUtils.getSubject();
         currentUser.logout();
-        
+
         return new SystemResult(HttpStatus.OK.value(), "用户已登出！", null);
     }
 
