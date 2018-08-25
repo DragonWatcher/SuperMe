@@ -287,13 +287,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public SystemResult updUserProfile(MultipartFile userProfile) {
+    public SystemResult updUserProfile(MultipartFile newProfile) {
         // 根据windows和linux配置不同的头像保存路径
         String OSName = System.getProperty("os.name");
         String profilesPath = OSName.toLowerCase().startsWith("win") ? SystemConstant.WINDOWS_PROFILES_PATH
                 : SystemConstant.LINUX_PROFILES_PATH;
 
-        if (!userProfile.isEmpty()) {
+        if (!newProfile.isEmpty()) {
             // 当前用户
             User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
             String profilePathAndNameDB = userDao.selectUserById(currentUser.getUserId()).getProfilePath();
@@ -301,11 +301,11 @@ public class UserServiceImpl implements UserService {
             String newProfileName = profilePathAndNameDB;
             // 若头像名称不存在
             if (profilePathAndNameDB == null || "".equals(profilePathAndNameDB)) {
-                newProfileName = profilesPath + System.currentTimeMillis() + userProfile.getOriginalFilename();
+                newProfileName = profilesPath + System.currentTimeMillis() + newProfile.getOriginalFilename();
+                // 路径存库
+                currentUser.setProfilePath(newProfileName);
+                userDao.updateUserProfilePath(currentUser);
             }
-            // 路径存库
-            currentUser.setProfilePath(newProfileName);
-            userDao.updateUserProfilePath(currentUser);
             // 磁盘保存
             BufferedOutputStream out = null;
             try {
@@ -313,8 +313,8 @@ public class UserServiceImpl implements UserService {
                 if (!folder.exists())
                     folder.mkdirs();
                 out = new BufferedOutputStream(new FileOutputStream(newProfileName));
-
-                out.write(userProfile.getBytes());
+                // 写入新文件
+                out.write(newProfile.getBytes());
                 out.flush();
             } catch (Exception e) {
                 e.printStackTrace();
