@@ -2,6 +2,8 @@ package com.ahav.system.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.ahav.system.entity.SystemResult;
 import com.ahav.system.entity.User;
 
@@ -144,4 +146,13 @@ public interface UserService {
      * @param color
      */
     SystemResult updUserColor(String color);
+    
+    /**
+     * 设置用户头像
+     * <br>作者： mht<br> 
+     * 时间：2018年8月24日-下午5:26:35<br>
+     * @param userProfile
+     * @return
+     */
+    SystemResult updUserProfile(MultipartFile userProfile);
 }

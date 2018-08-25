@@ -24,5 +24,8 @@ public final class SystemConstant {
     public static final String FIRST_PAGE = "1";
     /** 默认pageSize */
     public static final String PAGE_SIZE = "10";
-
+    
+    /** 头像保存路径 */
+    public static final String WINDOWS_PROFILES_PATH = "C:/super_meeting/profiles/";
+    public static final String LINUX_PROFILES_PATH = "/root/super_meeting/profiles/";
 }

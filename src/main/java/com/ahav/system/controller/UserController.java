@@ -5,6 +5,7 @@ import javax.ws.rs.FormParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ahav.system.entity.SystemResult;
 import com.ahav.system.entity.User;
@@ -203,5 +205,11 @@ public class UserController {
     @PutMapping("/colors")
     public SystemResult setUserColor(@RequestParam(required = true) String color) {
         return userService.updUserColor(color);
+    }
+    
+    @ApiOperation(value = "设置用户头像", notes = "设置当前用户头像")
+    @PutMapping("/profiles")
+    public SystemResult setUserProfile(@RequestParam(required = true) MultipartFile profile) {
+        return userService.updUserProfile(profile);
     }
 }
