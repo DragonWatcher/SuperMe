@@ -12,7 +12,7 @@ public final class SystemConstant {
     /** 网易邮箱公钥 */
     public static final String PUB_KEY = "30819f300d06092a864886f70d010101050003818d0030818902818100c7f15f0a3609bf6bbba6742fb091c5ec8a80532dc24c043a8fd6073ab77cb03b27e9b327847c6c5c3db5286a7b0ed05d3df641a0a55a09311c41ee8777c0f4259df4450a0e9deb9d21c2edf23406038649b1533000c94c2c8b56e6f497def21c6665ee8391c363c68108a8112e8f2375bab2662b7a7f12fb5227cea5d4c3c7250203010001";
     /** 默认邮箱测试账号 */
-    public static final String DEFAULT_ACCOUNT = "haotian.mou@ahav.com.cn";
+    public static final String DEFAULT_ACCOUNT = "haotian.mou";
     /** 安恒网易企业邮箱域名 */
     public static final String AHAV_DOMAIN = "ahav.com.cn";
     /** 网易用于标识企业的 Product */

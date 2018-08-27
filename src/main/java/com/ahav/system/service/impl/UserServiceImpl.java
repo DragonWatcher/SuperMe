@@ -281,9 +281,9 @@ public class UserServiceImpl implements UserService {
 
         boolean updUserColor = userDao.updateUserColor(user);
         if (!updUserColor) {
-            return new SystemResult(HttpStatus.OK.value(), "界面颜色设置失败", false);
+            return new SystemResult(HttpStatus.OK.value(), "界面颜色设置失败", Boolean.FALSE);
         }
-        return new SystemResult(HttpStatus.OK.value(), "界面颜色设置成功", true);
+        return new SystemResult(HttpStatus.OK.value(), "界面颜色设置成功", color);
     }
 
     @Override
