@@ -68,7 +68,7 @@ public class LoginServiceImpl implements LoginService {
         // 当前时间戳
         long currTime = System.currentTimeMillis();
 
-        // 安恒网易企业邮箱域名，为啥域名登录前后会变化？mail.ahav.com.cn/owa/
+        // 安恒网易企业邮箱域名
         String domain = SystemConstant.AHAV_DOMAIN;
 
         // 私钥
