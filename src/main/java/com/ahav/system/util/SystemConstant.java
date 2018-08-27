@@ -14,7 +14,7 @@ public final class SystemConstant {
     /** 默认邮箱测试账号 */
     public static final String DEFAULT_ACCOUNT = "haotian.mou@ahav.com.cn";
     /** 安恒网易企业邮箱域名 */
-    public static final String AHAV_DOMAIN = "mail.ahav.com.cn";
+    public static final String AHAV_DOMAIN = "ahav.com.cn";
     /** 网易用于标识企业的 Product */
     public static final String QIYE_PRODUCT = "ahav_hzqiye_ntesmail_com";
 
