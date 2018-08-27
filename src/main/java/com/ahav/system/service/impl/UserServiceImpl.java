@@ -255,6 +255,8 @@ public class UserServiceImpl implements UserService {
     public SystemResult getCurrentUser() {
         User currUser = (User) SecurityUtils.getSubject().getPrincipal();
         SimpleUser simpleUser = new SimpleUser(currUser);
+        // color有可能更新
+        simpleUser.setColor(userDao.selectUserById(simpleUser.getUserId()).getColor());
 
         return new SystemResult(HttpStatus.OK.value(), "当前用户", simpleUser);
     }
