@@ -1,5 +1,10 @@
 package com.ahav.system.service.impl;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -9,11 +14,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ahav.system.dao.UserDao;
 import com.ahav.system.dao.UserRoleDao;
-import com.ahav.system.entity.SystemResult;
 import com.ahav.system.entity.SimpleUser;
+import com.ahav.system.entity.SystemResult;
 import com.ahav.system.entity.User;
 import com.ahav.system.service.LoginService;
 import com.ahav.system.service.UserService;
@@ -50,14 +56,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SystemResult getUserById(Integer userId) {
-        SimpleUser userDB = userDao.getUserById(userId);
+        SimpleUser userDB = userDao.selectUserById(userId);
         SystemResult res = new SystemResult(HttpStatus.OK.value(), null, userDB);
         return res;
     }
 
     @Override
     public SystemResult getUserByName(String username) {
-        User userDB = userDao.getUserByName(username);
+        User userDB = userDao.selectUserByName(username);
         SystemResult res = new SystemResult(HttpStatus.OK.value(), null, userDB);
         return res;
     }
@@ -66,7 +72,7 @@ public class UserServiceImpl implements UserService {
     public SystemResult checkUsername(String username) {
         boolean unused = true;
         // 查询指定用户账号
-        String usernameDB = userDao.checkUsername(username);
+        String usernameDB = userDao.selectUsername(username);
         if (usernameDB != null) {
             unused = false;
             return new SystemResult(HttpStatus.OK.value(), "用户名重复！", unused);
@@ -164,7 +170,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> findUsersByRoleId(Integer roleId) {
-        return userDao.findUsersByRoleId(roleId);
+        return userDao.selectUsersByRoleId(roleId);
     }
 
     @Override
@@ -199,7 +205,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SystemResult resetPassword(Integer userId) {
-        SimpleUser userDB = userDao.getUserById(userId);
+        SimpleUser userDB = userDao.selectUserById(userId);
         User user = new User(userDB);
         // 散列原始密码
         String[] hashedCredentials = Encrypt.encryptPassword(user.getUsername(), user.getTrueName(),
@@ -255,7 +261,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SystemResult getUserByTrueName(String trueName) {
-        List<SimpleUser> users = userDao.findUserByTrueName(trueName);
+        List<SimpleUser> users = userDao.selectUserByTrueName(trueName);
         SystemResult result = new SystemResult(HttpStatus.OK.value(), "用户列表", users);
         return result;
     }
@@ -273,10 +279,57 @@ public class UserServiceImpl implements UserService {
         user.setUserId(currentUser.getUserId());
         user.setColor(color);
 
-        boolean updUserColor = userDao.updUserColor(user);
+        boolean updUserColor = userDao.updateUserColor(user);
         if (!updUserColor) {
             return new SystemResult(HttpStatus.OK.value(), "界面颜色设置失败", false);
         }
         return new SystemResult(HttpStatus.OK.value(), "界面颜色设置成功", true);
+    }
+
+    @Override
+    public SystemResult updUserProfile(MultipartFile newProfile) {
+        // 根据windows和linux配置不同的头像保存路径
+        String OSName = System.getProperty("os.name");
+        String profilesPath = OSName.toLowerCase().startsWith("win") ? SystemConstant.WINDOWS_PROFILES_PATH
+                : SystemConstant.LINUX_PROFILES_PATH;
+
+        if (!newProfile.isEmpty()) {
+            // 当前用户
+            User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
+            String profilePathAndNameDB = userDao.selectUserById(currentUser.getUserId()).getProfilePath();
+            // 默认以原来的头像名称为新头像的名称，这样可以直接替换掉文件夹中对应的旧头像
+            String newProfileName = profilePathAndNameDB;
+            // 若头像名称不存在
+            if (profilePathAndNameDB == null || "".equals(profilePathAndNameDB)) {
+                newProfileName = profilesPath + System.currentTimeMillis() + newProfile.getOriginalFilename();
+                // 路径存库
+                currentUser.setProfilePath(newProfileName);
+                userDao.updateUserProfilePath(currentUser);
+            }
+            // 磁盘保存
+            BufferedOutputStream out = null;
+            try {
+                File folder = new File(profilesPath);
+                if (!folder.exists())
+                    folder.mkdirs();
+                out = new BufferedOutputStream(new FileOutputStream(newProfileName));
+                // 写入新文件
+                out.write(newProfile.getBytes());
+                out.flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new SystemResult(HttpStatus.OK.value(), "设置头像失败", Boolean.FALSE);
+            } finally {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return new SystemResult(HttpStatus.OK.value(), "设置头像成功", Boolean.TRUE);
+        } else {
+            return new SystemResult(HttpStatus.OK.value(), "设置头像失败", Boolean.FALSE);
+        }
     }
 }

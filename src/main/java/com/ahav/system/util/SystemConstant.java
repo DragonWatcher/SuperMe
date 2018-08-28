@@ -14,7 +14,7 @@ public final class SystemConstant {
     /** 默认邮箱测试账号 */
     public static final String DEFAULT_ACCOUNT = "haotian.mou@ahav.com.cn";
     /** 安恒网易企业邮箱域名 */
-    public static final String AHAV_DOMAIN = "mail.ahav.com.cn";
+    public static final String AHAV_DOMAIN = "ahav.com.cn";
     /** 网易用于标识企业的 Product */
     public static final String QIYE_PRODUCT = "ahav_hzqiye_ntesmail_com";
 
@@ -24,5 +24,8 @@ public final class SystemConstant {
     public static final String FIRST_PAGE = "1";
     /** 默认pageSize */
     public static final String PAGE_SIZE = "10";
-
+    
+    /** 头像保存路径 */
+    public static final String WINDOWS_PROFILES_PATH = "C:/super_meeting/profiles/";
+    public static final String LINUX_PROFILES_PATH = "/root/super_meeting/profiles/";
 }

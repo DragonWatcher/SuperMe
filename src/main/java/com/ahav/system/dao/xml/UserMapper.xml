@@ -6,18 +6,18 @@
     	<result column="username" property="username"/>
     </resultMap>
     <!-- 根据userId查找用户-->
-    <select id="getUserById" resultType="com.ahav.system.entity.SimpleUser">
+    <select id="selectUserById" resultType="com.ahav.system.entity.SimpleUser">
         SELECT * FROM sys_user WHERE user_id = #{userId}
     </select>
 
     <!-- 根据username查询整个user对象 -->
-    <select id="getUserByName" resultType="com.ahav.system.entity.User">
+    <select id="selectUserByName" resultType="com.ahav.system.entity.User">
         SELECT * FROM sys_user
         WHERE username = #{username}
     </select>
     
     <!-- 根据真实姓名模糊查询 -->
-    <select id="findUserByTrueName" resultType="com.ahav.system.entity.SimpleUser">
+    <select id="selectUserByTrueName" resultType="com.ahav.system.entity.SimpleUser">
         SELECT
             user_id, username, true_name
         FROM sys_user
@@ -25,7 +25,7 @@
     </select>
 
     <!-- 用户账号查重 -->
-    <select id="checkUsername" resultType="String">
+    <select id="selectUsername" resultType="String">
         SELECT username
         FROM sys_user
         WHERE username = #{username}
@@ -68,7 +68,7 @@
         </where>
     </select>
     <!-- 根据角色ID查询对应用户的集合-->
-    <select id="findUsersByRoleId" resultType="java.util.HashMap">
+    <select id="selectUsersByRoleId" resultType="java.util.HashMap">
         SELECT u.username FROM sys_user u, sys_role r, sys_user_role ur
         WHERE ur.user_id = u.user_id
         AND ur.role_id = r.role_id
@@ -107,6 +107,7 @@
             <result column="enable_delete" property="enableDelete"/>
         </association>
     </resultMap>
+    <!-- 基础结果映射 -->
     <resultMap type="com.ahav.system.entity.User" id="BaseResultMap">
     	<id column="user_id" property="userId"/>
     	<result column="username" property="username"/>
@@ -136,9 +137,16 @@
 	</select>
 	
 	<!-- 用户界面换肤 -->
-	<update id="updUserColor" parameterType="com.ahav.system.entity.SimpleUser">
+	<update id="updateUserColor" parameterType="com.ahav.system.entity.SimpleUser">
         UPDATE sys_user
         SET color = #{color}
         WHERE user_id = #{userId}
+	</update>
+	
+	<!-- 设置用户头像路径 -->
+	<update id="updateUserProfilePath" parameterType="com.ahav.system.entity.SimpleUser">
+	   UPDATE sys_user
+	   SET profile_path = #{profilePath}
+	   WHERE user_id = #{userId}
 	</update>
 </mapper>        
