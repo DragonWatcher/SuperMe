@@ -458,11 +458,12 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         Date meetingStart = meetingDetails.getDeMeetingOver(); //添加新会议的开始时间
         Date meetingOver = meetingDetails.getDeMeetingStart();  //添加新会议的结束时间
 
-        //TODO:调用接口根据部门id查询出部门预订人的id
+        //TODO:调用接口根据部门id已及角色id查询出部门预订人的id（一个部门可以有多个部门预定人）
         List<User> users = userServiceImpl.selectUserByDeptIdAndRoleId(meetingDetails.getDeReserveDepartmentId(), 3);
         int count =0;
         for(User user:users){
             if(count == 0){
+                //取出第i个部门预定人的id
                 deptReservePersonId = user.getUserId()+"";
             }else{
                 deptReservePersonId = deptReservePersonId+","+user.getUserId();
@@ -479,7 +480,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         mDetails.setDeRoomId(roomId);
         List<MeetingDetails> meetingDetailsAll = meetingDetailsMapperImpl.selectMeetingDetails(mDetails);
         //判断指定日期指定的会议室已有会议有没有跟新添加会议的时间冲突
-        if(meetingDetailsAll.size()>0){
+/*        if(meetingDetailsAll.size()>0){
             for (MeetingDetails md:meetingDetailsAll){
                 if(md.getDeMeetingStart().compareTo(meetingStart) == -1){
                     if(md.getDeMeetingOver().compareTo(meetingStart) == -1){
@@ -489,6 +490,25 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                     }
                 }else {
                     if(md.getDeMeetingStart().compareTo(meetingOver) == 1){
+                        flag = true;
+                    }else {
+                        flag = false;
+                    }
+                }
+            }
+        }else{
+            flag = true;
+        }*/
+        if(meetingDetailsAll.size()>0){
+            for (MeetingDetails md:meetingDetailsAll){
+                if(md.getDeMeetingStart().after(meetingStart)){  //判断已有会议开始时间，是否在修改会议开始时间之前
+                    if(md.getDeMeetingOver().after(meetingStart)){  //判断已有会议结束时间，是否在修改会议开始时间之前
+                        flag=true;
+                    }else {
+                        flag=false;
+                    }
+                }else {
+                    if(md.getDeMeetingStart().before(meetingOver)){  //判断已有会议开始时间，是否在修改会议结束时间之后
                         flag = true;
                     }else {
                         flag = false;
