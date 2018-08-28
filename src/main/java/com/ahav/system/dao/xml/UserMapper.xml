@@ -12,7 +12,7 @@
 
     <!-- 根据username查询整个user对象 -->
     <select id="selectUserByName" resultType="com.ahav.system.entity.User">
-        SELECT user_id/*,username,true_name,color,profile_path*/ FROM sys_user
+        SELECT * FROM sys_user
         WHERE username = #{username}
     </select>
     
