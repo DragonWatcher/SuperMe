@@ -45,7 +45,7 @@ public class LoginServiceImpl implements LoginService {
                     new SimpleUser((User) SecurityUtils.getSubject().getPrincipal()));
         } catch (AuthenticationException e) {
             logger.info("用户名或密码错误>>>username:{},password:{}", username, password);
-            loginResult = new SystemResult(HttpStatus.FORBIDDEN.value(), "用户名或密码错误，登录失败！", null);
+            return new SystemResult(HttpStatus.FORBIDDEN.value(), "用户名或密码错误，登录失败！", null);
         }
         logger.info("用户登录成功>>>username:{}", username);
 
