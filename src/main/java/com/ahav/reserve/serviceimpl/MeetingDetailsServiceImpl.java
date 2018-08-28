@@ -153,12 +153,14 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         if(reserveName != null && "" != reserveName){
             //根据预定人的姓名查询出所有符合条件的预定人id
             List<SimpleUser> users = (List<SimpleUser>) userServiceImpl.getUserByTrueName(reserveName).getData();
-
             for(SimpleUser user:users){
                 meetingDetails.setDeReserveId(user.getUserId());
-                //因为查询体条件体中有id这一条件，所以结果最多也就只有有一条
+                //根据第i位用户的id与详情名称查询出所有的详情
                 List<MeetingDetails> meetingDetails1 = meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
-                meetingDetailsList.add(meetingDetails1.get(0));
+                for(MeetingDetails me1:meetingDetails1){
+                    //在吧根据第i位用户的id与详情名称查询出所有的详情，全部添加到List中
+                    meetingDetailsList.add(me1);
+                }
 /*                        List<MeetingDetails>  meetingDetails1 = meetingDetailsMapperImpl.byReserveIdselectMeetingDetails(,);*/
                        /* if(meetingDetails1.size()>0){
                             meetingDetailsList.add(meetingDetails1.get(0));
@@ -612,6 +614,10 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             }
             if(meetingStartTime == currentTime){
             /*判断当前是否是无模板，如果是则不去调用加载pub模板api*/
+                String dePubTemplate1 = me.getDePubTemplate();
+                if("{\"Content\":\"\",\"LayoutId\":-1,\"Thumb\":\"https://gss3.bdstatic.com/-Po3dSag_xI4khGkpoWK1HF6hhy/baike/w%3D268%3Bg%3D0/sign=69fb9c56cb95d143da76e3254bcbe53f/d1a20cf431adcbef5d550e53afaf2edda3cc9f05.jpg\",\"Id\":-1,\"Name\":\"nullTemplate\"}".equals(dePubTemplate1)){
+                    continue;
+                }
                 //调用pub加载pub模板的aqi
                     //获取pubIp
                 Integer roomId = me.getDeRoomId();
