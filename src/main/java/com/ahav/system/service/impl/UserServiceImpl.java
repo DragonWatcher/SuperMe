@@ -331,7 +331,7 @@ public class UserServiceImpl implements UserService, NtesService {
                 }
             }
 
-            return new SystemResult(HttpStatus.OK.value(), "设置头像成功", Boolean.TRUE);
+            return new SystemResult(HttpStatus.OK.value(), "设置头像成功", newProfileName);
         } else {
             return new SystemResult(HttpStatus.OK.value(), "设置头像失败", Boolean.FALSE);
         }
