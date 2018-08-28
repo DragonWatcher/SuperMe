@@ -10,6 +10,6 @@ import com.alibaba.fastjson.JSONObject;
  */
 public interface NtesService {
     
-    JSONObject GetUnitList();
+    JSONObject getUnitList();
 
 }

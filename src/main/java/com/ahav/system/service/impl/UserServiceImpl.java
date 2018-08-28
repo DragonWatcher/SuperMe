@@ -2,7 +2,6 @@ package com.ahav.system.service.impl;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -21,6 +20,8 @@ import com.ahav.system.dao.UserRoleDao;
 import com.ahav.system.entity.SimpleUser;
 import com.ahav.system.entity.SystemResult;
 import com.ahav.system.entity.User;
+import com.ahav.system.rsatool.HttpPost;
+import com.ahav.system.rsatool.RSASignatureToQiye;
 import com.ahav.system.service.LoginService;
 import com.ahav.system.service.NtesService;
 import com.ahav.system.service.UserService;
@@ -338,8 +339,21 @@ public class UserServiceImpl implements UserService, NtesService {
     }
 
     @Override
-    public JSONObject GetUnitList() {
-        
-        return null;
+    public JSONObject getUnitList() {
+        String url = "https://apihz.qiye.163.com/qiyeservice/api/unit/getUnitList";
+        long time = System.currentTimeMillis();
+
+        String sign = "domain=" + SystemConstant.AHAV_DOMAIN + "&product=" + SystemConstant.QIYE_PRODUCT + "&time="
+                + time;
+        System.out.println(sign);
+        sign = RSASignatureToQiye.generateSigature(SystemConstant.PRI_KEY, sign);
+        url = url + "?" + "domain=" + SystemConstant.AHAV_DOMAIN + "&product=" + SystemConstant.QIYE_PRODUCT + "&sign="
+                + sign + "&time=" + time;
+        System.out.println(url);
+
+        String res = new HttpPost().post(url);
+        JSONObject unitListJo = JSONObject.parseObject(res);
+
+        return unitListJo;
     }
 }
