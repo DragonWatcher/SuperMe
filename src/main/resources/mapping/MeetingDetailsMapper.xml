@@ -74,15 +74,74 @@
     <include refid="Base_Column_List" />
     FROM meeting_details
   </select>
-    <!-- 修改会议时根据条件查询会议有没有冲突：排除当前正在修改的会议 -->
+    <!-- 按照查询条件查询会议详情 -->
   <select id="selectMeetingDetails" parameterType="com.ahav.reserve.pojo.MeetingDetails" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List" />
     FROM meeting_details
     <where>
-      <!-- <if test="deDetailsId != null">
-        AND de_details_id&gt;#{deDetailsId,jdbcType=INTEGER}
-      </if> -->
+
+      <if test="deDetailsId != null">
+        AND de_details_id = #{deDetailsId,jdbcType=INTEGER}
+      </if>
+      <if test="deGrade != null">
+        AND de_grade=#{deGrade,jdbcType=VARCHAR}
+      </if>
+      <if test="deRoomId != null">
+        AND de_room_id=#{deRoomId,jdbcType=INTEGER}
+      </if>
+      <if test="deMeetingName != null">
+        AND de_meeting_name LIKE "%"#{deMeetingName,jdbcType=VARCHAR}"%"
+      </if>
+      <if test="deReserveDepartmentId != null">
+        AND de_reserve_department_id=#{deReserveDepartmentId,jdbcType=INTEGER}
+      </if>
+      <if test="deReserveId != null">
+        AND de_reserve_id=#{deReserveId,jdbcType=INTEGER}
+      </if>
+      <if test="deReservePhone != null">
+        AND de_reserve_phone=#{deReservePhone,jdbcType=VARCHAR}
+      </if>
+      <if test="deReserveNumber != null">
+        AND de_reserve_number=#{deReserveNumber,jdbcType=INTEGER}
+      </if>
+      <if test="deMain != null">
+        AND de_main=#{deMain,jdbcType=VARCHAR}
+      </if>
+      <!--      &lt;if test="deMeetingOver != null"&gt;
+              AND de_meeting_over=#{deMeetingOver,jdbcType=TIMESTAMP}
+            &lt;/if&gt;-->
+      <if test="deMeetingStart != null &amp;&amp; deMeetingOver != null">
+        AND de_meeting_start BETWEEN #{deMeetingStart,jdbcType=TIMESTAMP} AND #{deMeetingOver,jdbcType=TIMESTAMP}
+      </if>
+      <if test="deDepartmentReservePersonId != null">
+        AND de_department_reserve_person_id=#{deDepartmentReservePersonId,jdbcType=VARCHAR}
+      </if>
+      <if test="deMeetingStatus != null">
+        AND de_meeting_status=#{deMeetingStatus,jdbcType=VARCHAR}
+      </if>
+      <if test="deDateCount != null">
+        AND de_date_count=#{deDateCount,jdbcType=TIMESTAMP}
+      </if>
+      <if test="deGradeId != null">
+        AND de_grade_id=#{deGradeId,jdbcType=INTEGER}
+      </if>
+      <if test="deShow != null">
+        AND de_show=#{deShow,jdbcType=INTEGER}
+      </if>
+      <if test="dePubTemplate != null">
+        AND de_pub_template=#{dePubTemplate,jdbcType=VARCHAR}
+      </if>
+      ORDER BY de_meeting_start ASC
+    </where>
+  </select>
+  <!-- 修改会议时根据条件查询会议有没有冲突：排除当前正在修改的会议！！这是专门修改用的方法 -->
+  <select id="byExcludeDetailsIdselectMeetingDetails" parameterType="com.ahav.reserve.pojo.MeetingDetails" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM meeting_details
+    <where>
+
       <if test="deDetailsId != null">
         AND de_details_id != #{deDetailsId,jdbcType=INTEGER}
       </if>

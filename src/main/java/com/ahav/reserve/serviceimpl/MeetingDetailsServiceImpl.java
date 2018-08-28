@@ -126,8 +126,135 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     }
 
 
+    //按条件查询会议详情
+    @Override
+    public Map findMeetingDetails(MeetingDetails meetingDetails) {
+        Result result = new Result();
+        Boolean flag = false; //默认没有权限
+        Map meetingListMap = new HashMap<String,Object>();
+        MeetingTime meetingTime = new MeetingTime(); //会议时间
+        String reserveName = meetingDetails.getDeReserve(); //获得前台传递的预定人姓名
+        String meetingName = meetingDetails.getDeMeetingName(); //会议详情的名称
+        List<MeetingDetails> meetingDetailsList = new ArrayList<>();
+
+        //根据条件查询出某一天的会议详情
+        Date meetingStart = meetingDetails.getDeMeetingStart();
+        Date startTime = meetingUtils.getStartTime(meetingStart);  //获得某一天的开始时间
+        Date endTime = meetingUtils.getEndTime(meetingStart);  //获得某一天的结束时间
+        meetingDetails.setDeMeetingStart(startTime);
+        meetingDetails.setDeMeetingOver(endTime);
+
+        if(meetingName != null && "" != meetingName){
+            meetingDetails.setDeMeetingName(meetingName);
+        }
+
+        // TODO:如果预订人不等于Null则调用接口：根据从前台获取的预定人姓名模糊查询出所有符合条件的预定人ID
+        //思路遍历预定人的id
+        if(reserveName != null && "" != reserveName){
+            //根据预定人的姓名查询出所有符合条件的预定人id
+            List<SimpleUser> users = (List<SimpleUser>) userServiceImpl.getUserByTrueName(reserveName).getData();
+
+            for(SimpleUser user:users){
+                meetingDetails.setDeReserveId(user.getUserId());
+                //因为查询体条件体中有id这一条件，所以结果最多也就只有有一条
+                List<MeetingDetails> meetingDetails1 = meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
+                meetingDetailsList.add(meetingDetails1.get(0));
+/*                        List<MeetingDetails>  meetingDetails1 = meetingDetailsMapperImpl.byReserveIdselectMeetingDetails(,);*/
+                       /* if(meetingDetails1.size()>0){
+                            meetingDetailsList.add(meetingDetails1.get(0));
+                        }*/
+            }
+        }else{
+            meetingDetailsList = meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
+        }
 
 
+
+        //  List<MeetingDetails> meetingDetailsList = meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
+        for(MeetingDetails meetingDetails1 :meetingDetailsList){
+            //调用接口：根据会议室Id查询出会议室的名称，并设置到MeetingDetails对象中
+            meetingDetails1.setDeRoomName(RoomMapperImpl.selectRoomName(meetingDetails1.getDeRoomId()));
+            //TODO:调用接口：根据部门id查询部门名称，并设置到MeetingDetails对象中
+            Dept dept = deptServiceImpl.getDeptById(meetingDetails1.getDeReserveDepartmentId());
+            meetingDetails1.setDeReserveDepartment(dept.getDeptName());
+            /*TODO:调用接口：根据预订人id查询出预定人的姓名，并设置到MeetingDetails对象中*/
+            SimpleUser userById = (SimpleUser)userServiceImpl.getUserById(meetingDetails1.getDeReserveId()).getData();
+            meetingDetails1.setDeReserve(userById.getTrueName());
+        }
+
+        //TODO:调用接口参数当前操作需要的权限，得到true或false
+            /*flag = 调用是否有权限的接口*/
+        //TODO:调用接口token获得当前用户的id
+        SystemResult currentUser = userServiceImpl.getCurrentUser();
+        SimpleUser user = (SimpleUser)currentUser.getData();
+        int deReserveId = user.getUserId();
+        /*int deReserveId = 2;*/
+
+        //获得上次会议时间
+        MeetingDetails lastTime = meetingDetailsMapperImpl.selectLastTime(startTime);
+        if(lastTime != null){
+            meetingTime.setLastMeetingTime(lastTime.getDeMeetingStart());
+            //System.out.println(meetingTime.getLastMeetingTime());
+        }
+        //获得下次会议时间
+        MeetingDetails nextTime = meetingDetailsMapperImpl.selectNextTime(endTime);
+        if(nextTime != null){
+            meetingTime.setNextMeetingTime(nextTime.getDeMeetingStart());
+            //System.out.println(meetingTime.getNextMeetingTime());
+        }
+
+        meetingListMap.put("meetingTime ",meetingTime);  //将会议时间对象添加到map中
+
+        if(flag){
+            //有查看别人的权限
+            for(MeetingDetails md:meetingDetailsList){
+                md.setDeShow(1);
+            }
+            meetingListMap.put("meetingDetailsList",meetingDetailsList);
+            result.setStatus(200);
+            meetingListMap.put("result",result);
+            return meetingListMap;
+        }else{
+            //没有查看别人的权限
+            for(MeetingDetails md:meetingDetailsList){
+                if(md.getDeReserveId() == deReserveId){
+                    md.setDeShow(1);
+                }
+            }
+            meetingListMap.put("meetingDetailsList",meetingDetailsList);
+            result.setStatus(200);
+            meetingListMap.put("result",result);
+            return meetingListMap;
+        }
+    }
+
+
+    //根据详情id查询会议详情
+    @Override
+    public Map findMeetingDetails(Integer deDetailsId) {
+        Map detailsMap = new HashMap<String,Object>();
+        Result result = new Result();
+        if(deDetailsId > 0){
+            //当传递
+            MeetingDetails meetingDetails = meetingDetailsMapperImpl.selectByPrimaryKey(deDetailsId);
+            if(meetingDetails != null){
+                //获得查询会议的名称，并添加到MeetingDetails对象中
+                meetingDetails.setDeRoomName(RoomMapperImpl.selectRoomName(meetingDetails.getDeRoomId()));
+
+                result.setStatus(200);
+                detailsMap.put("result",result);
+                detailsMap.put("meetingDetails",meetingDetails);
+            }else {
+                result.setStatus(400);
+                detailsMap.put("result",result);
+            }
+            return detailsMap;
+        }else {
+            result.setStatus(400);
+            detailsMap.put("result",result);
+            return detailsMap;
+        }
+    }
 
 /*  //调用模板
     public void findTemplate(){
@@ -182,7 +309,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             mDetails.setDeRoomId(deRoomId);
             //查询出不包含当前会议的所有会议
             mDetails.setDeDetailsId(meetingDetails.getDeDetailsId());
-            List<MeetingDetails> meetingDetailsAll = meetingDetailsMapperImpl.selectMeetingDetails(mDetails);
+            List<MeetingDetails> meetingDetailsAll = meetingDetailsMapperImpl.byExcludeDetailsIdselectMeetingDetails(mDetails);
             //List<MeetingDetails> roomIdMeetingDetails = meetingDetailsMapperImpl.selectRoomIdMeetingDetails(deRoomId);
             //判断修改的会议时间跟以有的会议时间有没有冲突
             
@@ -274,133 +401,9 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         return result;
     }
 
-    //根据详情id查询会议详情
-    @Override
-    public Map findMeetingDetails(Integer deDetailsId) {
-        Map detailsMap = new HashMap<String,Object>();
-        Result result = new Result();
-        if(deDetailsId > 0){
-            //当传递
-            MeetingDetails meetingDetails = meetingDetailsMapperImpl.selectByPrimaryKey(deDetailsId);
-            if(meetingDetails != null){
-                //获得查询会议的名称，并添加到MeetingDetails对象中
-                meetingDetails.setDeRoomName(RoomMapperImpl.selectRoomName(meetingDetails.getDeRoomId()));
-
-                result.setStatus(200);
-                detailsMap.put("result",result);
-                detailsMap.put("meetingDetails",meetingDetails);
-            }else {
-                result.setStatus(400);
-                detailsMap.put("result",result);
-            }
-            return detailsMap;
-        }else {
-            result.setStatus(400);
-            detailsMap.put("result",result);
-            return detailsMap;
-        }
-    }
-
-    //按条件查询会议详情
-    @Override
-    public Map findMeetingDetails(MeetingDetails meetingDetails) {
-        Result result = new Result();
-        Boolean flag = false; //默认没有权限
-        Map meetingListMap = new HashMap<String,Object>();
-        MeetingTime meetingTime = new MeetingTime(); //会议时间
-        String reserveName = meetingDetails.getDeReserve(); //获得前台传递的预定人姓名
-        String meetingName = meetingDetails.getDeMeetingName(); //会议详情的名称
-        List<MeetingDetails> meetingDetailsList = new ArrayList<>();
-
-        //根据条件查询出某一天的会议详情
-        Date meetingStart = meetingDetails.getDeMeetingStart();
-        Date startTime = meetingUtils.getStartTime(meetingStart);  //获得某一天的开始时间
-        Date endTime = meetingUtils.getEndTime(meetingStart);  //获得某一天的结束时间
-        meetingDetails.setDeMeetingStart(startTime);
-        meetingDetails.setDeMeetingOver(endTime);
-
-        if(meetingName != null && "" != meetingName){
-            meetingDetails.setDeMeetingName(meetingName);
-        }
-
-       // TODO:如果预订人不等于Null则调用接口：根据从前台获取的预定人姓名模糊查询出所有符合条件的预定人ID
-            //思路遍历预定人的id
-               if(reserveName != null && "" != reserveName){
-                    List<SimpleUser> users = (List<SimpleUser>) userServiceImpl.getUserByTrueName(reserveName).getData();
-
-                    for(SimpleUser user:users){
-                        meetingDetails.setDeReserveId(user.getUserId());
-                        //因为查询体条件体中有id这一条件，所以结果最多也就只有有一条
-                        List<MeetingDetails> meetingDetails1 = meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
-                        meetingDetailsList.add(meetingDetails1.get(0));
-/*                        List<MeetingDetails>  meetingDetails1 = meetingDetailsMapperImpl.byReserveIdselectMeetingDetails(,);*/
-                       /* if(meetingDetails1.size()>0){
-                            meetingDetailsList.add(meetingDetails1.get(0));
-                        }*/
-                    }
-               }else{
-                   meetingDetailsList = meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
-               }
 
 
 
-        //  List<MeetingDetails> meetingDetailsList = meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
-        for(MeetingDetails meetingDetails1 :meetingDetailsList){
-            //调用接口：根据会议室Id查询出会议室的名称，并设置到MeetingDetails对象中
-            meetingDetails1.setDeRoomName(RoomMapperImpl.selectRoomName(meetingDetails1.getDeRoomId()));
-            //TODO:调用接口：根据部门id查询部门名称，并设置到MeetingDetails对象中
-            Dept dept = deptServiceImpl.getDeptById(meetingDetails1.getDeReserveDepartmentId());
-            meetingDetails1.setDeReserveDepartment(dept.getDeptName());
-            /*TODO:调用接口：根据预订人id查询出预定人的姓名，并设置到MeetingDetails对象中*/
-            SimpleUser userById = (SimpleUser)userServiceImpl.getUserById(meetingDetails1.getDeReserveId()).getData();
-            meetingDetails1.setDeReserve(userById.getTrueName());
-        }
-
-        //TODO:调用接口参数当前操作需要的权限，得到true或false
-            /*flag = 调用是否有权限的接口*/
-        //TODO:调用接口token获得当前用户的id
-        SystemResult currentUser = userServiceImpl.getCurrentUser();
-        SimpleUser user = (SimpleUser)currentUser.getData();
-        int deReserveId = user.getUserId();
-        /*int deReserveId = 2;*/
-
-        //获得上次会议时间
-        MeetingDetails lastTime = meetingDetailsMapperImpl.selectLastTime(startTime);
-        if(lastTime != null){
-            meetingTime.setLastMeetingTime(lastTime.getDeMeetingStart());
-            //System.out.println(meetingTime.getLastMeetingTime());
-        }
-        //获得下次会议时间
-        MeetingDetails nextTime = meetingDetailsMapperImpl.selectNextTime(endTime);
-        if(nextTime != null){
-            meetingTime.setNextMeetingTime(nextTime.getDeMeetingStart());
-            //System.out.println(meetingTime.getNextMeetingTime());
-        }
-
-        meetingListMap.put("meetingTime ",meetingTime);  //将会议时间对象添加到map中
-
-        if(flag){
-            //有查看别人的权限
-            for(MeetingDetails md:meetingDetailsList){
-                md.setDeShow(1);
-            }
-            meetingListMap.put("meetingDetailsList",meetingDetailsList);
-            result.setStatus(200);
-            meetingListMap.put("result",result);
-            return meetingListMap;
-        }else{
-            //没有查看别人的权限
-            for(MeetingDetails md:meetingDetailsList){
-                if(md.getDeReserveId() == deReserveId){
-                    md.setDeShow(1);
-                }
-            }
-            meetingListMap.put("meetingDetailsList",meetingDetailsList);
-            result.setStatus(200);
-            meetingListMap.put("result",result);
-            return meetingListMap;
-        }
-    }
 
     //查询上次会议的时间
     @Override
@@ -414,28 +417,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     }
 
 
-    /*    //根据会议室id查询会议详情
-        @Override
-        public Map findRoomIdMeetingDetails(Integer deRoomId) {
-            Map detailsMap = new HashMap<String,Object>();
-            Result result = new Result();
-            if(deDetailsId > 0){
-                //当传递
-                MeetingDetails meetingDetails = meetingDetailsMapperImpl.findMeetingDetails(deDetailsId);
-                if(meetingDetails != null){
-                    result.setStatus(200);
-                    detailsMap.put("meetingDetails",meetingDetails);
-                }else {
-                    result.setStatus(400);
-                    detailsMap.put("meetingDetails",meetingDetails);
-                }
-                return detailsMap;
-            }else {
-                result.setStatus(400);
-                detailsMap.put("result",result);
-                return detailsMap;
-            }
-        }*/
+
 
     //添加会议详情
     @Override
@@ -459,6 +441,83 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             return jsonObject;
         }
 
+    }
+
+    //保存添加会议详情
+    @Override
+    public Result addMeetingDetails(MeetingDetails meetingDetails) {
+        String deptReservePersonId = null; //部门预定人的id
+        Result result = new Result();
+        MeetingDetails mDetails =  new MeetingDetails();
+        int roomId = meetingDetails.getDeRoomId();
+        int deReserveId = meetingDetails.getDeReserveId();
+
+        boolean flag = false;
+        Date meetingStart = meetingDetails.getDeMeetingOver(); //添加新会议的开始时间
+        Date meetingOver = meetingDetails.getDeMeetingStart();  //添加新会议的结束时间
+
+        //TODO:调用接口根据部门id查询出部门预订人的id
+        List<User> users = userServiceImpl.selectUserByDeptIdAndRoleId(meetingDetails.getDeReserveDepartmentId(), 3);
+        int count =0;
+        for(User user:users){
+            if(count == 0){
+                deptReservePersonId = user.getUserId()+"";
+            }else{
+                deptReservePersonId = deptReservePersonId+","+user.getUserId();
+            }
+            count++;
+        }
+        meetingDetails.setDeDepartmentReservePersonId(deptReservePersonId);
+
+        //查询出指定日期指定会议室的会议详情
+        Date startTime = meetingUtils.getStartTime(meetingStart); //获得指定日期的开始时间
+        Date endTime = meetingUtils.getEndTime(meetingOver);  //获得指定日期的结束时间
+        mDetails.setDeMeetingStart(startTime);
+        mDetails.setDeMeetingOver(endTime);
+        mDetails.setDeRoomId(roomId);
+        List<MeetingDetails> meetingDetailsAll = meetingDetailsMapperImpl.selectMeetingDetails(mDetails);
+        //判断指定日期指定的会议室已有会议有没有跟新添加会议的时间冲突
+        if(meetingDetailsAll.size()>0){
+            for (MeetingDetails md:meetingDetailsAll){
+                if(md.getDeMeetingStart().compareTo(meetingStart) == -1){
+                    if(md.getDeMeetingOver().compareTo(meetingStart) == -1){
+                        flag=true;
+                    }else {
+                        flag=false;
+                    }
+                }else {
+                    if(md.getDeMeetingStart().compareTo(meetingOver) == 1){
+                        flag = true;
+                    }else {
+                        flag = false;
+                    }
+                }
+            }
+        }else{
+            flag = true;
+        }
+
+
+        if(flag){
+            //没有冲突,添加会议
+            if(deReserveId > 0){
+                int update = meetingDetailsMapperImpl.insertSelective(meetingDetails);
+                if(update == 1){
+                    result.setStatus(200);
+                    return result;
+                }else {
+                    result.setStatus(400);
+                    return result;
+                }
+            }else{
+                result.setStatus(400);
+                return result;
+            }
+
+        }else{
+            result.setStatus(400);
+            return result;
+        }
     }
 
     //历史查询
@@ -518,82 +577,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         return jsonObject;
     }
 
-    //保存添加会议详情
-    @Override
-    public Result addMeetingDetails(MeetingDetails meetingDetails) {
-        String deptReservePersonId = null; //部门预定人的id
-        Result result = new Result();
-        MeetingDetails mDetails =  new MeetingDetails();
-        int roomId = meetingDetails.getDeRoomId();
-        int deReserveId = meetingDetails.getDeReserveId();
 
-        boolean flag = false;
-        Date meetingStart = meetingDetails.getDeMeetingOver(); //添加新会议的开始时间
-        Date meetingOver = meetingDetails.getDeMeetingStart();  //添加新会议的结束时间
-        
-        //TODO:调用接口根据部门id查询出部门预订人的id
-        List<User> users = userServiceImpl.selectUserByDeptIdAndRoleId(meetingDetails.getDeReserveDepartmentId(), 3);
-        int count =0;
-        for(User user:users){
-            if(count == 0){
-                deptReservePersonId = user.getUserId()+"";
-            }else{
-                deptReservePersonId = deptReservePersonId+","+user.getUserId();
-            }
-            count++;
-        }
-        meetingDetails.setDeDepartmentReservePersonId(deptReservePersonId);
-        
-        //查询出指定日期指定会议室的会议详情
-        Date startTime = meetingUtils.getStartTime(meetingStart); //获得指定日期的开始时间
-        Date endTime = meetingUtils.getEndTime(meetingOver);  //获得指定日期的结束时间
-        mDetails.setDeMeetingStart(startTime);
-        mDetails.setDeMeetingOver(endTime);
-        mDetails.setDeRoomId(roomId);
-        List<MeetingDetails> meetingDetailsAll = meetingDetailsMapperImpl.selectMeetingDetails(mDetails);
-        //判断指定日期指定的会议室已有会议有没有跟新添加会议的时间冲突
-        if(meetingDetailsAll.size()>0){
-            for (MeetingDetails md:meetingDetailsAll){
-                if(md.getDeMeetingStart().compareTo(meetingStart) == -1){
-                    if(md.getDeMeetingOver().compareTo(meetingStart) == -1){
-                        flag=true;
-                    }else {
-                        flag=false;
-                    }
-                }else {
-                    if(md.getDeMeetingStart().compareTo(meetingOver) == 1){
-                        flag = true;
-                    }else {
-                        flag = false;
-                    }
-                }
-            }
-        }else{
-            flag = true;
-        }
-        
-
-        if(flag){
-            //没有冲突,添加会议
-            if(deReserveId > 0){
-                int update = meetingDetailsMapperImpl.insertSelective(meetingDetails);
-                if(update == 1){
-                    result.setStatus(200);
-                    return result;
-                }else {
-                    result.setStatus(400);
-                    return result;
-                }
-            }else{
-                result.setStatus(400);
-                return result;
-            }
-
-        }else{
-            result.setStatus(400);
-            return result;
-        }
-    }
 
 
     //加载pub模板（）
