@@ -2,6 +2,9 @@ package com.ahav.reserve.controller;
 
 import com.ahav.reserve.pojo.MeetingDetails;
 import com.ahav.reserve.service.IMeetingDetailsService;
+import com.ahav.system.entity.SystemResult;
+import com.ahav.system.service.LoginService;
+import com.ahav.system.service.UserService;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -21,6 +24,9 @@ public class historySelectCon {
     @Autowired
     private IMeetingDetailsService meetingDetailsServiceImpl;
 
+    @Autowired
+    private UserService loginService;
+
     @RequestMapping(value = "/reserve/history/selectHistory",method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value="历史查询", notes="按照查询条件找到相应的信息")
@@ -38,7 +44,14 @@ public class historySelectCon {
             @ApiImplicitParam(paramType="query", name = "pageSize", value = "每页展示几条内容", required = false, dataType = "Integer"),
     })
     public JSONObject selectHistory(MeetingDetails meetingDetails, @RequestParam(defaultValue = "1") Integer pageNum,@RequestParam(defaultValue = "10")Integer pageSize)  {
-
         return meetingDetailsServiceImpl.selectHistory(meetingDetails,pageNum,pageSize);
     }
+
+
+    @RequestMapping(value = "/test/userLogin",method = RequestMethod.GET)
+    @ResponseBody
+    public SystemResult userLogin(){
+       return loginService.getUserByName("mht");
+    }
+
 }

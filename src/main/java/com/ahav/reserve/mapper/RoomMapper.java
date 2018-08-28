@@ -8,6 +8,7 @@ import java.util.List;
 
 @Mapper
 @Repository
+
 public interface RoomMapper {
     int deleteByPrimaryKey(Integer meetingRoomId);
 
@@ -26,5 +27,6 @@ public interface RoomMapper {
     String selectRoomName(Integer roomId);
     //通过会议室名称查询会议室
     Room selectRoomByName(String roomName);
+
 
 }

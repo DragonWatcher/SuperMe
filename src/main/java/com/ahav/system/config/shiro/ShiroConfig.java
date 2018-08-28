@@ -30,6 +30,9 @@ public class ShiroConfig {
 		// 网易单点登录接口测试
 		filterChainMap.put("/ntes/login", "anon");
 
+		//测试用户登陆
+		filterChainMap.put("/test/userLogin", "anon");
+
 		filterChainMap.put("/swagger-ui.html", "anon");
 		filterChainMap.put("/webjars/**", "anon");
 		filterChainMap.put("/v2/**", "anon");
