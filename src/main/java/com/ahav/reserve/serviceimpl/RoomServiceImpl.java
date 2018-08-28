@@ -1,9 +1,8 @@
 package com.ahav.reserve.serviceimpl;
 
+import com.ahav.reserve.mapper.MeetingDetailsMapper;
 import com.ahav.reserve.mapper.RoomMapper;
-import com.ahav.reserve.pojo.Result;
-import com.ahav.reserve.pojo.Room;
-import com.ahav.reserve.pojo.RoomSettings;
+import com.ahav.reserve.pojo.*;
 import com.ahav.reserve.service.IRoomService;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -19,27 +18,40 @@ public class RoomServiceImpl implements IRoomService {
     private RoomMapper roomMapperImpl;
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private MeetingDetailsMapper  meetingDetailsMapperImpl;
 
 
     //修改pub模板（查看会议室的pub模板）
     @Override
-    public JSONObject selectRoomPubTemplate(int roomId) {
+    public JSONObject selectRoomPubTemplate(int deDetailsId) {
         //查询对应会议室对应的pub的Ip
         Result result = new Result();
         JSONObject jsonObject = new JSONObject();
-        Room room = roomMapperImpl.selectByPrimaryKey(roomId);
-        String pubIp = room.getPubIp();
-        //调用api接口
-        String body = restTemplate.getForEntity("http://"+pubIp+"/ajax/presetmode/list", String.class).getBody();
-        if(body != null && body != ""){
-            result.setStatus(200);
-            JSONArray pubTemplateArray = JSONArray.parseArray(body);//将json数组格式的字符串，转为json数组
-            jsonObject.put("pubTemplateArray",pubTemplateArray);//将json数组封装到json对象中
-            jsonObject.put("result",result);//将json数组封装到json对象中
-            return jsonObject;
+        MeetingDetails meetingDetails = meetingDetailsMapperImpl.selectByPrimaryKey(deDetailsId);
+        if(meetingDetails != null){
+            Room room = roomMapperImpl.selectByPrimaryKey(meetingDetails.getDeRoomId());
+            String pubIp = room.getPubIp();
+            //调用api接口
+            String body = restTemplate.getForEntity("http://"+pubIp+"/ajax/presetmode/list", String.class).getBody();
+            String dePubTemplate = meetingDetails.getDePubTemplate();//获得当前会议室的模板
+            if(body != null && body != ""){
+                result.setStatus(200);
+                JSONArray pubTemplateArray = JSONArray.parseArray(body);//将json数组格式的字符串，转为json数组
+                jsonObject.put("pubTemplateArray",pubTemplateArray);//将json数组封装到json对象中
+                jsonObject.put("result",result);//将json数组封装到json对象中
+                PubTemplate currentPubTemplate = jsonObject.parseObject(dePubTemplate, PubTemplate.class);//将字符串转为json对象
+                jsonObject.put("currentPubTemplate",currentPubTemplate);
+                return jsonObject;
+            }else {
+                result.setStatus(400);
+                jsonObject.put("result",result);
+                return jsonObject;
+            }
         }else {
+            //没有这个会议详情
             result.setStatus(400);
-            jsonObject.put("result",result);//将json数组封装到json对象中
+            jsonObject.put("result",result);
             return jsonObject;
         }
     }

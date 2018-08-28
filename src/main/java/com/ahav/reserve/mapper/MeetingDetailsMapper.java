@@ -39,5 +39,6 @@ public interface MeetingDetailsMapper {
     public List<MeetingDetails> byReserveIdselectMeetingDetails(Integer ReserveId);
     //历史查询
     List<MeetingDetails> selectHistory (MeetingDetails meetingDetails);
-
+    //保存修改会议详情，排除当前会议
+    List<MeetingDetails> byExcludeDetailsIdselectMeetingDetails(MeetingDetails mDetails);
 }

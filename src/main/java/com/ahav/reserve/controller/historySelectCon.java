@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@Api(value = "历史查询")
+@Api(value = "预约|历史查询模块")
 public class historySelectCon {
 
     @Autowired
