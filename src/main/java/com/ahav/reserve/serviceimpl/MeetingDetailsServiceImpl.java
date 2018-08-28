@@ -37,8 +37,6 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     @Autowired
     private UserService userServiceImpl;
 
-    private static int i = 0;//会议遍历序号
-
     //查询所有会议详情（初始化界面）
     @Override
     public Map findMeetingDetailsAll() {
@@ -324,23 +322,26 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         if(meetingName != null && "" != meetingName){
             meetingDetails.setDeMeetingName(meetingName);
         }
-        if(reserveName != null &&  "" != reserveName ){
-            meetingDetails.setDeReserve(reserveName);
-        }
 
        // TODO:如果预订人不等于Null则调用接口：根据从前台获取的预定人姓名模糊查询出所有符合条件的预定人ID
-            //思路遍历预定人的i
+            //思路遍历预定人的id
                if(reserveName != null && "" != reserveName){
                     List<SimpleUser> users = (List<SimpleUser>) userServiceImpl.getUserByTrueName(reserveName).getData();
-                    List<MeetingDetails>  meetingDetails1 = meetingDetailsMapperImpl.byReserveIdselectMeetingDetails(users.get(i).getUserId());
-                    for(int i=0;meetingDetails1.size()>i;i++){
-                        /*meetingDetails.setDeReserveId(users.get(i).getUserId());
-                        List<MeetingDetails> meetingDetailsList1=meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);*/
-                        meetingDetailsList.add(meetingDetails1.get(i));
-                 }
-             }else{
-                meetingDetailsList = meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
-             }
+
+                    for(SimpleUser user:users){
+                        meetingDetails.setDeReserveId(user.getUserId());
+                        //因为查询体条件体中有id这一条件，所以结果最多也就只有有一条
+                        List<MeetingDetails> meetingDetails1 = meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
+                        meetingDetailsList.add(meetingDetails1.get(0));
+/*                        List<MeetingDetails>  meetingDetails1 = meetingDetailsMapperImpl.byReserveIdselectMeetingDetails(,);*/
+                       /* if(meetingDetails1.size()>0){
+                            meetingDetailsList.add(meetingDetails1.get(0));
+                        }*/
+                    }
+               }else{
+                   meetingDetailsList = meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
+               }
+
 
 
         //  List<MeetingDetails> meetingDetailsList = meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
@@ -350,7 +351,6 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             //TODO:调用接口：根据部门id查询部门名称，并设置到MeetingDetails对象中
             Dept dept = deptServiceImpl.getDeptById(meetingDetails1.getDeReserveDepartmentId());
             meetingDetails1.setDeReserveDepartment(dept.getDeptName());
-            /*meetingDetails1.setDeReserveDepartment("销售部");*/
             /*TODO:调用接口：根据预订人id查询出预定人的姓名，并设置到MeetingDetails对象中*/
             SimpleUser userById = (SimpleUser)userServiceImpl.getUserById(meetingDetails1.getDeReserveId()).getData();
             meetingDetails1.setDeReserve(userById.getTrueName());
@@ -612,38 +612,43 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
         //对时间进行格式化
         DateFormat b=new SimpleDateFormat("yyyy年MM月dd日 HH时mm分");
-        //第i个会议详情
-        MeetingDetails meetingDetails = meetingDetailsAll.get(i);
-        Date meetingStartTime = meetingDetails.getDeMeetingStart();
-        try {
-            currentTime = b.parse(b.format(currentTime));
-            meetingStartTime = b.parse(b.format(meetingStartTime));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+
 
         //会议个数
         int meetingCount = meetingDetailsAll.size();
         //遍历所有会议，取出会议的开时间跟当前时间比较，如果相等则调用加载pub模板的aqi
-        if(meetingStartTime == currentTime){
-            i++;
+        for(MeetingDetails me:meetingDetailsAll){
+            //第i个会议详情
+            Date meetingStartTime = me.getDeMeetingStart();
+            try {
+                currentTime = b.parse(b.format(currentTime));  //当前时间
+                meetingStartTime = b.parse(b.format(meetingStartTime)); //第i个会议开始的时间
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if(meetingStartTime == currentTime){
             /*判断当前是否是无模板，如果是则不去调用加载pub模板api*/
-            //调用pub加载pub模板的aqi
-                //获取pubIp
-            Integer roomId = meetingDetails.getDeRoomId();
-            String pubIp = RoomMapperImpl.selectByPrimaryKey(roomId).getPubIp();
-            //获取模板id
-            String dePubTemplate = meetingDetails.getDePubTemplate();
-            PubTemplate pubTemplate = JSON.parseObject(dePubTemplate, PubTemplate.class);//将json字符串转为对应的对象
-            //调用pub加载pub模板的aqi
-            restTemplate.getForEntity("http://"+pubIp+"/ajax/presetmode/load?Id="+pubTemplate.getId(), String.class).getBody();
-        }
-        //如果会议序号变成了当天会议总数减1就代表，当天的会议遍历完了那么会序号置为0开始等待开始比较下一天的会议
-        if(i==meetingCount-1){
-            i=0;
+                //调用pub加载pub模板的aqi
+                    //获取pubIp
+                Integer roomId = me.getDeRoomId();
+                String pubIp = RoomMapperImpl.selectByPrimaryKey(roomId).getPubIp();
+                //获取模板id
+                String dePubTemplate = me.getDePubTemplate();
+                PubTemplate pubTemplate = JSON.parseObject(dePubTemplate, PubTemplate.class);//将json字符串转为对应的对象
+                //调用pub加载pub模板的aqi
+                restTemplate.getForEntity("http://"+pubIp+"/ajax/presetmode/load?Id="+pubTemplate.getId(), String.class).getBody();
+            }
         }
 
     }
+
+
+    //根据预定人姓名查询预定人ID
+    @Override
+    public int findReserveId(String reserveName) {
+        return meetingDetailsMapperImpl.selectReserveId(reserveName);
+    }
+
 
 
     //查看会议当前模板
@@ -678,13 +683,6 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         }
         return result;
     }
-
-    //根据预定人姓名查询预定人ID
-    @Override
-    public int findReserveId(String reserveName) {
-        return meetingDetailsMapperImpl.selectReserveId(reserveName);
-    }
-
 
 
 }

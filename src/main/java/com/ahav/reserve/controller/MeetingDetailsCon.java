@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@Api(value = "预约管理，预约添加")
+@Api(value = "预约|预约管理，添加预约模块")
 public class MeetingDetailsCon {
     @Autowired
     private IMeetingDetailsService meetingDetailsServiceImpl;
@@ -108,7 +108,6 @@ public class MeetingDetailsCon {
         return meetingDetailsServiceImpl.findMeetingDetails(deDetailsId);
     }
     //添加会议详情
-    //TODO:是是
     @RequestMapping(value = "/reserve/add/selectMeetingDetails",method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value="添加会议详情", notes="添加会议详情第一步")

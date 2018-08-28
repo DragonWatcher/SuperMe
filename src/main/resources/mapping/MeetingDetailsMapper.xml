@@ -45,7 +45,14 @@
         SELECT
         <include refid="Base_Column_List" />
         from meeting_details
-        where de_reserve_id = #{deReserveId,jdbcType=INTEGER}
+        where
+        <if test="de_reserve_id != null">
+         AND de_reserve_id = #{deReserveId,jdbcType=INTEGER}
+        </if>
+        <if test="deMeetingName != null">
+         AND de_meeting_name LIKE "%"#{deMeetingName,jdbcType=VARCHAR}"%"
+        </if>
+
   </select>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
