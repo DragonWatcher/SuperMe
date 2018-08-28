@@ -22,9 +22,11 @@ import com.ahav.system.entity.SimpleUser;
 import com.ahav.system.entity.SystemResult;
 import com.ahav.system.entity.User;
 import com.ahav.system.service.LoginService;
+import com.ahav.system.service.NtesService;
 import com.ahav.system.service.UserService;
 import com.ahav.system.util.Encrypt;
 import com.ahav.system.util.SystemConstant;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -35,7 +37,7 @@ import com.github.pagehelper.PageInfo;
  * 日期： 2018年8月5日-下午7:10:12<br>
  */
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, NtesService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
@@ -333,5 +335,11 @@ public class UserServiceImpl implements UserService {
         } else {
             return new SystemResult(HttpStatus.OK.value(), "设置头像失败", Boolean.FALSE);
         }
+    }
+
+    @Override
+    public JSONObject GetUnitList() {
+        
+        return null;
     }
 }
