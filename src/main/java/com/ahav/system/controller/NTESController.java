@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ahav.system.service.LoginService;
+import com.ahav.system.service.NtesService;
+import com.alibaba.fastjson.JSONObject;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,6 +21,9 @@ public class NTESController {
     @Autowired
     private LoginService loginService;
     
+    @Autowired
+    private NtesService ntesService;
+    
     /**
      * 网易邮箱单点登录测试接口
      * 默认登录账号是：SystemConstant.DEFAULT_ACCOUNT
@@ -27,8 +32,9 @@ public class NTESController {
      */
     @ApiOperation(value = "单点登录接口", notes = "单点登录跳转，默认登录账号：haotian.mou@ahav.com.cn")
     @GetMapping("/login")
-    public void ntesLogin(HttpServletResponse response) {
-        loginService.ntesLogin(null, response);
+    public JSONObject ntesLogin(HttpServletResponse response) {
+//        loginService.ntesLogin(null, response);
+        return ntesService.getUnitList();
     }
 
 }
