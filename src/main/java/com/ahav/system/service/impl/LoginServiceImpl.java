@@ -46,7 +46,7 @@ public class LoginServiceImpl implements LoginService {
         } catch (AuthenticationException e) {
             e.printStackTrace();
             logger.info("用户名或密码错误>>>username:{},password:{}", username, password);
-            loginResult = new SystemResult(HttpStatus.FORBIDDEN.value(), "用户名或密码错误，登录失败！", null);
+            return new SystemResult(HttpStatus.FORBIDDEN.value(), "用户名或密码错误，登录失败！", null);
         }
         logger.info("用户登录成功>>>username:{}", username);
 
@@ -69,7 +69,7 @@ public class LoginServiceImpl implements LoginService {
         // 当前时间戳
         long currTime = System.currentTimeMillis();
 
-        // 安恒网易企业邮箱域名，为啥域名登录前后会变化？mail.ahav.com.cn/owa/
+        // 安恒网易企业邮箱域名
         String domain = SystemConstant.AHAV_DOMAIN;
 
         // 私钥
