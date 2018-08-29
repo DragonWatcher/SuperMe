@@ -20,6 +20,7 @@ import com.ahav.system.dao.UserRoleDao;
 import com.ahav.system.entity.SimpleUser;
 import com.ahav.system.entity.SystemResult;
 import com.ahav.system.entity.User;
+import com.ahav.system.enums.NtesFunc;
 import com.ahav.system.rsatool.HttpPost;
 import com.ahav.system.rsatool.RSASignatureToQiye;
 import com.ahav.system.service.LoginService;
@@ -340,20 +341,19 @@ public class UserServiceImpl implements UserService, NtesService {
 
     @Override
     public JSONObject getUnitList() {
-        String url = "https://apihz.qiye.163.com/qiyeservice/api/unit/getUnitList";
+        String url = SystemConstant.NTES_API_BASE_URL + NtesFunc.UNIT_GET_UNIT_LIST.func();
         long time = System.currentTimeMillis();
 
         String sign = "domain=" + SystemConstant.AHAV_DOMAIN + "&product=" + SystemConstant.QIYE_PRODUCT + "&time="
                 + time;
-        System.out.println(sign);
         sign = RSASignatureToQiye.generateSigature(SystemConstant.PRI_KEY, sign);
         url = url + "?" + "domain=" + SystemConstant.AHAV_DOMAIN + "&product=" + SystemConstant.QIYE_PRODUCT + "&sign="
                 + sign + "&time=" + time;
-        System.out.println(url);
 
         String res = new HttpPost().post(url);
         JSONObject unitListJo = JSONObject.parseObject(res);
 
         return unitListJo;
     }
+    
 }
