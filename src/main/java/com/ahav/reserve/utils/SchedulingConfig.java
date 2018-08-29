@@ -21,6 +21,6 @@ public class SchedulingConfig {
     public void getToken() {
         //调用加载pub模板方法
         //logger.info("getToken定时任务启动");
-        System.out.println("99999999999999999999999999999999999999999999999999999999");
+        /*System.out.println("99999999999999999999999999999999999999999999999999999999");*/
     }
 }
