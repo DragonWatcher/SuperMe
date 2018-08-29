@@ -63,6 +63,6 @@ public interface DeptDao {
      * @param dataName
      * @return
      */
-    long selectNtesDataVer(String dataName);
+    Long selectNtesDataVer(String dataName);
 
 }
