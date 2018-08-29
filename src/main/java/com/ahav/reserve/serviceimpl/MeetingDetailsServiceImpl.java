@@ -316,25 +316,27 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             //判断修改的会议时间跟以有的会议时间有没有冲突
             
             if(meetingDetailsAll.size()>0){
-                //如果查到了会议则按个比较会议时间有没有冲突
                 for (MeetingDetails md:meetingDetailsAll){
-                    if(md.getDeMeetingStart().compareTo(stratTime) == -1){
-                        if(md.getDeMeetingOver().compareTo(stratTime) == -1){
+                	//如果查到了会议则按个比较会议时间有没有冲突
+                    if(md.getDeMeetingStart().before(stratTime)){  //判断已有会议开始时间，是否在修改会议开始时间之前
+                        if(md.getDeMeetingOver().before(stratTime)){  //判断已有会议结束时间，是否在修改会议开始时间之前
                             flag=true;
                         }else {
                             flag=false;
+                            break;
                         }
                     }else {
-                        if(md.getDeMeetingStart().compareTo(overTime) == 1){
+                        if(md.getDeMeetingStart().after(overTime)){  //判断已有会议开始时间，是否在修改会议结束时间之后
                             flag = true;
                         }else {
                             flag = false;
+                            break;
                         }
                     }
                 }
             }else{
-                //没有查到指定条件下有会议，所以可以直接修改
-                flag=true;
+            	//没有查到指定条件下有会议，所以可以直接修改
+                flag = true;
             }
             
 
@@ -455,14 +457,15 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         int deReserveId = meetingDetails.getDeReserveId();
 
         boolean flag = false;
-        Date meetingStart = meetingDetails.getDeMeetingOver(); //添加新会议的开始时间
-        Date meetingOver = meetingDetails.getDeMeetingStart();  //添加新会议的结束时间
+        Date meetingStart = meetingDetails.getDeMeetingStart(); //添加新会议的开始时间
+        Date meetingOver = meetingDetails.getDeMeetingOver();  //添加新会议的结束时间
 
-        //TODO:调用接口根据部门id查询出部门预订人的id
+        //TODO:调用接口根据部门id已及角色id查询出部门预订人的id（一个部门可以有多个部门预定人）
         List<User> users = userServiceImpl.selectUserByDeptIdAndRoleId(meetingDetails.getDeReserveDepartmentId(), 3);
         int count =0;
         for(User user:users){
             if(count == 0){
+                //取出第i个部门预定人的id
                 deptReservePersonId = user.getUserId()+"";
             }else{
                 deptReservePersonId = deptReservePersonId+","+user.getUserId();
@@ -479,7 +482,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         mDetails.setDeRoomId(roomId);
         List<MeetingDetails> meetingDetailsAll = meetingDetailsMapperImpl.selectMeetingDetails(mDetails);
         //判断指定日期指定的会议室已有会议有没有跟新添加会议的时间冲突
-        if(meetingDetailsAll.size()>0){
+/*        if(meetingDetailsAll.size()>0){
             for (MeetingDetails md:meetingDetailsAll){
                 if(md.getDeMeetingStart().compareTo(meetingStart) == -1){
                     if(md.getDeMeetingOver().compareTo(meetingStart) == -1){
@@ -492,6 +495,27 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                         flag = true;
                     }else {
                         flag = false;
+                    }
+                }
+            }
+        }else{
+            flag = true;
+        }*/
+        if(meetingDetailsAll.size()>0){
+            for (MeetingDetails md:meetingDetailsAll){
+                if(md.getDeMeetingStart().before(meetingStart)){  //判断已有会议开始时间，是否在修改会议开始时间之前
+                    if(md.getDeMeetingOver().before(meetingStart)){  //判断已有会议结束时间，是否在修改会议开始时间之前
+                        flag=true;
+                    }else {
+                        flag=false;
+                        break;
+                    }
+                }else {
+                    if(md.getDeMeetingStart().after(meetingOver)){  //判断已有会议开始时间，是否在修改会议结束时间之后
+                        flag = true;
+                    }else {
+                        flag = false;
+                        break;
                     }
                 }
             }

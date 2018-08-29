@@ -30,6 +30,7 @@
         FROM sys_user
         WHERE username = #{username}
     </select>
+
     <!-- 添加新成员 -->
     <insert id="insertUser" parameterType="com.ahav.system.entity.User" useGeneratedKeys="true" keyProperty="userId">
         INSERT INTO sys_user
