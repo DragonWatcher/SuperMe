@@ -39,7 +39,7 @@ import com.github.pagehelper.PageInfo;
  * 日期： 2018年8月5日-下午7:10:12<br>
  */
 @Service
-public class UserServiceImpl implements UserService, NtesService {
+public class UserServiceImpl implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
@@ -338,22 +338,4 @@ public class UserServiceImpl implements UserService, NtesService {
             return new SystemResult(HttpStatus.OK.value(), "设置头像失败", Boolean.FALSE);
         }
     }
-
-    @Override
-    public JSONObject getUnitList() {
-        String url = SystemConstant.NTES_API_BASE_URL + NtesFunc.UNIT_GET_UNIT_LIST.func();
-        long time = System.currentTimeMillis();
-
-        String sign = "domain=" + SystemConstant.AHAV_DOMAIN + "&product=" + SystemConstant.QIYE_PRODUCT + "&time="
-                + time;
-        sign = RSASignatureToQiye.generateSigature(SystemConstant.PRI_KEY, sign);
-        url = url + "?" + "domain=" + SystemConstant.AHAV_DOMAIN + "&product=" + SystemConstant.QIYE_PRODUCT + "&sign="
-                + sign + "&time=" + time;
-
-        String res = new HttpPost().post(url);
-        JSONObject unitListJo = JSONObject.parseObject(res);
-
-        return unitListJo;
-    }
-    
 }
