@@ -68,7 +68,7 @@ public class MeetingDetailsCon {
     @RequestMapping (value = "/reserve/manage/updateMeetingDetails",method = RequestMethod.PUT)
     //@PutMapping("MeetingDetails")
     @ResponseBody
-    @ApiOperation(value="保存修改会议", notes="修改会议的第二步")
+    @ApiOperation(value="保存修改会议", notes="修改会议的第二步,注意修改的时间秒级单位要为00")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType="query", name = "deDetailsId", value = "会议详情ID", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deGrade", value = "会议级别", required = true, dataType = "String"),
@@ -119,7 +119,7 @@ public class MeetingDetailsCon {
     //保存添加会议详情
     @RequestMapping(value = "/reserve/add/insertMeetingDetails",method = RequestMethod.POST)
     @ResponseBody
-    @ApiOperation(value="保存添加会议", notes="添加会议的第二步")
+    @ApiOperation(value="保存添加会议", notes="添加会议的第二步,注意添加的时间秒级单位要为00")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType="query", name = "deGrade", value = "会议级别", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deGradeId", value = "会议级别ID", required = true, dataType = "Integer"),

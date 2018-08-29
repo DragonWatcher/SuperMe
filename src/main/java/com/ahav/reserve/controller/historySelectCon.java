@@ -24,8 +24,8 @@ public class historySelectCon {
     @Autowired
     private IMeetingDetailsService meetingDetailsServiceImpl;
 
-    @Autowired
-    private UserService loginService;
+    /*@Autowired
+    private UserService loginService;*/
 
     @RequestMapping(value = "/reserve/history/selectHistory",method = RequestMethod.GET)
     @ResponseBody
@@ -48,10 +48,10 @@ public class historySelectCon {
     }
 
 
-    @RequestMapping(value = "/test/userLogin",method = RequestMethod.GET)
+    /*@RequestMapping(value = "/test/userLogin",method = RequestMethod.GET)
     @ResponseBody
     public SystemResult userLogin(){
        return loginService.getUserByName("mht");
-    }
+    }*/
 
 }
