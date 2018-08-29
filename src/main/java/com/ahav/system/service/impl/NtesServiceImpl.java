@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 import com.ahav.system.dao.DeptDao;
 import com.ahav.system.entity.SystemResult;
@@ -14,6 +15,7 @@ import com.ahav.system.service.NtesService;
 import com.ahav.system.util.SystemConstant;
 import com.alibaba.fastjson.JSONObject;
 
+@Service
 public class NtesServiceImpl implements NtesService {
     
     private static final Logger logger = LoggerFactory.getLogger(NtesServiceImpl.class);
