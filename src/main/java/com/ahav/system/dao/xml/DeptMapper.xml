@@ -29,4 +29,11 @@
         SELECT * FROM sys_dept WHERE dept_id = #{deptId}
     </select>
     
+    <!-- 根据数据名称查询数据版本 -->
+    <select id="selectNtesDataVer" resultType="long">
+        SELECT data_ver
+        FROM ntes_data_ver
+        WHERE data_name = #{dataName}
+    </select>
+    
 </mapper>        

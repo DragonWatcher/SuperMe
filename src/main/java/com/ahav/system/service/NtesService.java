@@ -1,5 +1,6 @@
 package com.ahav.system.service;
 
+import com.ahav.system.entity.SystemResult;
 import com.alibaba.fastjson.JSONObject;
 
 /**
@@ -10,6 +11,12 @@ import com.alibaba.fastjson.JSONObject;
  */
 public interface NtesService {
     
-    JSONObject GetUnitList();
+    /**
+     * 更新本地部门数据
+     * <br>作者： mht<br> 
+     * 时间：2018年8月29日-下午2:51:22<br>
+     * @return
+     */
+    SystemResult updLocalDeptTable();
 
 }

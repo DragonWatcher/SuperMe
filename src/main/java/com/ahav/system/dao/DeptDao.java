@@ -55,5 +55,14 @@ public interface DeptDao {
      * @return
      */
     Dept getDeptById(Integer deptId);
+    
+    /**
+     * 查询网易数据版本
+     * <br>作者： mht<br> 
+     * 时间：2018年8月29日-下午3:19:16<br>
+     * @param dataName
+     * @return
+     */
+    long selectNtesDataVer(String dataName);
 
 }
