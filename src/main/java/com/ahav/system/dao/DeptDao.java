@@ -3,6 +3,7 @@ package com.ahav.system.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.ahav.system.entity.Dept;
 import com.ahav.system.enums.NtesDataVer;
@@ -73,5 +74,5 @@ public interface DeptDao {
      * @param dataName
      * @param dataVer
      */
-    void updateDataVer(NtesDataVer dataName, Long dataVer);
+    void updateDataVer(@Param("dataName") NtesDataVer dataName, @Param("dataVer") Long dataVer);
 }
