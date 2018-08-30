@@ -6,7 +6,7 @@
     <result column="de_grade" jdbcType="VARCHAR" property="deGrade" />
     <result column="de_room_id" jdbcType="INTEGER" property="deRoomId" />
     <result column="de_meeting_name" jdbcType="VARCHAR" property="deMeetingName" />
-    <result column="de_reserve_department_id" jdbcType="INTEGER" property="deReserveDepartmentId" />
+    <result column="de_reserve_department_id" jdbcType="VARCHAR" property="deReserveDepartmentId" />
     <result column="de_reserve_id" jdbcType="INTEGER" property="deReserveId" />
     <result column="de_reserve_phone" jdbcType="VARCHAR" property="deReservePhone" />
     <result column="de_reserve_number" jdbcType="INTEGER" property="deReserveNumber" />
@@ -94,7 +94,7 @@
         AND de_meeting_name LIKE "%"#{deMeetingName,jdbcType=VARCHAR}"%"
       </if>
       <if test="deReserveDepartmentId != null">
-        AND de_reserve_department_id=#{deReserveDepartmentId,jdbcType=INTEGER}
+        AND de_reserve_department_id=#{deReserveDepartmentId,jdbcType=VARCHAR}
       </if>
       <if test="deReserveId != null">
         AND de_reserve_id=#{deReserveId,jdbcType=INTEGER}
@@ -155,7 +155,7 @@
         AND de_meeting_name LIKE "%"#{deMeetingName,jdbcType=VARCHAR}"%"
       </if>
       <if test="deReserveDepartmentId != null">
-        AND de_reserve_department_id=#{deReserveDepartmentId,jdbcType=INTEGER}
+        AND de_reserve_department_id=#{deReserveDepartmentId,jdbcType=VARCHAR}
       </if>
       <if test="deReserveId != null">
         AND de_reserve_id=#{deReserveId,jdbcType=INTEGER}
@@ -209,7 +209,7 @@
         AND de_meeting_name LIKE "%"#{deMeetingName,jdbcType=VARCHAR}"%"
       </if>
       <if test="deReserveDepartmentId != null">
-        AND de_reserve_department_id=#{deReserveDepartmentId,jdbcType=INTEGER}
+        AND de_reserve_department_id=#{deReserveDepartmentId,jdbcType=VARCHAR}
       </if>
       <if test="deReserveId != null">
         AND de_reserve_id=#{deReserveId,jdbcType=INTEGER}
@@ -245,7 +245,7 @@
     de_meeting_status, de_date_count,
     de_grade_id,de_show,de_pub_template)
     values (#{deDetailsId,jdbcType=INTEGER}, #{deGrade,jdbcType=VARCHAR}, #{deRoomId,jdbcType=INTEGER},
-    #{deMeetingName,jdbcType=VARCHAR}, #{deReserveDepartmentId,jdbcType=INTEGER},
+    #{deMeetingName,jdbcType=VARCHAR}, #{deReserveDepartmentId,jdbcType=VARCHAR},
     #{deReserveId,jdbcType=INTEGER}, #{deReservePhone,jdbcType=VARCHAR}, #{deReserveNumber,jdbcType=INTEGER}, #{deMain,jdbcType=VARCHAR},
     #{deMeetingOver,jdbcType=TIMESTAMP}, #{deMeetingStart,jdbcType=TIMESTAMP}, #{deDepartmentReservePersonId,jdbcType=INTEGER}
     #{deMeetingStatus,jdbcType=VARCHAR}, #{deDateCount,jdbcType=TIMESTAMP},
@@ -314,7 +314,7 @@
         #{deMeetingName,jdbcType=VARCHAR},
       </if>
       <if test="deReserveDepartmentId != null">
-        #{deReserveDepartmentId,jdbcType=INTEGER},
+        #{deReserveDepartmentId,jdbcType=VARCHAR},
       </if>
       <if test="deReserveId != null">
         #{deReserveId,jdbcType=INTEGER},
@@ -367,7 +367,7 @@
         de_meeting_name = #{deMeetingName,jdbcType=VARCHAR},
       </if>
       <if test="deReserveDepartmentId != null">
-        de_reserve_department_id = #{deReserveDepartmentId,jdbcType=INTEGER},
+        de_reserve_department_id = #{deReserveDepartmentId,jdbcType=VARCHAR},
       </if>
       <if test="deReserveId != null">
         de_reserve_id = #{deReserveId,jdbcType=INTEGER},
@@ -413,7 +413,7 @@
     set de_grade = #{deGrade,jdbcType=VARCHAR},
     de_room_id = #{deRoomId,jdbcType=INTEGER},
     de_meeting_name = #{deMeetingName,jdbcType=VARCHAR},
-    de_reserve_department_id = #{deReserveDepartmentId,jdbcType=INTEGER},
+    de_reserve_department_id = #{deReserveDepartmentId,jdbcType=VARCHAR},
     de_reserve_id = #{deReserveId,jdbcType=INTEGER},
     de_reserve_phone = #{deReservePhone,jdbcType=VARCHAR},
     de_reserve_number = #{deReserveNumber,jdbcType=INTEGER},

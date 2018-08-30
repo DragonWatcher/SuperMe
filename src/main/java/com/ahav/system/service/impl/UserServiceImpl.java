@@ -273,7 +273,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> selectUserByDeptIdAndRoleId(Integer deptId, Integer roleId) {
+    public List<User> selectUserByDeptIdAndRoleId(String deptId, Integer roleId) {
         List<User> users = userDao.selectUserByDeptIdAndRoleId(deptId, roleId);
         return users;
     }
