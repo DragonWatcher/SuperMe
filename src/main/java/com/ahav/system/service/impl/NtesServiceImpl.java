@@ -1,5 +1,8 @@
 package com.ahav.system.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.ahav.system.dao.DeptDao;
+import com.ahav.system.entity.Dept;
 import com.ahav.system.entity.SystemResult;
 import com.ahav.system.enums.NtesDataVer;
 import com.ahav.system.enums.NtesFunc;
@@ -14,6 +18,7 @@ import com.ahav.system.rsatool.HttpPost;
 import com.ahav.system.rsatool.RSASignatureToQiye;
 import com.ahav.system.service.NtesService;
 import com.ahav.system.util.SystemConstant;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 @Service
@@ -41,12 +46,32 @@ public class NtesServiceImpl implements NtesService {
         if (verFromNtes == unitVersionDB) {
             return new SystemResult(HttpStatus.OK.value(), updOk, true);
         }
-        // 2.1.2 版本号不一致，更新数据库
+        // 2.1.2 版本号不一致,更新版本号
         new Thread(() -> deptDao.updateDataVer(NtesDataVer.UNIT_VER, verFromNtes)).start();
-        
+
         // 2.2 更新dept表中的数据
-        
-        
+        JSONArray unitListArr = apiResult.getJSONArray("con");
+        List<Dept> deptList = new ArrayList<>();
+        unitListArr.forEach((unit) -> deptList.add(JSONObject.parseObject(JSONObject.toJSONString(unit), Dept.class)));
+        // 2.2.1 查询返回列表中的数据在数据库中的状态
+        deptList.forEach((unit) -> {
+            Dept deptDB = deptDao.selectDeptById(unit.getDeptId());
+            if (deptDB == null) {// 添加新部门
+                deptDao.insertDept(unit);
+            } else {
+                if (!unit.equals(deptDB))
+                    deptDao.updateDept(unit);
+            }
+        });
+        /* 准备删除操作*/
+        List<String> deptIdList = deptDao.selectDeptIdList();
+        deptIdList.forEach((idDB) -> {
+            if (deptList.contains(idDB))
+                deptIdList.remove(idDB);
+        });
+        // 执行部门批量删除
+        deptDao.delDeptsBatch(deptIdList);
+
         return new SystemResult(HttpStatus.OK.value(), updOk, apiResult);
     }
     

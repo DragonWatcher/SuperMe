@@ -29,6 +29,6 @@ public interface DeptService {
      * @param deptId
      * @return
      */
-    Dept getDeptById(Integer deptId);
+    Dept getDeptById(String deptId);
 
 }
