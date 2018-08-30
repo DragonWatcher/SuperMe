@@ -43,7 +43,7 @@ public class NtesServiceImpl implements NtesService {
         String updOk = "部门信息更新成功！";
         // 2.1 版本号一致，不需要更新数据库
         Long verFromNtes = apiResult.getLong("ver");
-        if (verFromNtes == unitVersionDB) {
+        if (unitVersionDB != null && verFromNtes.equals(unitVersionDB)) {
             return new SystemResult(HttpStatus.OK.value(), updOk, Boolean.TRUE);
         }
 
@@ -54,7 +54,7 @@ public class NtesServiceImpl implements NtesService {
         unitListArr.forEach((o) -> {
             JSONObject unit = JSONObject.parseObject(JSONObject.toJSONString(o));
             deptList.add(new Dept(unit.getString("unit_id"), unit.getString("unit_name"), unit.getString("parent_id"),
-                    unit.getInteger("unit_rank"), ""));
+                    unit.getInteger("unit_rank"), null));
         });
         // 2.2.1 查询返回列表中的数据在数据库中的状态 并执行insert 或 update
         deptList.forEach((unit) -> {
