@@ -14,6 +14,14 @@ public class Dept {
     /** 排序值 */
     private Integer deptRank;
     private String describe;
+    
+    public Dept(String deptId, String deptName, String parentId, Integer deptRank, String describe) {
+        this.deptId = deptId;
+        this.deptName = deptName;
+        this.parentId = parentId;
+        this.deptRank = deptRank;
+        this.describe = describe;
+    }
 
     public String getDeptId() {
         return deptId;

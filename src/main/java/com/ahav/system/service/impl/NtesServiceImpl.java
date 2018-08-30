@@ -47,13 +47,17 @@ public class NtesServiceImpl implements NtesService {
             return new SystemResult(HttpStatus.OK.value(), updOk, true);
         }
         // 2.1.2 版本号不一致,更新版本号
-        new Thread(() -> deptDao.updateDataVer(NtesDataVer.UNIT_VER, verFromNtes)).start();
+        new Thread(() -> deptDao.updateDataVer(NtesDataVer.UNIT_VER, verFromNtes), "saveDataVerThread").start();
 
         // 2.2 更新dept表中的数据
         JSONArray unitListArr = apiResult.getJSONArray("con");
         List<Dept> deptList = new ArrayList<>();
         // unitListArr 转化为 List<Dept> deptList
-        unitListArr.forEach((unit) -> deptList.add(JSONObject.parseObject(JSONObject.toJSONString(unit), Dept.class)));
+        unitListArr.forEach((o) -> {
+            JSONObject unit = JSONObject.parseObject(JSONObject.toJSONString(o));
+            deptList.add(new Dept(unit.getString("unit_id"), unit.getString("unit_name"), unit.getString("parent_id"),
+                    unit.getInteger("unit_rank"), null));
+        });
         // 2.2.1 查询返回列表中的数据在数据库中的状态 并执行insert 或 update
         deptList.forEach((unit) -> {
             Dept deptDB = deptDao.selectDeptById(unit.getDeptId());
