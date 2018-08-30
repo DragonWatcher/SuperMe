@@ -41,13 +41,11 @@ public class NtesServiceImpl implements NtesService {
         }
         // 2. 更新数据库
         String updOk = "部门信息更新成功！";
-        // 2.1.1 版本号一致，不需要更新数据库
+        // 2.1 版本号一致，不需要更新数据库
         Long verFromNtes = apiResult.getLong("ver");
         if (verFromNtes == unitVersionDB) {
-            return new SystemResult(HttpStatus.OK.value(), updOk, true);
+            return new SystemResult(HttpStatus.OK.value(), updOk, Boolean.TRUE);
         }
-        // 2.1.2 版本号不一致,更新版本号
-        new Thread(() -> deptDao.updateDataVer(NtesDataVer.UNIT_VER, verFromNtes), "saveDataVerThread").start();
 
         // 2.2 更新dept表中的数据
         JSONArray unitListArr = apiResult.getJSONArray("con");
@@ -73,15 +71,18 @@ public class NtesServiceImpl implements NtesService {
         deptList.forEach((d) -> deptIdListNtes.add(d.getDeptId()));
 
         List<String> deptIdListDB = deptDao.selectDeptIdList();
-        deptIdListDB.forEach((idDB) -> {
+        deptIdListNtes.forEach((unitId) -> {
             // 相同则移除数据库中的部门id列表，剩下的就是数据库中多余的部门id列表
-            if (deptIdListNtes.contains(idDB))
-                deptIdListDB.remove(idDB);
+            if (deptIdListDB.contains(unitId))
+                deptIdListDB.remove(unitId);
         });
         // 执行（多余的）部门批量删除
         deptDao.delDeptsBatch(deptIdListDB);
+        
+        // 更新版本号
+        new Thread(() -> deptDao.updateDataVer(NtesDataVer.UNIT_VER, verFromNtes), "saveDataVerThread").start();
 
-        return new SystemResult(HttpStatus.OK.value(), updOk, apiResult);
+        return new SystemResult(HttpStatus.OK.value(), updOk, Boolean.TRUE);
     }
     
     /**

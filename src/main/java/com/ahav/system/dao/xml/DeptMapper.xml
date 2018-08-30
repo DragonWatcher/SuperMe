@@ -27,8 +27,8 @@
     
     <!-- 添加部门 -->
     <insert id="insertDept" parameterType="com.ahav.system.entity.Dept">
-        INSERT INTO sys_dept(dept_id,dept_name,parent_id,dept_rank,describe)
-        VALUES(#{deptId},#{deptName},#{parentId},#{deptRank},#{describe})
+        INSERT INTO sys_dept(dept_id, dept_name, parent_id, dept_rank)
+        VALUES(#{deptId}, #{deptName}, #{parentId}, #{deptRank})
     </insert>
     
     <!-- 更新部门信息 -->
@@ -37,8 +37,7 @@
         SET
             dept_name = #{deptName},
             parent_id = #{parentId},
-            dept_rank = #{deptRank},
-            describe = #{describe}
+            dept_rank = #{deptRank}
         WHERE dept_id = #{deptId}
     </update>
     <!-- 根据部门id查找部门信息 -->
