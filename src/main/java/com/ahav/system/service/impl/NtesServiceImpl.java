@@ -40,11 +40,10 @@ public class NtesServiceImpl implements NtesService {
             return new SystemResult(HttpStatus.OK.value(), "获取部门列表失败！", apiResult.getString("error_code"));
         }
         // 2. 更新数据库
-        String updOk = "部门信息更新成功！";
         // 2.1 版本号一致，不需要更新数据库
         Long verFromNtes = apiResult.getLong("ver");
         if (unitVersionDB != null && verFromNtes.equals(unitVersionDB)) {
-            return new SystemResult(HttpStatus.OK.value(), updOk, Boolean.TRUE);
+            return new SystemResult(HttpStatus.OK.value(), "部门列表已是最新", Boolean.TRUE);
         }
 
         // 2.2 更新dept表中的数据
@@ -82,7 +81,7 @@ public class NtesServiceImpl implements NtesService {
         // 更新版本号
         new Thread(() -> deptDao.updateDataVer(NtesDataVer.UNIT_VER, verFromNtes), "saveDataVerThread").start();
 
-        return new SystemResult(HttpStatus.OK.value(), updOk, Boolean.TRUE);
+        return new SystemResult(HttpStatus.OK.value(), "部门信息更新成功！", Boolean.TRUE);
     }
     
     /**
