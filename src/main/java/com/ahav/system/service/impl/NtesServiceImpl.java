@@ -36,16 +36,16 @@ public class NtesServiceImpl implements NtesService {
         }
         // 2. 更新数据库
         String updOk = "部门信息更新成功！";
-        // 2.1 版本号一致，不需要更新数据库
+        // 2.1.1 版本号一致，不需要更新数据库
         Long verFromNtes = apiResult.getLong("ver");
         if (verFromNtes == unitVersionDB) {
             return new SystemResult(HttpStatus.OK.value(), updOk, true);
         }
-        // 2.1 版本号不一致，更新数据库
-        new Thread(() -> {
-            // 更新数据版本号
-            deptDao.updateDataVer(NtesDataVer.UNIT_VER, verFromNtes);
-        }).start();
+        // 2.1.2 版本号不一致，更新数据库
+        new Thread(() -> deptDao.updateDataVer(NtesDataVer.UNIT_VER, verFromNtes)).start();
+        
+        // 2.2 更新dept表中的数据
+        
         
         return new SystemResult(HttpStatus.OK.value(), updOk, apiResult);
     }
