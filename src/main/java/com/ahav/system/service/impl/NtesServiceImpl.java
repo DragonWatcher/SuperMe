@@ -52,8 +52,9 @@ public class NtesServiceImpl implements NtesService {
         // 2.2 更新dept表中的数据
         JSONArray unitListArr = apiResult.getJSONArray("con");
         List<Dept> deptList = new ArrayList<>();
+        // unitListArr 转化为 List<Dept> deptList
         unitListArr.forEach((unit) -> deptList.add(JSONObject.parseObject(JSONObject.toJSONString(unit), Dept.class)));
-        // 2.2.1 查询返回列表中的数据在数据库中的状态
+        // 2.2.1 查询返回列表中的数据在数据库中的状态 并执行insert 或 update
         deptList.forEach((unit) -> {
             Dept deptDB = deptDao.selectDeptById(unit.getDeptId());
             if (deptDB == null) {// 添加新部门
@@ -63,14 +64,18 @@ public class NtesServiceImpl implements NtesService {
                     deptDao.updateDept(unit);
             }
         });
-        /* 准备删除操作*/
-        List<String> deptIdList = deptDao.selectDeptIdList();
-        deptIdList.forEach((idDB) -> {
-            if (deptList.contains(idDB))
-                deptIdList.remove(idDB);
+        // 2.2.2 提取网易部门列表的部门id
+        List<String> deptIdListNtes = new ArrayList<>();
+        deptList.forEach((d) -> deptIdListNtes.add(d.getDeptId()));
+
+        List<String> deptIdListDB = deptDao.selectDeptIdList();
+        deptIdListDB.forEach((idDB) -> {
+            // 相同则移除数据库中的部门id列表，剩下的就是数据库中多余的部门id列表
+            if (deptIdListNtes.contains(idDB))
+                deptIdListDB.remove(idDB);
         });
-        // 执行部门批量删除
-        deptDao.delDeptsBatch(deptIdList);
+        // 执行（多余的）部门批量删除
+        deptDao.delDeptsBatch(deptIdListDB);
 
         return new SystemResult(HttpStatus.OK.value(), updOk, apiResult);
     }
