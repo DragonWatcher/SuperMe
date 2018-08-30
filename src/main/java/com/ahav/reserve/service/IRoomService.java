@@ -1,12 +1,7 @@
 package com.ahav.reserve.service;
 
-import com.ahav.reserve.pojo.Result;
-
-import com.ahav.reserve.pojo.Room;
 import com.ahav.reserve.pojo.RoomSettings;
 import com.alibaba.fastjson.JSONObject;
-
-import java.util.List;
 
 public interface IRoomService {
    /* //修改pub模板（查看会议室的pub模板）
@@ -23,7 +18,7 @@ public interface IRoomService {
     public JSONObject selectRoomById(int meetingRoomId);*/
 
     //修改pub模板（查看会议室的pub模板）
-    public JSONObject selectRoomPubTemplate(int room);
+    public JSONObject selectRoomPubTemplate(int deDetailsId);
 
     //查询所有会议室
     public JSONObject selectAllRoom();

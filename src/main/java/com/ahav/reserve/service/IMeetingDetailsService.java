@@ -6,7 +6,6 @@ import com.ahav.reserve.pojo.Result;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 public interface IMeetingDetailsService {
@@ -31,7 +30,7 @@ public interface IMeetingDetailsService {
     //查看会议当前模板
     public JSONObject findMeetingPubTemplate(int deDetailsId);
     //保存模板
-    public Result saveTemplate(PubTemplate pubTemplate,int deDetailsId);
+    public Result saveTemplate(int deDetailsId,PubTemplate pubTemplate);
     //根据预定人姓名查询预定人ID
     public int findReserveId(String reserveName);
 
@@ -41,4 +40,6 @@ public interface IMeetingDetailsService {
     JSONObject addMeetingDetails();
     //历史查询
     JSONObject selectHistory(MeetingDetails meetingDetails,Integer pageNum,Integer pageSize);
+    //删除pub模板
+    Map deletePubTemplate(int deDetailsId,String pubTemplate);
 }

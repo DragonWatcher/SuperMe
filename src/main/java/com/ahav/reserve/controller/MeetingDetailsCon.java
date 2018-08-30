@@ -3,7 +3,6 @@ package com.ahav.reserve.controller;
 import com.ahav.reserve.pojo.*;
 import com.ahav.reserve.service.IMeetingDetailsService;
 import com.ahav.reserve.service.IRoomService;
-import com.ahav.reserve.utils.meetingUtils;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -16,9 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
 
 @Controller

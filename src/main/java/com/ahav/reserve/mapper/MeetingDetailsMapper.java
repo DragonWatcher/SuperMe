@@ -41,4 +41,6 @@ public interface MeetingDetailsMapper {
     List<MeetingDetails> selectHistory (MeetingDetails meetingDetails);
     //保存修改会议详情，排除当前会议
     List<MeetingDetails> byExcludeDetailsIdselectMeetingDetails(MeetingDetails mDetails);
+    //删除pub模板
+    int deletePubTemplate(int deDetailsId,String pubTemplate);
 }

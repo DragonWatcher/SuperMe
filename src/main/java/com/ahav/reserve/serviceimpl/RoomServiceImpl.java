@@ -33,9 +33,9 @@ public class RoomServiceImpl implements IRoomService {
             Room room = roomMapperImpl.selectByPrimaryKey(meetingDetails.getDeRoomId());
             String pubIp = room.getPubIp();
             //调用api接口
-            String body = restTemplate.getForEntity("http://"+pubIp+"/ajax/presetmode/list", String.class).getBody();
-            String dePubTemplate = meetingDetails.getDePubTemplate();//获得当前会议室的模板
-            if(body != null && body != ""){
+            String body = restTemplate.getForEntity("http://"+pubIp+"/ajax/presetmode/list", String.class).getBody(); //返回的结果是一个json数组形式的字符串
+            String dePubTemplate = meetingDetails.getDePubTemplate();//获得当前会议室的模板,返回一个json格式的字符串
+            if(body != null && !body.equals("")){
                 result.setStatus(200);
                 JSONArray pubTemplateArray = JSONArray.parseArray(body);//将json数组格式的字符串，转为json数组
                 jsonObject.put("pubTemplateArray",pubTemplateArray);//将json数组封装到json对象中

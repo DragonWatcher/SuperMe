@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.awt.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -373,18 +372,21 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                     return map;
                 }else{
                     result.setStatus(400);
+                    result.setMessage("修改会议时间与已有会议时间冲突！");
                     map.put("result",result);
                     return map;
                 }
 
             }else {
                 //时间冲突
+                result.setMessage("修改会议时间与已有会议时间冲突！");
                 result.setStatus(400);
                 map.put("result",result);
                 return map;
             }
         }else{
             //没有这个预定人
+            result.setMessage("修改会议失败，无此预定人！");
             result.setStatus(400);
             map.put("result",result);
             return map;
@@ -482,25 +484,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         mDetails.setDeRoomId(roomId);
         List<MeetingDetails> meetingDetailsAll = meetingDetailsMapperImpl.selectMeetingDetails(mDetails);
         //判断指定日期指定的会议室已有会议有没有跟新添加会议的时间冲突
-/*        if(meetingDetailsAll.size()>0){
-            for (MeetingDetails md:meetingDetailsAll){
-                if(md.getDeMeetingStart().compareTo(meetingStart) == -1){
-                    if(md.getDeMeetingOver().compareTo(meetingStart) == -1){
-                        flag=true;
-                    }else {
-                        flag=false;
-                    }
-                }else {
-                    if(md.getDeMeetingStart().compareTo(meetingOver) == 1){
-                        flag = true;
-                    }else {
-                        flag = false;
-                    }
-                }
-            }
-        }else{
-            flag = true;
-        }*/
+            //例12:01与12：05比较得出12：01在12:05之前，12:05在12:01之后
         if(meetingDetailsAll.size()>0){
             for (MeetingDetails md:meetingDetailsAll){
                 if(md.getDeMeetingStart().before(meetingStart)){  //判断已有会议开始时间，是否在修改会议开始时间之前
@@ -520,6 +504,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                 }
             }
         }else{
+            //当天没有冲突的会议
             flag = true;
         }
 
@@ -532,15 +517,18 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                     result.setStatus(200);
                     return result;
                 }else {
+                    result.setMessage("新添加会议跟已有会议时间冲突！");
                     result.setStatus(400);
                     return result;
                 }
             }else{
+                result.setMessage("新添加会议跟已有会议时间冲突！");
                 result.setStatus(400);
                 return result;
             }
 
         }else{
+            result.setMessage("新添加会议跟已有会议时间冲突！");
             result.setStatus(400);
             return result;
         }
@@ -603,14 +591,30 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         return jsonObject;
     }
 
-
+    //删除pub模板
+    @Override
+    public Map deletePubTemplate(int deDetailsId,String pubTemplate) {
+        Result result = new Result();
+        Map<String,Object> map = new HashMap<String,Object>();
+        int delete = meetingDetailsMapperImpl.deletePubTemplate(deDetailsId, pubTemplate);
+        if(delete > 1){
+            result.setStatus(200);
+            map.put("result",result);
+            MeetingDetails meetingDetails = meetingDetailsMapperImpl.selectByPrimaryKey(deDetailsId);
+            String dePubTemplate = meetingDetails.getDePubTemplate();
+            map.put("pubTemplate",dePubTemplate);
+        }else {
+            result.setStatus(400);
+            map.put("result",result);
+        }
+        return map;
+    }
 
 
     //加载pub模板（）
     @Override
     public void loadPubTemplateCon() {
         //遍历序号
-
         //查询出当天所有会议
         MeetingDetails mDetails =  new MeetingDetails();
         Date currentTime = new Date();//当前时间
@@ -622,8 +626,6 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
         //对时间进行格式化
         DateFormat b=new SimpleDateFormat("yyyy年MM月dd日 HH时mm分");
-
-
         //会议个数
         int meetingCount = meetingDetailsAll.size();
         //遍历所有会议，取出会议的开时间跟当前时间比较，如果相等则调用加载pub模板的aqi
@@ -636,7 +638,10 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            if(meetingStartTime == currentTime){
+            /*TODO：调用接口获取预设模板提前开启的时间,存储的时间为整分且以毫秒的形式存储，列只可以选择1分钟，3分钟存储到库中就是60000毫秒，180000毫秒*/
+            long time = 300000;//300000相当于5分钟
+            /*TODO：调用接口获取当前会议室有没有人，如果有人则不加载预设模板，无人则调用*/
+            if(meetingStartTime.getTime()-time == currentTime.getTime()){
             /*判断当前是否是无模板，如果是则不去调用加载pub模板api*/
                 String dePubTemplate1 = me.getDePubTemplate();
                 if("{\"Content\":\"\",\"LayoutId\":-1,\"Thumb\":\"https://gss3.bdstatic.com/-Po3dSag_xI4khGkpoWK1HF6hhy/baike/w%3D268%3Bg%3D0/sign=69fb9c56cb95d143da76e3254bcbe53f/d1a20cf431adcbef5d550e53afaf2edda3cc9f05.jpg\",\"Id\":-1,\"Name\":\"nullTemplate\"}".equals(dePubTemplate1)){
@@ -649,7 +654,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                 //获取模板id
                 String dePubTemplate = me.getDePubTemplate();
                 PubTemplate pubTemplate = JSON.parseObject(dePubTemplate, PubTemplate.class);//将json字符串转为对应的对象
-                //调用pub加载pub模板的aqi
+                //调用pub加载pub模板的aqi（调用api就使用restTemplate.getForEntity（"访问的url地址,访问的方法返回类型.class"）.getBody();）
                 restTemplate.getForEntity("http://"+pubIp+"/ajax/presetmode/load?Id="+pubTemplate.getId(), String.class).getBody();
             }
         }
@@ -685,7 +690,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
     //保存模板
     @Override
-    public Result saveTemplate(PubTemplate pubTemplate,int deDetailsId) {
+    public Result saveTemplate(int deDetailsId,PubTemplate  pubTemplate) {
         Result result = new Result();
         //将对象转为json字符串
         String jsonTemplate = JSON.toJSONString(pubTemplate);

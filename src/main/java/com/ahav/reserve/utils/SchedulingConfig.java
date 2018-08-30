@@ -1,14 +1,11 @@
 package com.ahav.reserve.utils;
 
-import jdk.nashorn.internal.ir.WhileNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import javax.annotation.Resource;
-import java.util.Date;
 
 @Configuration
 @EnableScheduling
