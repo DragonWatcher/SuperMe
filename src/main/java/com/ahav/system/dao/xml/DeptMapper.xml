@@ -27,8 +27,8 @@
     
     <!-- 添加部门 -->
     <insert id="insertDept" parameterType="com.ahav.system.entity.Dept">
-        INSERT INTO sys_dept(dept_name)
-        VALUES(#{deptName})
+        INSERT INTO sys_dept(dept_id,dept_name,parent_id,dept_rank,describe)
+        VALUES(#{deptId},#{deptName},#{parentId},#{deptRank},#{describe})
     </insert>
     
     <!-- 更新部门信息 -->
