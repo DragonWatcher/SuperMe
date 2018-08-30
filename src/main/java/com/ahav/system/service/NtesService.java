@@ -1,7 +1,6 @@
 package com.ahav.system.service;
 
 import com.ahav.system.entity.SystemResult;
-import com.alibaba.fastjson.JSONObject;
 
 /**
  * 网易邮箱接口服务类

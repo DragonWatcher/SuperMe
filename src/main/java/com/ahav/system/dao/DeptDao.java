@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.ahav.system.entity.Dept;
+import com.ahav.system.enums.NtesDataVer;
 
 /**
  * 部门Dao接口
@@ -63,6 +64,14 @@ public interface DeptDao {
      * @param dataName
      * @return
      */
-    Long selectNtesDataVer(String dataName);
+    Long selectUnitDataVer(NtesDataVer dataName);
 
+    /**
+     * 更新网易邮箱数据版本
+     * <br>作者： mht<br> 
+     * 时间：2018年8月30日-上午10:47:54<br>
+     * @param dataName
+     * @param dataVer
+     */
+    void updateDataVer(NtesDataVer dataName, Long dataVer);
 }

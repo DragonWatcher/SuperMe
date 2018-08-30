@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.ahav.system.dao.DeptDao;
 import com.ahav.system.entity.SystemResult;
+import com.ahav.system.enums.NtesDataVer;
 import com.ahav.system.enums.NtesFunc;
 import com.ahav.system.rsatool.HttpPost;
 import com.ahav.system.rsatool.RSASignatureToQiye;
@@ -27,22 +28,33 @@ public class NtesServiceImpl implements NtesService {
     public SystemResult updLocalDeptTable() {
         // 1. 获取网易邮箱合作企业部门列表
         // 1.1 查询部门列表版本号
-        Long unitVersion = deptDao.selectNtesDataVer("unit_ver");
-        JSONObject apiResult = getUnitList(unitVersion);
+        Long unitVersionDB = deptDao.selectUnitDataVer(NtesDataVer.UNIT_VER);
+        JSONObject apiResult = getUnitList(unitVersionDB);
         if (!apiResult.getBooleanValue("suc")) {
             logger.info("网易邮箱接口请求错误码,error_code>>>" + apiResult.getString("error_code"));
             return new SystemResult(HttpStatus.OK.value(), "获取部门列表失败！", apiResult.getString("error_code"));
         }
         // 2. 更新数据库
+        String updOk = "部门信息更新成功！";
+        // 2.1 版本号一致，不需要更新数据库
+        Long verFromNtes = apiResult.getLong("ver");
+        if (verFromNtes == unitVersionDB) {
+            return new SystemResult(HttpStatus.OK.value(), updOk, true);
+        }
+        // 2.1 版本号不一致，更新数据库
+        new Thread(() -> {
+            // 更新数据版本号
+            deptDao.updateDataVer(NtesDataVer.UNIT_VER, verFromNtes);
+        }).start();
         
-        
-        return new SystemResult(HttpStatus.OK.value(), "接口调用成功", apiResult);
+        return new SystemResult(HttpStatus.OK.value(), updOk, apiResult);
     }
     
     /**
      * 获取网易邮箱合作企业部门列表
      * <br>作者： mht<br> 
      * 时间：2018年8月29日-下午2:55:53<br>
+     * @param unitVersion
      * @return
      */
     private JSONObject getUnitList(Long unitVersion) {
@@ -51,7 +63,7 @@ public class NtesServiceImpl implements NtesService {
 
         String sign = "domain=" + SystemConstant.AHAV_DOMAIN + "&product=" + SystemConstant.QIYE_PRODUCT + "&time="
                 + time;
-                
+
         if (unitVersion != null) {
             sign += "&ver=" + unitVersion;
         }

@@ -30,10 +30,17 @@
     </select>
     
     <!-- 根据数据名称查询数据版本 -->
-    <select id="selectNtesDataVer" resultType="long">
+    <select id="selectUnitDataVer" resultType="long">
         SELECT data_ver
         FROM ntes_data_ver
         WHERE data_name = #{dataName}
     </select>
+    
+    <!-- 更新网易数据版本 -->
+    <update id="updateDataVer">
+        UPDATE ntes_data_ver
+		SET data_ver = #{dataVer}
+		WHERE data_name = #{dataName}
+    </update>
     
 </mapper>        
