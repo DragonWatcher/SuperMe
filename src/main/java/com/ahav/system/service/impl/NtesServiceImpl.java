@@ -76,7 +76,9 @@ public class NtesServiceImpl implements NtesService {
                 deptIdListDB.remove(unitId);
         });
         // 执行（多余的）部门批量删除
-        deptDao.delDeptsBatch(deptIdListDB);
+        if (deptIdListDB != null && deptIdListDB.size() != 0) {
+            deptDao.delDeptsBatch(deptIdListDB);
+        }
         
         // 更新版本号
         new Thread(() -> deptDao.updateDataVer(NtesDataVer.UNIT_VER, verFromNtes), "saveDataVerThread").start();
