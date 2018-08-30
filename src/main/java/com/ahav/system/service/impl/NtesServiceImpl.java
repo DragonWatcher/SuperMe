@@ -54,7 +54,7 @@ public class NtesServiceImpl implements NtesService {
         unitListArr.forEach((o) -> {
             JSONObject unit = JSONObject.parseObject(JSONObject.toJSONString(o));
             deptList.add(new Dept(unit.getString("unit_id"), unit.getString("unit_name"), unit.getString("parent_id"),
-                    unit.getInteger("unit_rank"), null));
+                    unit.getInteger("unit_rank"), ""));
         });
         // 2.2.1 查询返回列表中的数据在数据库中的状态 并执行insert 或 update
         deptList.forEach((unit) -> {
