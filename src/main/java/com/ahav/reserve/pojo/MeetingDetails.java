@@ -21,7 +21,7 @@ public class MeetingDetails {
     @ApiModelProperty(value = "预定部门")
     private String deReserveDepartment;
     @ApiModelProperty(value = "预定部门Id")
-    private Integer deReserveDepartmentId;  //
+    private String deReserveDepartmentId;  //
     @ApiModelProperty(value = "预定人")
     private String deReserve;
     @ApiModelProperty(value = "预定人电话")
@@ -61,11 +61,11 @@ public class MeetingDetails {
         this.deRoomName = deRoomName;
     }
 
-    public Integer getDeReserveDepartmentId() {
+    public String getDeReserveDepartmentId() {
         return deReserveDepartmentId;
     }
 
-    public void setDeReserveDepartmentId(Integer deReserveDepartmentId) {
+    public void setDeReserveDepartmentId(String deReserveDepartmentId) {
         this.deReserveDepartmentId = deReserveDepartmentId;
     }
 

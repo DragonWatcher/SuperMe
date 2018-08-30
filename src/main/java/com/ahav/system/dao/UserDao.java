@@ -96,7 +96,7 @@ public interface UserDao {
      * @param roleId
      * @return
      */
-    List<User> selectUserByDeptIdAndRoleId(@Param("deptId") Integer deptId, @Param("roleId") Integer roleId);
+    List<User> selectUserByDeptIdAndRoleId(@Param("deptId") String deptId, @Param("roleId") Integer roleId);
     
     /**
      * 添加新成员 <br>

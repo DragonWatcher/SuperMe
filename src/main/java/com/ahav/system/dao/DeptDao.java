@@ -3,8 +3,10 @@ package com.ahav.system.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.ahav.system.entity.Dept;
+import com.ahav.system.enums.NtesDataVer;
 
 /**
  * 部门Dao接口
@@ -24,12 +26,29 @@ public interface DeptDao {
     List<Dept> allDepts();
     
     /**
+     * 根据部门id查找对应的部门信息
+     * <br>作者： mht<br> 
+     * 时间：2018年8月30日-下午1:03:03<br>
+     * @param deptId
+     * @return
+     */
+    Dept selectDeptById(String deptId);
+    
+    /**
+     * 查询部门id列表
+     * <br>作者： mht<br> 
+     * 时间：2018年8月30日-下午1:12:38<br>
+     * @return
+     */
+    List<String> selectDeptIdList();
+    
+    /**
      * 删除部门信息
      * <br>作者： mht<br> 
      * 时间：2018年8月9日-下午9:16:09<br>
      * @param deptId
      */
-    void delDeptById(Integer deptId);
+    void delDeptById(String deptId);
     
     /**
      * 新增部门信息
@@ -54,7 +73,7 @@ public interface DeptDao {
      * @param deptId
      * @return
      */
-    Dept getDeptById(Integer deptId);
+    Dept getDeptById(String deptId);
     
     /**
      * 查询网易数据版本
@@ -63,6 +82,22 @@ public interface DeptDao {
      * @param dataName
      * @return
      */
-    Long selectNtesDataVer(String dataName);
+    Long selectUnitDataVer(NtesDataVer dataName);
 
+    /**
+     * 更新网易邮箱数据版本
+     * <br>作者： mht<br> 
+     * 时间：2018年8月30日-上午10:47:54<br>
+     * @param dataName
+     * @param dataVer
+     */
+    void updateDataVer(@Param("dataName") NtesDataVer dataName, @Param("dataVer") Long dataVer);
+    
+    /**
+     * 根据部门id列表批量删除部门
+     * <br>作者： mht<br> 
+     * 时间：2018年8月30日-下午1:29:56<br>
+     * @param deptIdList
+     */
+    void delDeptsBatch(@Param("deptIdList") List<String> deptIdList);
 }

@@ -5,23 +5,39 @@
     <!-- 查询全部部门信息 -->
     <select id="allDepts" resultType="com.ahav.system.entity.Dept">
         SELECT * FROM sys_dept
+        ORDER BY dept_rank DESC
+    </select>
+    
+    <!-- 根据部门id查找对应的部门数据 -->
+    <select id="selectDeptById" resultType="com.ahav.system.entity.Dept">
+        SELECT * FROM sys_dept
+        WHERE dept_id = #{deptId}
+    </select>
+    
+    <!-- 查询部门id列表 -->
+    <select id="selectDeptIdList" resultType="String">
+        SELECT dept_id
+        FROM sys_dept
     </select>
     
     <!-- 根据部门id删除对应部门信息 -->
-    <delete id="delDeptById" parameterType="int">
+    <delete id="delDeptById" parameterType="String">
         DELETE FROM sys_dept WHERE dept_id = #{deptId}
     </delete>
     
     <!-- 添加部门 -->
     <insert id="insertDept" parameterType="com.ahav.system.entity.Dept">
-        INSERT INTO sys_dept(dept_name)
-        VALUES(#{deptName})
+        INSERT INTO sys_dept(dept_id, dept_name, parent_id, dept_rank)
+        VALUES(#{deptId}, #{deptName}, #{parentId}, #{deptRank})
     </insert>
     
     <!-- 更新部门信息 -->
     <update id="updateDept" parameterType="com.ahav.system.entity.Dept">
         UPDATE sys_dept
-        SET dept_name = #{deptName}
+        SET
+            dept_name = #{deptName},
+            parent_id = #{parentId},
+            dept_rank = #{deptRank}
         WHERE dept_id = #{deptId}
     </update>
     <!-- 根据部门id查找部门信息 -->
@@ -30,10 +46,25 @@
     </select>
     
     <!-- 根据数据名称查询数据版本 -->
-    <select id="selectNtesDataVer" resultType="long">
+    <select id="selectUnitDataVer" resultType="long">
         SELECT data_ver
         FROM ntes_data_ver
         WHERE data_name = #{dataName}
     </select>
+    
+    <!-- 更新网易数据版本 -->
+    <update id="updateDataVer">
+        UPDATE ntes_data_ver
+		SET data_ver = #{dataVer}
+		WHERE data_name = #{dataName}
+    </update>
+    
+    <!-- 批量删除部门 -->
+    <delete id="delDeptsBatch">
+        DELETE FROM sys_dept WHERE dept_id IN
+        <foreach collection="deptIdList" separator="," item="deptId" open="(" close=")">
+              #{deptId}
+        </foreach>
+    </delete>
     
 </mapper>        
