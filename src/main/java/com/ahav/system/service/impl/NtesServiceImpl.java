@@ -62,18 +62,12 @@ public class NtesServiceImpl implements NtesService {
         long time = System.currentTimeMillis();
 
         String sign = "domain=" + SystemConstant.AHAV_DOMAIN + "&product=" + SystemConstant.QIYE_PRODUCT + "&time="
-                + time;
-
-        if (unitVersion != null) {
-            sign += "&ver=" + unitVersion;
-        }
+                + time + (unitVersion != null ? ("&ver=" + unitVersion) : "");
+        // 签名
         sign = RSASignatureToQiye.generateSigature(SystemConstant.PRI_KEY, sign);
+        // url生成
         url = url + "?" + "domain=" + SystemConstant.AHAV_DOMAIN + "&product=" + SystemConstant.QIYE_PRODUCT + "&sign="
-                + sign + "&time=" + time;
-
-        if (unitVersion != null) {
-            url += "&ver=" + unitVersion;
-        }
+                + sign + "&time=" + time + (unitVersion != null ? ("&ver=" + unitVersion) : "");
 
         String res = new HttpPost().post(url);
         JSONObject apiResult = JSONObject.parseObject(res);
