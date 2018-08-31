@@ -20,8 +20,7 @@ public class SchedulingConfig {
     @Scheduled(fixedRate = 4000) //指定定时任务每4秒钟执行一次
     public void getToken() {
         //调用加载pub模板方法
-        logger.info("getToken定时任务启动");
+        //logger.info("getToken定时任务启动");
         meetingDetailsServiceImpl.loadPubTemplateCon();
-        System.out.println("99999999999999999999999999999999999999999999999999999999");
     }
 }
