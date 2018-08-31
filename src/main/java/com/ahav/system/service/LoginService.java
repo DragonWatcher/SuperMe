@@ -34,6 +34,7 @@ public interface LoginService {
      * <br>作者： mht<br> 
      * 时间：2018年8月20日-下午1:56:58<br>
      */
+    @Deprecated
     void ntesLogin(String username, HttpServletResponse response);
 
 }

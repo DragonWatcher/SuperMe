@@ -1,7 +1,10 @@
 package com.ahav.system.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,17 +28,18 @@ import com.alibaba.fastjson.JSONObject;
 public class NtesServiceImpl implements NtesService {
 
     private static final Logger logger = LoggerFactory.getLogger(NtesServiceImpl.class);
-
+    
     @Autowired
     private DeptDao deptDao;
 
     @Override
-    public SystemResult updLocalDeptTable() {
+    public SystemResult updLocalDepts() {
         // 1. 获取网易邮箱合作企业部门列表
         // 1.1 查询部门列表版本号
         Long unitVersionDB = deptDao.selectUnitDataVer(NtesDataVer.UNIT_VER);
         // ntes接口调用
         JSONObject apiResult = getNtesData(NtesFunc.UNIT_GET_UNIT_LIST, unitVersionDB);
+
         if (!apiResult.getBooleanValue("suc")) {
             logger.info("网易邮箱接口请求错误码,error_code>>>" + apiResult.getString("error_code"));
             return new SystemResult(HttpStatus.OK.value(), "获取部门列表失败！", apiResult.getString("error_code"));
@@ -43,22 +47,29 @@ public class NtesServiceImpl implements NtesService {
         // 2. 更新数据库
         // 2.1 版本号一致，不需要更新数据库
         Long verFromNtes = apiResult.getLong("ver");
-        if (unitVersionDB != null && verFromNtes.equals(unitVersionDB)) {
+        if (verFromNtes.equals(unitVersionDB)) {
             return new SystemResult(HttpStatus.OK.value(), "部门列表已是最新", Boolean.TRUE);
         }
 
         // 2.2 更新dept表中的数据
         JSONArray unitListArr = apiResult.getJSONArray("con");
-        List<Dept> deptList = new ArrayList<>();
+        List<Dept> deptListNtes = new ArrayList<>();
         // unitListArr 转化为 List<Dept> deptList
         unitListArr.forEach((o) -> {
-            JSONObject unit = JSONObject.parseObject(JSONObject.toJSONString(o));
-            deptList.add(new Dept(unit.getString("unit_id"), unit.getString("unit_name"), unit.getString("parent_id"),
-                    unit.getInteger("unit_rank"), null));
+            JSONObject unit = JSONObject.parseObject(o.toString());
+            deptListNtes.add(new Dept(unit.getString("unit_id"), unit.getString("unit_name"),
+                    unit.getString("parent_id"), unit.getInteger("unit_rank"), null));
         });
         // 2.2.1 查询返回列表中的数据在数据库中的状态 并执行insert 或 update
-        deptList.forEach((unit) -> {
-            Dept deptDB = deptDao.selectDeptById(unit.getDeptId());
+        Map<String, Dept> deptDBMap = new HashMap<>();
+        // 数据库中现有的全部部门List
+        List<Dept> deptListDB = deptDao.allDepts();
+        if (deptListDB != null && deptListDB.size() != 0) {
+            deptListDB.forEach((d) -> deptDBMap.put(d.getDeptId(), d));
+        }
+
+        deptListNtes.forEach((unit) -> {
+            Dept deptDB = deptDBMap.get(unit.getDeptId());
             if (deptDB == null) {// 添加新部门
                 deptDao.insertDept(unit);
             } else {
@@ -68,17 +79,18 @@ public class NtesServiceImpl implements NtesService {
         });
         // 2.2.2 提取网易部门列表的部门id
         List<String> deptIdListNtes = new ArrayList<>();
-        deptList.forEach((d) -> deptIdListNtes.add(d.getDeptId()));
+        deptListNtes.forEach((d) -> deptIdListNtes.add(d.getDeptId()));
 
-        List<String> deptIdListDB = deptDao.selectDeptIdList();
+        Set<String> deptIdSetDB = deptDBMap.keySet();
+        
         deptIdListNtes.forEach((unitId) -> {
             // 相同则移除数据库中的部门id列表，剩下的就是数据库中多余的部门id列表
-            if (deptIdListDB.contains(unitId))
-                deptIdListDB.remove(unitId);
+            if (deptIdSetDB.contains(unitId))
+                deptIdSetDB.remove(unitId);
         });
         // 执行（多余的）部门批量删除
-        if (deptIdListDB != null && deptIdListDB.size() != 0) {
-            deptDao.delDeptsBatch(deptIdListDB);
+        if (deptIdSetDB != null && deptIdSetDB.size() != 0) {
+            deptDao.delDeptsBatch(deptIdSetDB);
         }
 
         // 更新版本号
@@ -88,7 +100,7 @@ public class NtesServiceImpl implements NtesService {
     }
     
     @Override
-    public SystemResult updLocalAccount() {
+    public SystemResult updLocalAccounts() {
         Long accountVer = deptDao.selectUnitDataVer(NtesDataVer.ACCOUNT_VER);
         // ntes接口调用
         JSONObject apiResult = getNtesData(NtesFunc.UNIT_GET_ACCOUNT_LIST, accountVer);

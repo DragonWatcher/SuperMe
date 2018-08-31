@@ -21,13 +21,13 @@ public class NTESController {
     @ApiOperation(value = "部门更新接口")
     @GetMapping("/units")
     public SystemResult updLocalDeptTable() {
-        return ntesService.updLocalDeptTable();
+        return ntesService.updLocalDepts();
     }
     
     @ApiOperation(value = "账号更新接口")
     @GetMapping("/accounts")
     public SystemResult updLocalAccount() {
-        return ntesService.updLocalAccount();
+        return ntesService.updLocalAccounts();
     }
 
 }
