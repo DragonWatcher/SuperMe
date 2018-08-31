@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,15 +81,16 @@ public class NtesServiceImpl implements NtesService {
         List<String> deptIdListNtes = new ArrayList<>();
         deptListNtes.forEach((d) -> deptIdListNtes.add(d.getDeptId()));
 
-        List<String> deptIdListDB = deptDao.selectDeptIdList();
+        Set<String> deptIdSetDB = deptDBMap.keySet();
+        
         deptIdListNtes.forEach((unitId) -> {
             // 相同则移除数据库中的部门id列表，剩下的就是数据库中多余的部门id列表
-            if (deptIdListDB.contains(unitId))
-                deptIdListDB.remove(unitId);
+            if (deptIdSetDB.contains(unitId))
+                deptIdSetDB.remove(unitId);
         });
         // 执行（多余的）部门批量删除
-        if (deptIdListDB != null && deptIdListDB.size() != 0) {
-            deptDao.delDeptsBatch(deptIdListDB);
+        if (deptIdSetDB != null && deptIdSetDB.size() != 0) {
+            deptDao.delDeptsBatch(deptIdSetDB);
         }
 
         // 更新版本号

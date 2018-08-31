@@ -1,6 +1,7 @@
 package com.ahav.system.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -99,5 +100,5 @@ public interface DeptDao {
      * 时间：2018年8月30日-下午1:29:56<br>
      * @param deptIdList
      */
-    void delDeptsBatch(@Param("deptIdList") List<String> deptIdList);
+    void delDeptsBatch(@Param("deptIdList") Set<String> deptIdList);
 }
