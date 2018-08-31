@@ -1,8 +1,9 @@
 package com.ahav.system.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +27,9 @@ import com.alibaba.fastjson.JSONObject;
 public class NtesServiceImpl implements NtesService {
 
     private static final Logger logger = LoggerFactory.getLogger(NtesServiceImpl.class);
-
+    
     @Autowired
     private DeptDao deptDao;
-    /** ntes接口返回值*/
-    private JSONObject apiResult = null;
 
     @Override
     public SystemResult updLocalDeptTable() {
@@ -38,8 +37,8 @@ public class NtesServiceImpl implements NtesService {
         // 1.1 查询部门列表版本号
         Long unitVersionDB = deptDao.selectUnitDataVer(NtesDataVer.UNIT_VER);
         // ntes接口调用
-        apiResult = getNtesData(NtesFunc.UNIT_GET_UNIT_LIST, unitVersionDB);
-        
+        JSONObject apiResult = getNtesData(NtesFunc.UNIT_GET_UNIT_LIST, unitVersionDB);
+
         if (!apiResult.getBooleanValue("suc")) {
             logger.info("网易邮箱接口请求错误码,error_code>>>" + apiResult.getString("error_code"));
             return new SystemResult(HttpStatus.OK.value(), "获取部门列表失败！", apiResult.getString("error_code"));
@@ -53,16 +52,23 @@ public class NtesServiceImpl implements NtesService {
 
         // 2.2 更新dept表中的数据
         JSONArray unitListArr = apiResult.getJSONArray("con");
-        List<Dept> deptList = new ArrayList<>();
+        List<Dept> deptListNtes = new ArrayList<>();
         // unitListArr 转化为 List<Dept> deptList
         unitListArr.forEach((o) -> {
             JSONObject unit = JSONObject.parseObject(o.toString());
-            deptList.add(new Dept(unit.getString("unit_id"), unit.getString("unit_name"), unit.getString("parent_id"),
-                    unit.getInteger("unit_rank"), null));
+            deptListNtes.add(new Dept(unit.getString("unit_id"), unit.getString("unit_name"),
+                    unit.getString("parent_id"), unit.getInteger("unit_rank"), null));
         });
         // 2.2.1 查询返回列表中的数据在数据库中的状态 并执行insert 或 update
-        deptList.forEach((unit) -> {
-            Dept deptDB = deptDao.selectDeptById(unit.getDeptId());
+        Map<String, Dept> deptDBMap = new HashMap<>();
+        // 数据库中现有的全部部门List
+        List<Dept> deptListDB = deptDao.allDepts();
+        if (deptListDB != null && deptListDB.size() != 0) {
+            deptListDB.forEach((d) -> deptDBMap.put(d.getDeptId(), d));
+        }
+
+        deptListNtes.forEach((unit) -> {
+            Dept deptDB = deptDBMap.get(unit.getDeptId());
             if (deptDB == null) {// 添加新部门
                 deptDao.insertDept(unit);
             } else {
@@ -72,7 +78,7 @@ public class NtesServiceImpl implements NtesService {
         });
         // 2.2.2 提取网易部门列表的部门id
         List<String> deptIdListNtes = new ArrayList<>();
-        deptList.forEach((d) -> deptIdListNtes.add(d.getDeptId()));
+        deptListNtes.forEach((d) -> deptIdListNtes.add(d.getDeptId()));
 
         List<String> deptIdListDB = deptDao.selectDeptIdList();
         deptIdListNtes.forEach((unitId) -> {
