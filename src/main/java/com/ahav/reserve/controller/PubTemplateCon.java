@@ -32,6 +32,7 @@ public class PubTemplateCon {
     @ApiOperation(value="修改pub模板", notes="修改Pub模板的第一步，需要会议详情的id")
     @ApiImplicitParam(paramType="path", name = "deDetailsId", value = "会议详情ID", required = true, dataType = "Integer")
     public JSONObject selectRoomPubTemplate(@PathVariable int deDetailsId) {
+        System.out.println("888888888");
         return roomServiceImpl.selectRoomPubTemplate(deDetailsId);
     }
 
@@ -81,10 +82,12 @@ public class PubTemplateCon {
     @RequestMapping(value = "/reserve/add/addPubTemplate/{roomId}",method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value="继续并添加Pub模板第一步", notes="通过会议室id查询该会议的pub模板")
-    @ApiImplicitParam(paramType="query", name = "roomId", value = "会议室id", required = true, dataType = "Integer")
+    @ApiImplicitParam(paramType="path", name = "roomId", value = "会议室id", required = true, dataType = "Integer")
     public JSONObject addRoomPubTemplate(@PathVariable int roomId){
         return roomServiceImpl.byRoomIdSelectRoomPubTemplate(roomId);
     }
+    
+    
     //继续并添加Pub模板---完成
     @RequestMapping(value = "/reserve/add/addPubTemplate",method = RequestMethod.POST)
     @ResponseBody
