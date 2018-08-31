@@ -47,9 +47,8 @@ public class NtesServiceImpl implements NtesService {
         // 2. 更新数据库
         // 2.1 版本号一致，不需要更新数据库
         Long verFromNtes = apiResult.getLong("ver");
-        if (verFromNtes.equals(unitVersionDB)) {
+        if (verFromNtes.equals(unitVersionDB))
             return new SystemResult(HttpStatus.OK.value(), "部门列表已是最新", Boolean.TRUE);
-        }
 
         // 2.2 更新dept表中的数据
         JSONArray unitListArr = apiResult.getJSONArray("con");
