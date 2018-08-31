@@ -43,4 +43,6 @@ public interface MeetingDetailsMapper {
     List<MeetingDetails> byExcludeDetailsIdselectMeetingDetails(MeetingDetails mDetails);
     //删除pub模板
     int deletePubTemplate(int deDetailsId,String pubTemplate);
+    //获取刚插入的会议详情的id
+    Integer selectNewestDetailsId();
 }

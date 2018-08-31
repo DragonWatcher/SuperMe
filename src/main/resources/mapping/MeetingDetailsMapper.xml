@@ -458,4 +458,9 @@
      SET de_pub_template = #{1,jdbcType=VARCHAR}
       WHERE de_details_id = #{0,jdbcType=INTEGER}
   </update>
+  <!--获取刚插入的数据的id（要求表的id为自增）-->
+  <select id="selectNewestDetailsId" resultType="java.lang.Integer">
+    SELECT MAX(de_details_id)
+    FROM meeting_details
+  </select>
 </mapper>

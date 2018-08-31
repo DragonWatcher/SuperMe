@@ -1,4 +1,5 @@
 package com.ahav.reserve.controller;
+import com.ahav.reserve.pojo.MeetingDetails;
 import com.ahav.reserve.pojo.PubTemplate;
 import com.ahav.reserve.pojo.Result;
 import com.ahav.reserve.service.IMeetingDetailsService;
@@ -47,12 +48,24 @@ public class PubTemplateCon {
     //保存pub模板，根据选择的模板更新已选择的会议中的pub模板
     @RequestMapping(value = "/reserve/manage/updatePubTemplate",method = RequestMethod.PUT)
     @ResponseBody
-    @ApiOperation(value="查看当前pub预设模板", notes="查看当前会议预设的pub模板，需要会议详情的id")
+    @ApiOperation(value="保存pub模板", notes="根据选择的模板更新已选择的会议中的pub模板")
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType="query", name = "deDetailsId", value = "会议详情id", required = true, dataType = "Integer"),
+            @ApiImplicitParam(paramType="query", name = "deGrade", value = "会议级别", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deGradeId", value = "会议级别ID", required = true, dataType = "Integer"),
+            @ApiImplicitParam(paramType="query", name = "deRoomId", value = "会议室Id", required = true, dataType = "Integer"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingStart", value = "会议开始时间", required = true, dataType = "Date"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingOver", value = "会议结束时间", required = true, dataType = "Date"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingName", value = "会议详情名称", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deReserveDepartmentId", value = "预定部门Id", required = true, dataType = "Integer"),
+            @ApiImplicitParam(paramType="query", name = "deReserve", value = "预定人", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deReserveId", value = "预定人id", required = true, dataType = "Integer"),
+            @ApiImplicitParam(paramType="query", name = "deReservePhone", value = "预定人电话", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deReserveNumber", value = "预定人数", required = true, dataType = "Integer"),
+            @ApiImplicitParam(paramType="query", name = "deMain", value = "主要人员", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = true, dataType = "String"),
     })
-    public Result updatePubTemplate(int deDetailsId,@RequestBody PubTemplate pubTemplate){//接受一个json对象，要求前台传递的json对象中的每一个key与我们接受类的属性名一一对应，json对象的名与类名一致
-       return meetingDetailsServiceImpl.saveTemplate(deDetailsId,pubTemplate);
+    public Map updatePubTemplate(MeetingDetails meetingDetails,@RequestBody PubTemplate pubTemplate){//接受一个json对象，要求前台传递的json对象中的每一个key与我们接受类的属性名一一对应，json对象的名与类名一致
+       return meetingDetailsServiceImpl.saveTemplate(meetingDetails,pubTemplate);
     }
 
     //删除pub模板（实际不是删除Pub模板，而是将预设模板改为无模板的那个模板）
@@ -64,12 +77,36 @@ public class PubTemplateCon {
     }
 
 
-    /*    //继续并添加Pub模板
-    @RequestMapping(value = "/reserve/add/select/room/pubTemplate/{deDetailsId}",method = RequestMethod.GET)
+    //继续并添加Pub模板---通过会议室id查询该会议的pub模板
+    @RequestMapping(value = "/reserve/add/addPubTemplate/{roomId}",method = RequestMethod.GET)
     @ResponseBody
-    public JSONObject selectRoomPubTemplate(@PathVariable int deDetailsId){
-        //调用添加会议室的方法
-        meetingDetailsServiceImpl.addMeetingDetails()
-    }*/
+    @ApiOperation(value="继续并添加Pub模板第一步", notes="通过会议室id查询该会议的pub模板")
+    @ApiImplicitParam(paramType="query", name = "roomId", value = "会议室id", required = true, dataType = "Integer")
+    public JSONObject addRoomPubTemplate(@PathVariable int roomId){
+        return roomServiceImpl.byRoomIdSelectRoomPubTemplate(roomId);
+    }
+    //继续并添加Pub模板---完成
+    @RequestMapping(value = "/reserve/add/addPubTemplate",method = RequestMethod.POST)
+    @ResponseBody
+    @ApiOperation(value="继续并添加Pub模板第一步", notes="通过会议室id查询该会议的pub模板")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType="query", name = "deGrade", value = "会议级别", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deGradeId", value = "会议级别ID", required = true, dataType = "Integer"),
+            @ApiImplicitParam(paramType="query", name = "deRoomId", value = "会议室Id", required = true, dataType = "Integer"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingStart", value = "会议开始时间", required = true, dataType = "Date"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingOver", value = "会议结束时间", required = true, dataType = "Date"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingName", value = "会议详情名称", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deReserveDepartmentId", value = "预定部门Id", required = true, dataType = "Integer"),
+            @ApiImplicitParam(paramType="query", name = "deReserve", value = "预定人", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deReserveId", value = "预定人id", required = true, dataType = "Integer"),
+            @ApiImplicitParam(paramType="query", name = "deReservePhone", value = "预定人电话", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deReserveNumber", value = "预定人数", required = true, dataType = "Integer"),
+            @ApiImplicitParam(paramType="query", name = "deMain", value = "主要人员", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = true, dataType = "String"),
+    })
+    public JSONObject addRoomPubTemplate2(MeetingDetails meetingDetails,@RequestBody PubTemplate pubTemplate){
+        return meetingDetailsServiceImpl.addMeetingDetails(meetingDetails,pubTemplate);
+    }
+
 
 }

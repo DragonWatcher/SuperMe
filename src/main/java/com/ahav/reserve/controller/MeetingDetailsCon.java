@@ -10,10 +10,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.util.Map;
@@ -82,9 +79,8 @@ public class MeetingDetailsCon {
             @ApiImplicitParam(paramType="query", name = "deMain", value = "主要人员", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = true, dataType = "String"),
     })
-    public Map updateMeetingDetails(MeetingDetails meetingDetails){
-           System.out.println(meetingDetails.getDeMeetingName());
-        return meetingDetailsServiceImpl.alterMeetingDetails(meetingDetails);
+    public Map updateMeetingDetails(MeetingDetails meetingDetails, @RequestBody PubTemplate pubTemplate){
+        return meetingDetailsServiceImpl.alterMeetingDetails(meetingDetails,pubTemplate);
     }
 
     //删除会议详情
@@ -133,8 +129,8 @@ public class MeetingDetailsCon {
             @ApiImplicitParam(paramType="query", name = "deMain", value = "主要人员", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = true, dataType = "String"),
     })
-    public Result insertMeetingDetails(MeetingDetails meetingDetails){
-        return meetingDetailsServiceImpl.addMeetingDetails(meetingDetails);
+    public JSONObject insertMeetingDetails(MeetingDetails meetingDetails,@RequestBody PubTemplate pubTemplate){
+        return meetingDetailsServiceImpl.addMeetingDetails(meetingDetails,pubTemplate);
     }
 
 

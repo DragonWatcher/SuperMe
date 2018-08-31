@@ -288,7 +288,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
     //保存修改会议详情
     @Override
-    public Map alterMeetingDetails(MeetingDetails meetingDetails) {
+    public Map alterMeetingDetails(MeetingDetails meetingDetails,PubTemplate pubTemplate) {
         String deptReservePersonId = null; //部门预定人的id
         Map map = new HashMap<String,Object>();
         Result result = new Result();
@@ -311,7 +311,6 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             //查询出不包含当前会议的所有会议
             mDetails.setDeDetailsId(meetingDetails.getDeDetailsId());
             List<MeetingDetails> meetingDetailsAll = meetingDetailsMapperImpl.byExcludeDetailsIdselectMeetingDetails(mDetails);
-            //List<MeetingDetails> roomIdMeetingDetails = meetingDetailsMapperImpl.selectRoomIdMeetingDetails(deRoomId);
             //判断修改的会议时间跟以有的会议时间有没有冲突
             
             if(meetingDetailsAll.size()>0){
@@ -337,7 +336,11 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             	//没有查到指定条件下有会议，所以可以直接修改
                 flag = true;
             }
-            
+
+            if (pubTemplate != null){
+                String jsonTemplate = JSON.toJSONString(pubTemplate); //将json对象转为json字符串
+                meetingDetails.setDePubTemplate(jsonTemplate);
+            }
 
             if(flag){
                 //TODO:调用接口根据部门id查询出部门预订人的id
@@ -351,7 +354,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                     }
                     count++;
                 }
-                meetingDetails.setDeDepartmentReservePersonId(deptReservePersonId);
+                meetingDetails.setDeDepartmentReservePersonId(deptReservePersonId);  //将部门预定人的id添加到meetingDetails对象中
                 //时间没有冲突可以修改
                 int i = meetingDetailsMapperImpl.updateByPrimaryKeySelective(meetingDetails);
                 if(i>0){
@@ -368,7 +371,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                     Dept dept = deptServiceImpl.getDeptById(meetingDetails.getDeReserveDepartmentId());
                     meetingDetails1.setDeReserveDepartment(dept.getDeptName());
                     map.put("result",result);
-                    map.put("meetingDetails1",meetingDetails1);
+                    map.put("meetingDetails",meetingDetails1);
                     return map;
                 }else{
                     result.setStatus(400);
@@ -451,7 +454,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
     //保存添加会议详情
     @Override
-    public Result addMeetingDetails(MeetingDetails meetingDetails) {
+    public JSONObject addMeetingDetails(MeetingDetails meetingDetails,PubTemplate pubTemplate) {
+        JSONObject jsonObject = new JSONObject();
         String deptReservePersonId = null; //部门预定人的id
         Result result = new Result();
         MeetingDetails mDetails =  new MeetingDetails();
@@ -508,29 +512,40 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             flag = true;
         }
 
+        if(pubTemplate != null){
+            String jsonTemplate = JSON.toJSONString(pubTemplate); //将json对象转为json字符串
+            meetingDetails.setDePubTemplate(jsonTemplate);
+        }
 
         if(flag){
             //没有冲突,添加会议
             if(deReserveId > 0){
                 int update = meetingDetailsMapperImpl.insertSelective(meetingDetails);
                 if(update == 1){
+                    Integer detailsId = meetingDetailsMapperImpl.selectNewestDetailsId();//获取最新插入的会议详情的id
+                    MeetingDetails meetingDetails1 = meetingDetailsMapperImpl.selectByPrimaryKey(detailsId);
                     result.setStatus(200);
-                    return result;
+                    jsonObject.put("meetingDetails",meetingDetails1);
+                    jsonObject.put("result",result);
+                    return jsonObject;
                 }else {
                     result.setMessage("新添加会议跟已有会议时间冲突！");
                     result.setStatus(400);
-                    return result;
+                    jsonObject.put("result",result);
+                    return jsonObject;
                 }
             }else{
                 result.setMessage("新添加会议跟已有会议时间冲突！");
                 result.setStatus(400);
-                return result;
+                jsonObject.put("result",result);
+                return jsonObject;
             }
 
         }else{
             result.setMessage("新添加会议跟已有会议时间冲突！");
             result.setStatus(400);
-            return result;
+            jsonObject.put("result",result);
+            return jsonObject;
         }
     }
 
@@ -690,17 +705,11 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
     //保存模板
     @Override
-    public Result saveTemplate(int deDetailsId,PubTemplate  pubTemplate) {
+    public Map saveTemplate(MeetingDetails meetingDetails,PubTemplate  pubTemplate) {
         Result result = new Result();
         //将对象转为json字符串
         String jsonTemplate = JSON.toJSONString(pubTemplate);
-        int update = meetingDetailsMapperImpl.updatePubTemplate(jsonTemplate,deDetailsId);
-        if(update > 0){
-            result.setStatus(200);
-        }else {
-            result.setStatus(400);
-        }
-        return result;
+        return alterMeetingDetails(meetingDetails, pubTemplate);
     }
 
 
