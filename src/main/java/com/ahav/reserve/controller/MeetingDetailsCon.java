@@ -80,6 +80,7 @@ public class MeetingDetailsCon {
             @ApiImplicitParam(paramType="query", name = "deReservePhone", value = "预定人电话", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deReserveNumber", value = "预定人数", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deMain", value = "主要人员", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = true, dataType = "String"),
     })
     public Map updateMeetingDetails(MeetingDetails meetingDetails){
            System.out.println(meetingDetails.getDeMeetingName());
@@ -130,6 +131,7 @@ public class MeetingDetailsCon {
             @ApiImplicitParam(paramType="query", name = "deReservePhone", value = "预定人电话", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deReserveNumber", value = "预定人数", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deMain", value = "主要人员", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = true, dataType = "String"),
     })
     public Result insertMeetingDetails(MeetingDetails meetingDetails){
         return meetingDetailsServiceImpl.addMeetingDetails(meetingDetails);

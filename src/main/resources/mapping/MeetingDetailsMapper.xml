@@ -11,6 +11,7 @@
     <result column="de_reserve_phone" jdbcType="VARCHAR" property="deReservePhone" />
     <result column="de_reserve_number" jdbcType="INTEGER" property="deReserveNumber" />
     <result column="de_main" jdbcType="VARCHAR" property="deMain" />
+    <result column="de_meeting_postil" jdbcType="VARCHAR" property="deMeetingPostil" />
     <result column="de_meeting_over" jdbcType="TIMESTAMP" property="deMeetingOver" />
     <result column="de_meeting_start" jdbcType="TIMESTAMP" property="deMeetingStart" />
     <result column="de_department_reserve_person_id" jdbcType="VARCHAR" property="deDepartmentReservePersonId" />
@@ -22,7 +23,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     de_details_id, de_grade, de_room_id, de_meeting_name, de_reserve_department_id, de_reserve_id,
-    de_reserve_phone, de_reserve_number, de_main, de_meeting_over, de_meeting_start,
+    de_reserve_phone, de_reserve_number, de_main, de_meeting_postil, de_meeting_over, de_meeting_start,
     de_department_reserve_person_id, de_meeting_status, de_date_count,
     de_grade_id,de_show,de_pub_template
   </sql>
@@ -108,6 +109,9 @@
       <if test="deMain != null">
         AND de_main=#{deMain,jdbcType=VARCHAR}
       </if>
+      <if test="deMeetingPostil != null">
+        AND de_meeting_postil=#{deMeetingPostil,jdbcType=VARCHAR}
+      </if>
       <!--      &lt;if test="deMeetingOver != null"&gt;
               AND de_meeting_over=#{deMeetingOver,jdbcType=TIMESTAMP}
             &lt;/if&gt;-->
@@ -168,6 +172,9 @@
       </if>
       <if test="deMain != null">
         AND de_main=#{deMain,jdbcType=VARCHAR}
+      </if>
+      <if test="deMeetingPostil != null">
+        AND de_meeting_postil=#{deMeetingPostil,jdbcType=VARCHAR}
       </if>
       <!--      &lt;if test="deMeetingOver != null"&gt;
               AND de_meeting_over=#{deMeetingOver,jdbcType=TIMESTAMP}
@@ -240,13 +247,13 @@
   <insert id="insert" parameterType="com.ahav.reserve.pojo.MeetingDetails">
     insert into meeting_details (de_details_id, de_grade, de_room_id,
     de_meeting_name, de_reserve_department_id, de_reserve_id,
-    de_reserve_phone, de_reserve_number, de_main,
+    de_reserve_phone, de_reserve_number, de_main, de_meeting_postil,
     de_meeting_over, de_meeting_start, de_department_reserve_person_id,
     de_meeting_status, de_date_count,
     de_grade_id,de_show,de_pub_template)
     values (#{deDetailsId,jdbcType=INTEGER}, #{deGrade,jdbcType=VARCHAR}, #{deRoomId,jdbcType=INTEGER},
     #{deMeetingName,jdbcType=VARCHAR}, #{deReserveDepartmentId,jdbcType=VARCHAR},
-    #{deReserveId,jdbcType=INTEGER}, #{deReservePhone,jdbcType=VARCHAR}, #{deReserveNumber,jdbcType=INTEGER}, #{deMain,jdbcType=VARCHAR},
+    #{deReserveId,jdbcType=INTEGER}, #{deReservePhone,jdbcType=VARCHAR}, #{deReserveNumber,jdbcType=INTEGER}, #{deMain,jdbcType=VARCHAR}, #{deMeetingPostil,jdbcType=VARCHAR},
     #{deMeetingOver,jdbcType=TIMESTAMP}, #{deMeetingStart,jdbcType=TIMESTAMP}, #{deDepartmentReservePersonId,jdbcType=INTEGER}
     #{deMeetingStatus,jdbcType=VARCHAR}, #{deDateCount,jdbcType=TIMESTAMP},
     #{deGradeId,jdbcType=INTEGER},#{deShow,jdbcType=INTEGER},#{dePubTemplate,jdbcType=VARCHAR})
@@ -280,6 +287,9 @@
       </if>
       <if test="deMain != null">
         de_main,
+      </if>
+      <if test="deMeetingPostil != null">
+        de_meeting_postil,
       </if>
       <if test="deMeetingOver != null">
         de_meeting_over,
@@ -327,6 +337,9 @@
       </if>
       <if test="deMain != null">
         #{deMain,jdbcType=VARCHAR},
+      </if>
+      <if test="deMeetingPostil != null">
+        #{deMeetingPostil,jdbcType=VARCHAR},
       </if>
       <if test="deMeetingOver != null">
         #{deMeetingOver,jdbcType=TIMESTAMP},
@@ -381,6 +394,9 @@
       <if test="deMain != null">
         de_main = #{deMain,jdbcType=VARCHAR},
       </if>
+      <if test="deMeetingPostil != null">
+        de_meeting_postil = #{deMeetingPostil,jdbcType=VARCHAR},
+      </if>
       <if test="deMeetingOver != null">
         de_meeting_over = #{deMeetingOver,jdbcType=TIMESTAMP},
       </if>
@@ -418,6 +434,7 @@
     de_reserve_phone = #{deReservePhone,jdbcType=VARCHAR},
     de_reserve_number = #{deReserveNumber,jdbcType=INTEGER},
     de_main = #{deMain,jdbcType=VARCHAR},
+    de_meeting_postil = #{deMeetingPostil,jdbcType=VARCHAR},
     de_meeting_over = #{deMeetingOver,jdbcType=TIMESTAMP},
     de_meeting_start = #{deMeetingStart,jdbcType=TIMESTAMP},
     de_department_reserve_person_id = #{deDepartmentReservePersonId,jdbcType=VARCHAR},

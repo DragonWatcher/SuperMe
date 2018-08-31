@@ -30,6 +30,8 @@ public class MeetingDetails {
     private Integer deReserveNumber;
     @ApiModelProperty(value = "主要人员")
     private String deMain;
+    @ApiModelProperty(value = "会议备注")
+    private String deMeetingPostil;
     @ApiModelProperty(value = "会议结束时间")
     private Date deMeetingOver;
     @ApiModelProperty(value = "会议开始时间")
@@ -149,6 +151,14 @@ public class MeetingDetails {
         this.deMain = deMain == null ? null : deMain.trim();
     }
 
+    public String getDeMeetingPostil() {
+        return deMeetingPostil;
+    }
+
+    public void setDeMeetingPostil(String deMeetingPostil) {
+        this.deMeetingPostil = deMeetingPostil;
+    }
+
     public Date getDeMeetingOver() {
         return deMeetingOver;
     }
@@ -231,6 +241,6 @@ public class MeetingDetails {
 
     @Override
     public String toString() {
-        return "MeetingDetails{" + "deDetailsId=" + deDetailsId + ", deGrade='" + deGrade + '\'' + ", deRoomId=" + deRoomId + ", deRoomName='" + deRoomName + '\'' + ", deMeetingName='" + deMeetingName + '\'' + ", deReserveDepartment='" + deReserveDepartment + '\'' + ", deReserveDepartmentId=" + deReserveDepartmentId + ", deReserve='" + deReserve + '\'' + ", deReservePhone='" + deReservePhone + '\'' + ", deReserveNumber=" + deReserveNumber + ", deMain='" + deMain + '\'' + ", deMeetingOver=" + deMeetingOver + ", deMeetingStart=" + deMeetingStart + ", deDepartmentReservePerson=" + Arrays.toString(deDepartmentReservePerson) + ", deMeetingStatus='" + deMeetingStatus + '\'' + ", deMeetingCount=" + deMeetingCount + ", deDateCount=" + deDateCount + ", deGradeId=" + deGradeId + ", deReserveId=" + deReserveId + ", deDepartmentReservePersonId='" + deDepartmentReservePersonId + '\'' + ", deShow=" + deShow + ", dePubTemplate='" + dePubTemplate + '\'' + '}';
+        return "MeetingDetails{" + "deDetailsId=" + deDetailsId + ", deGrade='" + deGrade + '\'' + ", deRoomId=" + deRoomId + ", deRoomName='" + deRoomName + '\'' + ", deMeetingName='" + deMeetingName + '\'' + ", deReserveDepartment='" + deReserveDepartment + '\'' + ", deReserveDepartmentId='" + deReserveDepartmentId + '\'' + ", deReserve='" + deReserve + '\'' + ", deReservePhone='" + deReservePhone + '\'' + ", deReserveNumber=" + deReserveNumber + ", deMain='" + deMain + '\'' + ", deMeetingPostil='" + deMeetingPostil + '\'' + ", deMeetingOver=" + deMeetingOver + ", deMeetingStart=" + deMeetingStart + ", deDepartmentReservePerson=" + Arrays.toString(deDepartmentReservePerson) + ", deMeetingStatus='" + deMeetingStatus + '\'' + ", deMeetingCount=" + deMeetingCount + ", deDateCount=" + deDateCount + ", deGradeId=" + deGradeId + ", deReserveId=" + deReserveId + ", deDepartmentReservePersonId='" + deDepartmentReservePersonId + '\'' + ", deShow=" + deShow + ", dePubTemplate='" + dePubTemplate + '\'' + '}';
     }
 }

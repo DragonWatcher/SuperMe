@@ -616,10 +616,10 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     public void loadPubTemplateCon() {
         //遍历序号
         //查询出当天所有会议
-        MeetingDetails mDetails =  new MeetingDetails();
+        MeetingDetails mDetails =  new MeetingDetails();  //创建一个查询条件体
         Date currentTime = new Date();//当前时间
-        Date startTime = meetingUtils.getStartTime(currentTime);
-        Date endTime = meetingUtils.getEndTime(currentTime);
+        Date startTime = meetingUtils.getStartTime(currentTime);   //获得当天的开始时间
+        Date endTime = meetingUtils.getEndTime(currentTime);  //获得当天的结束时间
         mDetails.setDeMeetingStart(startTime);
         mDetails.setDeMeetingOver(endTime);
         List<MeetingDetails> meetingDetailsAll = meetingDetailsMapperImpl.selectMeetingDetails(mDetails);
@@ -652,7 +652,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                 Integer roomId = me.getDeRoomId();
                 String pubIp = RoomMapperImpl.selectByPrimaryKey(roomId).getPubIp();
                 //获取模板id
-                String dePubTemplate = me.getDePubTemplate();
+                String dePubTemplate = me.getDePubTemplate();  //返回一个json格式的字符串
                 PubTemplate pubTemplate = JSON.parseObject(dePubTemplate, PubTemplate.class);//将json字符串转为对应的对象
                 //调用pub加载pub模板的aqi（调用api就使用restTemplate.getForEntity（"访问的url地址,访问的方法返回类型.class"）.getBody();）
                 restTemplate.getForEntity("http://"+pubIp+"/ajax/presetmode/load?Id="+pubTemplate.getId(), String.class).getBody();
