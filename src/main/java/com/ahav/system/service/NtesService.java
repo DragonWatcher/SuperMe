@@ -16,7 +16,7 @@ public interface NtesService {
      * 时间：2018年8月29日-下午2:51:22<br>
      * @return
      */
-    SystemResult updLocalDeptTable();
+    SystemResult updLocalDepts();
 
     /**
      * 更新本地账号数据
@@ -24,5 +24,5 @@ public interface NtesService {
      * 时间：2018年8月30日-下午4:43:31<br>
      * @return
      */
-    SystemResult updLocalAccount();
+    SystemResult updLocalAccounts();
 }

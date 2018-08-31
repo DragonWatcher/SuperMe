@@ -33,7 +33,7 @@ public class NtesServiceImpl implements NtesService {
     private DeptDao deptDao;
 
     @Override
-    public SystemResult updLocalDeptTable() {
+    public SystemResult updLocalDepts() {
         // 1. 获取网易邮箱合作企业部门列表
         // 1.1 查询部门列表版本号
         Long unitVersionDB = deptDao.selectUnitDataVer(NtesDataVer.UNIT_VER);
@@ -100,7 +100,7 @@ public class NtesServiceImpl implements NtesService {
     }
     
     @Override
-    public SystemResult updLocalAccount() {
+    public SystemResult updLocalAccounts() {
         Long accountVer = deptDao.selectUnitDataVer(NtesDataVer.ACCOUNT_VER);
         // ntes接口调用
         JSONObject apiResult = getNtesData(NtesFunc.UNIT_GET_ACCOUNT_LIST, accountVer);
