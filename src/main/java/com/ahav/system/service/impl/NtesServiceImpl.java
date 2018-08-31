@@ -2,6 +2,7 @@ package com.ahav.system.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,8 @@ public class NtesServiceImpl implements NtesService {
 
     @Autowired
     private DeptDao deptDao;
+    /** ntes接口返回值*/
+    private JSONObject apiResult = null;
 
     @Override
     public SystemResult updLocalDeptTable() {
@@ -35,7 +38,8 @@ public class NtesServiceImpl implements NtesService {
         // 1.1 查询部门列表版本号
         Long unitVersionDB = deptDao.selectUnitDataVer(NtesDataVer.UNIT_VER);
         // ntes接口调用
-        JSONObject apiResult = getNtesData(NtesFunc.UNIT_GET_UNIT_LIST, unitVersionDB);
+        apiResult = getNtesData(NtesFunc.UNIT_GET_UNIT_LIST, unitVersionDB);
+        
         if (!apiResult.getBooleanValue("suc")) {
             logger.info("网易邮箱接口请求错误码,error_code>>>" + apiResult.getString("error_code"));
             return new SystemResult(HttpStatus.OK.value(), "获取部门列表失败！", apiResult.getString("error_code"));
@@ -43,7 +47,7 @@ public class NtesServiceImpl implements NtesService {
         // 2. 更新数据库
         // 2.1 版本号一致，不需要更新数据库
         Long verFromNtes = apiResult.getLong("ver");
-        if (unitVersionDB != null && verFromNtes.equals(unitVersionDB)) {
+        if (verFromNtes.equals(unitVersionDB)) {
             return new SystemResult(HttpStatus.OK.value(), "部门列表已是最新", Boolean.TRUE);
         }
 
@@ -52,7 +56,7 @@ public class NtesServiceImpl implements NtesService {
         List<Dept> deptList = new ArrayList<>();
         // unitListArr 转化为 List<Dept> deptList
         unitListArr.forEach((o) -> {
-            JSONObject unit = JSONObject.parseObject(JSONObject.toJSONString(o));
+            JSONObject unit = JSONObject.parseObject(o.toString());
             deptList.add(new Dept(unit.getString("unit_id"), unit.getString("unit_name"), unit.getString("parent_id"),
                     unit.getInteger("unit_rank"), null));
         });
