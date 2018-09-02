@@ -34,11 +34,11 @@ public class NtesServiceImpl implements NtesService {
     @Autowired
     private DeptDao deptDao;
 
-    private volatile static JSONObject apiResult;
+    private volatile JSONObject apiResult;
 
-    private volatile static Map<String, Dept> deptDBMap;
+    private volatile Map<String, Dept> deptDBMap;
 
-    private volatile static SystemResult updDeptResult;
+    private volatile SystemResult updDeptResult;
 
     @Override
     public SystemResult updLocalDepts() {
@@ -59,9 +59,7 @@ public class NtesServiceImpl implements NtesService {
                     updDeptResult = new SystemResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), "数据库访问失败，请检查网络！",
                             null);
                 } else {
-                    if (deptDBMap.size() != 0) {
-                        updDeptResult = processDeptTables(unitVersionDB);
-                    }
+                    updDeptResult = processDeptTables(unitVersionDB);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
