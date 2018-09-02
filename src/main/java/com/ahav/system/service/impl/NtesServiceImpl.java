@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,15 +33,45 @@ public class NtesServiceImpl implements NtesService {
     
     @Autowired
     private DeptDao deptDao;
+    
+    private volatile static JSONObject apiResult;
+    
+    private volatile static Map<String, Dept> deptDBMap;
 
     @Override
     public SystemResult updLocalDepts() {
         // 1. 获取网易邮箱合作企业部门列表
         // 1.1 查询部门列表版本号
         Long unitVersionDB = deptDao.selectUnitDataVer(NtesDataVer.UNIT_VER);
-        // ntes接口调用
-        JSONObject apiResult = getNtesData(NtesFunc.UNIT_GET_UNIT_LIST, unitVersionDB);
+        // 主线程处理逻辑门闩
+        CountDownLatch dealResultsLatch = new CountDownLatch(2);
+        
+        /*mysql查询线程*/
+        new Thread(() -> {
+            // 查询返回列表中的数据在数据库中的状态 并执行insert 或 update
+            deptDBMap = new HashMap<>();
+            // 数据库中现有的全部部门List
+            List<Dept> deptListDB = deptDao.allDepts();
+            if (deptListDB != null && deptListDB.size() != 0) {
+                deptListDB.forEach((d) -> deptDBMap.put(d.getDeptId(), d));
+            }
+            dealResultsLatch.countDown();
+        }).start();
+        
+        /*ntes接口调用线程*/
+        new Thread(() -> {
+            apiResult = getNtesData(NtesFunc.UNIT_GET_UNIT_LIST, unitVersionDB);
+            dealResultsLatch.countDown();
+        }).start();
 
+        try {
+            dealResultsLatch.await(5, TimeUnit.SECONDS);
+            if (apiResult == null)
+                return new SystemResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), "接口访问失败，请检查网络！", null);
+        } catch (InterruptedException e) {
+            logger.info("接口返回成功...");
+        }
+        
         if (!apiResult.getBooleanValue("suc")) {
             logger.info("网易邮箱接口请求错误码,error_code>>>" + apiResult.getString("error_code"));
             return new SystemResult(HttpStatus.OK.value(), "获取部门列表失败！", apiResult.getString("error_code"));
@@ -59,13 +91,6 @@ public class NtesServiceImpl implements NtesService {
             deptListNtes.add(new Dept(unit.getString("unit_id"), unit.getString("unit_name"),
                     unit.getString("parent_id"), unit.getInteger("unit_rank"), null));
         });
-        // 2.2.1 查询返回列表中的数据在数据库中的状态 并执行insert 或 update
-        Map<String, Dept> deptDBMap = new HashMap<>();
-        // 数据库中现有的全部部门List
-        List<Dept> deptListDB = deptDao.allDepts();
-        if (deptListDB != null && deptListDB.size() != 0) {
-            deptListDB.forEach((d) -> deptDBMap.put(d.getDeptId(), d));
-        }
 
         deptListNtes.forEach((unit) -> {
             Dept deptDB = deptDBMap.get(unit.getDeptId());
