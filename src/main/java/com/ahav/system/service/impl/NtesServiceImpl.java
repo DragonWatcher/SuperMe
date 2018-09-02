@@ -50,23 +50,21 @@ public class NtesServiceImpl implements NtesService {
 
         /* 同步处理线程 */
         new Thread(() -> {
-            if (apiResult == null) {
-                try {
-                    dealResultsLatch.await(10, TimeUnit.SECONDS);
-                    if (apiResult == null) {
-                        updDeptResult = new SystemResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), "网易接口访问失败，请检查网络！",
-                                null);
-                    } else if (deptDBMap == null) {
-                        updDeptResult = new SystemResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), "数据库访问失败，请检查网络！",
-                                null);
-                    } else {
-                        if (deptDBMap.size() != 0) {
-                            updDeptResult = processDeptTables(unitVersionDB);
-                        }
+            try {
+                dealResultsLatch.await(10, TimeUnit.SECONDS);
+                if (apiResult == null) {
+                    updDeptResult = new SystemResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), "网易接口访问失败，请检查网络！",
+                            null);
+                } else if (deptDBMap == null) {
+                    updDeptResult = new SystemResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), "数据库访问失败，请检查网络！",
+                            null);
+                } else {
+                    if (deptDBMap.size() != 0) {
+                        updDeptResult = processDeptTables(unitVersionDB);
                     }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }).start();
 
