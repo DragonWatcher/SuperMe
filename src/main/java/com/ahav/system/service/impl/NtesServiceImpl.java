@@ -59,7 +59,7 @@ public class NtesServiceImpl implements NtesService {
                     updDeptResult = new SystemResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), "数据库访问失败，请检查网络！",
                             null);
                 } else {
-                    updDeptResult = processDeptTables(unitVersionDB);
+                    updDeptResult = processDeptTable(unitVersionDB);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -131,7 +131,7 @@ public class NtesServiceImpl implements NtesService {
      * @param unitVersionDB
      * @return
      */
-    private SystemResult processDeptTables(Long unitVersionDB) {
+    private SystemResult processDeptTable(Long unitVersionDB) {
         // 1. 判断返回值是否正确
         if (!apiResult.getBooleanValue("suc")) {
             logger.info("网易邮箱接口请求错误码,error_code>>>" + apiResult.getString("error_code"));
