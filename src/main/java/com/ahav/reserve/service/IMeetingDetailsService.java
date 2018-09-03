@@ -42,4 +42,6 @@ public interface IMeetingDetailsService {
     JSONObject selectHistory(MeetingDetails meetingDetails,Integer pageNum,Integer pageSize);
     //删除pub模板
     Map deletePubTemplate(int deDetailsId,String pubTemplate);
+    //根据设备列表查询相应的会议详情
+    JSONObject byEquipmentListSelectMeetingDetails(String[] equipmentList,Date todayTime);
 }

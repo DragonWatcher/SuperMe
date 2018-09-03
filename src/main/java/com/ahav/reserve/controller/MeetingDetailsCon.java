@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.Date;
 import java.util.Map;
 
 @Controller
@@ -131,6 +132,18 @@ public class MeetingDetailsCon {
     })
     public JSONObject insertMeetingDetails(MeetingDetails meetingDetails,@RequestBody PubTemplate pubTemplate){
         return meetingDetailsServiceImpl.addMeetingDetails(meetingDetails,pubTemplate);
+    }
+
+    //根据设备和时间查询相应的会议详情
+    @RequestMapping(value = "/reserve/add/byEquipmentListSelectMeetingDetails",method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value="根据设备和时间查询相应的会议详情", notes="添加会议的第二步")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType="query", name = "equipmentList", value = "设备列表", required = false, allowMultiple = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "todayTime", value = "今天时间", required = true, dataType = "Date"),
+    })
+    public JSONObject byEquipmentListSelectMeetingDetails(String[] equipmentList, Date todayTime){
+        return meetingDetailsServiceImpl.byEquipmentListSelectMeetingDetails(equipmentList,todayTime);
     }
 
 

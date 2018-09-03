@@ -45,4 +45,6 @@ public interface MeetingDetailsMapper {
     int deletePubTemplate(int deDetailsId,String pubTemplate);
     //获取刚插入的会议详情的id
     Integer selectNewestDetailsId();
+    //通过时间和所选设备查询符合条件的会议详情
+    List<MeetingDetails> byEquipmentListSelectMeetingDetails(Date startTime, Date endTime, List<Integer> excludeRoom);
 }

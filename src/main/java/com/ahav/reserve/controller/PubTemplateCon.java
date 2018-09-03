@@ -72,6 +72,8 @@ public class PubTemplateCon {
     //删除pub模板（实际不是删除Pub模板，而是将预设模板改为无模板的那个模板）
     @RequestMapping(value = "/reserve/manage/updatePubTemplate/{deDetailsId}",method = RequestMethod.PUT)
     @ResponseBody
+    @ApiOperation(value="删除pub模板", notes="实际不是删除Pub模板，而是将预设模板改为无模板的那个模板")
+    @ApiImplicitParam(paramType="path", name = "deDetailsId", value = "会议详情id", required = true, dataType = "Integer")
     public Map updatePubTemplate(int deDetailsId){
         String pubTemplate = "{\"Content\":\"\",\"LayoutId\":-1,\"Thumb\":\"https://gss3.bdstatic.com/-Po3dSag_xI4khGkpoWK1HF6hhy/baike/w%3D268%3Bg%3D0/sign=69fb9c56cb95d143da76e3254bcbe53f/d1a20cf431adcbef5d550e53afaf2edda3cc9f05.jpg\",\"Id\":-1,\"Name\":\"nullTemplate\"}";
         return meetingDetailsServiceImpl.deletePubTemplate(deDetailsId,pubTemplate);
@@ -91,7 +93,7 @@ public class PubTemplateCon {
     //继续并添加Pub模板---完成
     @RequestMapping(value = "/reserve/add/addPubTemplate",method = RequestMethod.POST)
     @ResponseBody
-    @ApiOperation(value="继续并添加Pub模板第一步", notes="通过会议室id查询该会议的pub模板")
+    @ApiOperation(value="继续并添加Pub模板---完成", notes=" ")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType="query", name = "deGrade", value = "会议级别", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deGradeId", value = "会议级别ID", required = true, dataType = "Integer"),
