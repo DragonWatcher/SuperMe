@@ -3,7 +3,6 @@ package com.ahav.reserve.controller;
 import com.ahav.reserve.pojo.*;
 import com.ahav.reserve.service.IMeetingDetailsService;
 import com.ahav.reserve.service.IRoomService;
-import com.ahav.reserve.utils.meetingUtils;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -11,14 +10,10 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -83,10 +78,10 @@ public class MeetingDetailsCon {
             @ApiImplicitParam(paramType="query", name = "deReservePhone", value = "预定人电话", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deReserveNumber", value = "预定人数", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deMain", value = "主要人员", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = true, dataType = "String"),
     })
-    public Map updateMeetingDetails(MeetingDetails meetingDetails){
-           System.out.println(meetingDetails.getDeMeetingName());
-        return meetingDetailsServiceImpl.alterMeetingDetails(meetingDetails);
+    public Map updateMeetingDetails(MeetingDetails meetingDetails, @RequestBody PubTemplate pubTemplate){
+        return meetingDetailsServiceImpl.alterMeetingDetails(meetingDetails,pubTemplate);
     }
 
     //删除会议详情
@@ -133,9 +128,22 @@ public class MeetingDetailsCon {
             @ApiImplicitParam(paramType="query", name = "deReservePhone", value = "预定人电话", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deReserveNumber", value = "预定人数", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deMain", value = "主要人员", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = true, dataType = "String"),
     })
-    public Result insertMeetingDetails(MeetingDetails meetingDetails){
-        return meetingDetailsServiceImpl.addMeetingDetails(meetingDetails);
+    public JSONObject insertMeetingDetails(MeetingDetails meetingDetails,@RequestBody PubTemplate pubTemplate){
+        return meetingDetailsServiceImpl.addMeetingDetails(meetingDetails,pubTemplate);
+    }
+
+    //根据设备和时间查询相应的会议详情
+    @RequestMapping(value = "/reserve/add/byEquipmentListSelectMeetingDetails",method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value="根据设备和时间查询相应的会议详情", notes="添加会议的第二步")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType="query", name = "equipmentList", value = "设备列表", required = false, allowMultiple = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "todayTime", value = "今天时间", required = true, dataType = "Date"),
+    })
+    public JSONObject byEquipmentListSelectMeetingDetails(String[] equipmentList, Date todayTime){
+        return meetingDetailsServiceImpl.byEquipmentListSelectMeetingDetails(equipmentList,todayTime);
     }
 
 

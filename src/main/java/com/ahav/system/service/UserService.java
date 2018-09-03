@@ -137,7 +137,7 @@ public interface UserService {
      * @param roleId
      * @return
      */
-    List<User> selectUserByDeptIdAndRoleId(Integer deptId, Integer roleId);
+    List<User> selectUserByDeptIdAndRoleId(String deptId, Integer roleId);
     
     /**
      * 设置当前用户的界面颜色

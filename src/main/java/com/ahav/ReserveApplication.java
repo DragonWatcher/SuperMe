@@ -30,38 +30,4 @@ public class ReserveApplication {
 		return builder.build();
 	}
 
-/*	@Bean
-	public DeptService getDeptService(){
-		return new DeptServiceImpl();
-	}
-	@Bean
-	public DeptDao getDeptDao(){
-		return new DeptDao() {
-			@Override
-			public List<Dept> allDepts() {
-				return null;
-			}
-
-			@Override
-			public void delDeptById(Integer integer) {
-
-			}
-
-			@Override
-			public void insertDept(Dept dept) {
-
-			}
-
-			@Override
-			public void updateDept(Dept dept) {
-
-			}
-
-			@Override
-			public Dept getDeptById(Integer integer) {
-				return null;
-			}
-		};
-	}*/
-
 }

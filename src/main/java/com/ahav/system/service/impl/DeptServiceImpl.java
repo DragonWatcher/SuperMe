@@ -65,7 +65,7 @@ public class DeptServiceImpl implements DeptService{
     }
 
     @Override
-    public Dept getDeptById(Integer deptId) {
+    public Dept getDeptById(String deptId) {
         return deptDao.getDeptById(deptId);
     }
 

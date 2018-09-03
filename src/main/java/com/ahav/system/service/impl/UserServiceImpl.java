@@ -2,7 +2,6 @@ package com.ahav.system.service.impl;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -21,6 +20,9 @@ import com.ahav.system.dao.UserRoleDao;
 import com.ahav.system.entity.SimpleUser;
 import com.ahav.system.entity.SystemResult;
 import com.ahav.system.entity.User;
+import com.ahav.system.enums.NtesFunc;
+import com.ahav.system.rsatool.HttpPost;
+import com.ahav.system.rsatool.RSASignatureToQiye;
 import com.ahav.system.service.LoginService;
 import com.ahav.system.service.NtesService;
 import com.ahav.system.service.UserService;
@@ -37,7 +39,7 @@ import com.github.pagehelper.PageInfo;
  * 日期： 2018年8月5日-下午7:10:12<br>
  */
 @Service
-public class UserServiceImpl implements UserService, NtesService {
+public class UserServiceImpl implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
@@ -271,7 +273,7 @@ public class UserServiceImpl implements UserService, NtesService {
     }
 
     @Override
-    public List<User> selectUserByDeptIdAndRoleId(Integer deptId, Integer roleId) {
+    public List<User> selectUserByDeptIdAndRoleId(String deptId, Integer roleId) {
         List<User> users = userDao.selectUserByDeptIdAndRoleId(deptId, roleId);
         return users;
     }
@@ -335,11 +337,5 @@ public class UserServiceImpl implements UserService, NtesService {
         } else {
             return new SystemResult(HttpStatus.OK.value(), "设置头像失败", Boolean.FALSE);
         }
-    }
-
-    @Override
-    public JSONObject GetUnitList() {
-        
-        return null;
     }
 }

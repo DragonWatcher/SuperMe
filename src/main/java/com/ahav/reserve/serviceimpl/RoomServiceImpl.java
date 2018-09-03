@@ -33,13 +33,13 @@ public class RoomServiceImpl implements IRoomService {
             Room room = roomMapperImpl.selectByPrimaryKey(meetingDetails.getDeRoomId());
             String pubIp = room.getPubIp();
             //调用api接口
-            String body = restTemplate.getForEntity("http://"+pubIp+"/ajax/presetmode/list", String.class).getBody();
-            String dePubTemplate = meetingDetails.getDePubTemplate();//获得当前会议室的模板
-            if(body != null && body != ""){
+            String body = restTemplate.getForEntity("http://"+pubIp+"/ajax/presetmode/list", String.class).getBody(); //返回的结果是一个json数组形式的字符串
+            String dePubTemplate = meetingDetails.getDePubTemplate();//获得当前会议室的模板,返回一个json格式的字符串
+            if(body != null && !body.equals("")){
                 result.setStatus(200);
                 JSONArray pubTemplateArray = JSONArray.parseArray(body);//将json数组格式的字符串，转为json数组
                 jsonObject.put("pubTemplateArray",pubTemplateArray);//将json数组封装到json对象中
-                jsonObject.put("result",result);//将json数组封装到json对象中
+                jsonObject.put("result",result);
                 PubTemplate currentPubTemplate = jsonObject.parseObject(dePubTemplate, PubTemplate.class);//将字符串转为json对象
                 jsonObject.put("currentPubTemplate",currentPubTemplate);
                 return jsonObject;
@@ -223,6 +223,30 @@ public class RoomServiceImpl implements IRoomService {
             List<Room> allRoom = roomMapperImpl.selectRoomAll();
             jsonObject.put("result",result);
             jsonObject.put("allRoom",allRoom);
+            return jsonObject;
+        }
+    }
+
+
+
+    //继续并添加模板---通过会议室id查询该会议的pub模板
+    @Override
+    public JSONObject byRoomIdSelectRoomPubTemplate(Integer roomId) {
+        Result result = new Result();
+        JSONObject jsonObject = new JSONObject();
+        Room room = roomMapperImpl.selectByPrimaryKey(roomId);
+        String pubIp = room.getPubIp();
+        //调用api接口
+        String body = restTemplate.getForEntity("http://"+pubIp+"/ajax/presetmode/list", String.class).getBody(); //返回的结果是一个json数组形式的字符串
+        if(body != null && !body.equals("")){
+            result.setStatus(200);
+            JSONArray pubTemplateArray = JSONArray.parseArray(body);//将json数组格式的字符串，转为json数组
+            jsonObject.put("pubTemplateArray",pubTemplateArray);//将json数组封装到json对象中
+            jsonObject.put("result",result);
+            return jsonObject;
+        }else {
+            result.setStatus(400);
+            jsonObject.put("result",result);
             return jsonObject;
         }
     }

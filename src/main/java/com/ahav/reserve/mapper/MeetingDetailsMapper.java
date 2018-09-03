@@ -2,6 +2,7 @@ package com.ahav.reserve.mapper;
 
 import com.ahav.reserve.pojo.MeetingDetails;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -41,4 +42,10 @@ public interface MeetingDetailsMapper {
     List<MeetingDetails> selectHistory (MeetingDetails meetingDetails);
     //保存修改会议详情，排除当前会议
     List<MeetingDetails> byExcludeDetailsIdselectMeetingDetails(MeetingDetails mDetails);
+    //删除pub模板
+    int deletePubTemplate(int deDetailsId,String pubTemplate);
+    //获取刚插入的会议详情的id
+    Integer selectNewestDetailsId();
+    //通过时间和所选设备查询符合条件的会议详情
+    List<MeetingDetails> byEquipmentListSelectMeetingDetails(@Param("startTime") Date startTime,@Param("endTime") Date endTime,@Param("excludeRoom") List<Integer> excludeRoom);
 }
