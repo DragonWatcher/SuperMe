@@ -16,9 +16,10 @@ import org.springframework.stereotype.Service;
 import com.ahav.system.entity.SimpleUser;
 import com.ahav.system.entity.SystemResult;
 import com.ahav.system.entity.User;
+import com.ahav.system.rsatool.RSATool;
 import com.ahav.system.service.LoginService;
 import com.ahav.system.util.SystemConstant;
-import com.netease.domainmail.RSATool;
+//import com.netease.domainmail.RSATool;
 
 /**
  * LoginService实现类 <br>
@@ -81,7 +82,10 @@ public class LoginServiceImpl implements LoginService {
         RSATool rsa = new RSATool();
         // 加密串 (摘要)
         String enc = rsa.generateSHA1withRSASigature(src, priKey);
-
+        
+        boolean verifySign = rsa.verifySHA1withRSASigature(enc, src, SystemConstant.PUB_KEY);
+        System.out.println("公钥验证签名Boolean：" + verifySign);
+        
         // 提交登录的url,后台加上必须的参数,为了安全，可使用https提交
         String url = "https://entryhz.qiye.163.com/domain/oa/Entry?domain=" + domain + "&account_name=" + account_name
                 + "&time=" + currTime + "&enc=" + enc + "&language=0";

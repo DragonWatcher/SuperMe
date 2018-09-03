@@ -1,6 +1,7 @@
 package com.ahav.system.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ahav.system.entity.SystemResult;
+import com.ahav.system.service.LoginService;
 import com.ahav.system.service.NtesService;
 import com.alibaba.fastjson.JSONObject;
 
@@ -21,6 +23,9 @@ import io.swagger.annotations.ApiOperation;
 public class NTESController {
     @Autowired
     private NtesService ntesService;
+    
+    @Autowired
+    private LoginService loginService;
     
     @ApiOperation(value = "部门更新接口")
     @GetMapping("/units")
@@ -38,6 +43,12 @@ public class NTESController {
     @GetMapping("/ip")
     public SystemResult reviewIp(HttpServletRequest request) {
         return new SystemResult(HttpStatus.OK.value(), "remoteAddr", request.getRemoteAddr());
+    }
+    
+    @ApiOperation(value = "网易邮箱登录")
+    @GetMapping("/login")
+    public void ntesLogin(HttpServletResponse response) {
+        loginService.ntesLogin(null, response);
     }
 
 }
