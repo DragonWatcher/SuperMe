@@ -73,7 +73,7 @@ public class NtesServiceImpl implements NtesService {
             // deptDBMap必须在查询部门列表方法后初始化
             deptDBMap = new HashMap<>();
             if (deptListDB != null && deptListDB.size() != 0) {
-                deptListDB.forEach((d) -> deptDBMap.put(d.getDeptId(), d));
+                deptListDB.forEach(d -> deptDBMap.put(d.getDeptId(), d));
             }
             dealResultsLatch.countDown();
         }).start();
@@ -147,13 +147,13 @@ public class NtesServiceImpl implements NtesService {
         JSONArray unitListArr = apiResult.getJSONArray("con");
         List<Dept> deptListNtes = new ArrayList<>();
         // unitListArr 转化为 List<Dept> deptList
-        unitListArr.forEach((o) -> {
+        unitListArr.forEach(o -> {
             JSONObject unit = JSONObject.parseObject(o.toString());
             deptListNtes.add(new Dept(unit.getString("unit_id"), unit.getString("unit_name"),
                     unit.getString("parent_id"), unit.getInteger("unit_rank"), null));
         });
         // deptDBMap中没有的id直接添加，有id的比较对象，有差异的更新
-        deptListNtes.forEach((unit) -> {
+        deptListNtes.forEach(unit -> {
             Dept deptDB = deptDBMap.get(unit.getDeptId());
             if (deptDB == null) {
                 deptDao.insertDept(unit);
@@ -164,11 +164,11 @@ public class NtesServiceImpl implements NtesService {
         });
         // 2.2.2 删除数据库中多余部门
         List<String> deptIdListNtes = new ArrayList<>();
-        deptListNtes.forEach((d) -> deptIdListNtes.add(d.getDeptId()));
+        deptListNtes.forEach(d -> deptIdListNtes.add(d.getDeptId()));
 
         Set<String> deptIdSetDB = deptDBMap.keySet();
 
-        deptIdListNtes.forEach((unitId) -> {
+        deptIdListNtes.forEach(unitId -> {
             // 相同则移除数据库中的部门id列表，剩下的就是数据库中多余的部门id列表
             if (deptIdSetDB.contains(unitId))
                 deptIdSetDB.remove(unitId);
