@@ -48,15 +48,13 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             /*flag = 调用是否有权限的接口*/
         //TODO:调用接口获得当前用户的id
         SystemResult currentUser = userServiceImpl.getCurrentUser();
-        System.out.println(currentUser);
         SimpleUser user = (SimpleUser)currentUser.getData();
-        System.out.println(user);
         int deReserveId = user.getUserId();
         Boolean flag = true;
 /*        int deReserveId = 3;  //预定人id*/
 
         //查询出当天所有的会议
-        MeetingDetails mDetails =  new MeetingDetails();
+        MeetingDetails mDetails =  new MeetingDetails();  //创建查询体
         Date startTime = meetingUtils.getStartTime(new Date());
         Date endTime = meetingUtils.getEndTime(new Date());
         mDetails.setDeMeetingStart(startTime);
@@ -411,9 +409,6 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     }
 
 
-
-
-
     //查询上次会议的时间
     @Override
     public MeetingDetails findNextTime(Date startTime) {
@@ -626,6 +621,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     }
 
 
+
+
     //加载pub模板（）
     @Override
     public void loadPubTemplateCon() {
@@ -684,7 +681,6 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     }
 
 
-
     //查看会议当前模板
     @Override
     public JSONObject findMeetingPubTemplate(int deDetailsId) {
@@ -710,6 +706,101 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         //将对象转为json字符串
         String jsonTemplate = JSON.toJSONString(pubTemplate);
         return alterMeetingDetails(meetingDetails, pubTemplate);
+    }
+
+    //根据设备列表查询相应的会议详情
+    @Override
+    public JSONObject byEquipmentListSelectMeetingDetails(String[] equipmentList,Date todayTime) {
+        Result result = new Result();
+        int flag = 0;
+        JSONObject jsonObject = new JSONObject();
+        List<Room> roomAll = RoomMapperImpl.selectRoomAll();
+        boolean falg1 = true;
+        List<Integer> excludeRoom = new ArrayList<>() ;//不包含所选全部设备的会议室
+        for(Room room:roomAll){
+            //遍历所有会议室
+            for(int i = 0;equipmentList.length>i;i++){
+                //遍历所有所选设备
+                if(room.getMeetingEquipmentList().indexOf(equipmentList[i]) == -1){
+                    //当前会议室不包含某一个所选设备，所以跳出本次循环,并将不符合条件的会议室记录下来
+                    falg1 = false;
+                    excludeRoom.add(room.getMeetingRoomId());
+                    break;
+                }
+            }
+
+        }
+
+        MeetingTime meetingTime = new MeetingTime();
+        //调用接口参数当前操作需要的权限，得到true或false
+            /*Power = 调用是否有权限的接口*/
+        //TODO:调用接口获得当前用户的id
+        SystemResult currentUser = userServiceImpl.getCurrentUser();
+        SimpleUser user = (SimpleUser)currentUser.getData();
+        int deReserveId = user.getUserId();
+        Boolean Power = true; //是否有查看其它人会议详情的权限
+        //查询出当天符合设备条件的会议室对应的所有会议
+        MeetingDetails mDetails =  new MeetingDetails();  //创建查询体
+        Date startTime = meetingUtils.getStartTime(todayTime);
+        Date endTime = meetingUtils.getEndTime(todayTime);
+        mDetails.setDeMeetingStart(startTime);
+        mDetails.setDeMeetingOver(endTime);
+        List<MeetingDetails> meetingDetailsAll = meetingDetailsMapperImpl.byEquipmentListSelectMeetingDetails(startTime,endTime,excludeRoom);
+
+        for(MeetingDetails meetingDetails:meetingDetailsAll){
+            //根据会议室ID查询出会议室的名称，并设置到MeetingDetails对象中
+            String roomName = RoomMapperImpl.selectRoomName(meetingDetails.getDeRoomId());
+            meetingDetails.setDeRoomName(roomName);
+            //TODO：调用接口：根据部门id查询部门名称，并设置到MeetingDetails对象中
+            Dept dept = deptServiceImpl.getDeptById(meetingDetails.getDeReserveDepartmentId());
+            meetingDetails.setDeReserveDepartment(dept.getDeptName());
+            /*TODO:调用接口：根据预订人id查询出预订人的姓名，并设置到MeetingDetails对象中*/
+            SimpleUser userById = (SimpleUser)userServiceImpl.getUserById(meetingDetails.getDeReserveId()).getData();
+            meetingDetails.setDeReserve(userById.getTrueName());
+        }
+
+        //获得上次会议时间
+        MeetingDetails lastTime = findLastTime(startTime);
+        if(lastTime != null){
+            //只有上次会议不为空，才取会议时间
+            meetingTime.setLastMeetingTime(lastTime.getDeMeetingStart());
+        }
+        //获得下次会议时间
+        MeetingDetails nextTime = findNextTime(endTime);
+        if(nextTime != null){
+            //只有下次会议不为空，才取会议时间
+            meetingTime.setNextMeetingTime(nextTime.getDeMeetingStart());
+        }
+
+        /*TODO:调用接口查询会议室设备列表
+        * jsonObject.put("会议室设备列表",会议室设备列表);*/
+        jsonObject.put("meetingTime",meetingTime);
+        jsonObject.put("roomAll",roomAll);
+
+        if(Power){
+            //可以查看所有会议详情
+            for(MeetingDetails meetingDetails:meetingDetailsAll){
+                meetingDetails.setDeShow(1);
+            }
+
+            jsonObject.put("meetingDetailsAll",meetingDetailsAll);
+
+            result.setStatus(200);
+            jsonObject.put("result",result);
+            return jsonObject;
+        }else{
+            //不可查看所有会议详情
+            for(MeetingDetails meetingDetails:meetingDetailsAll){
+                if(meetingDetails.getDeReserveId()==deReserveId){
+                    meetingDetails.setDeShow(1);
+                }
+            }
+            jsonObject.put("meetingDetailsAll",meetingDetailsAll);
+            result.setStatus(200);
+            jsonObject.put("result",result);
+            return jsonObject;
+        }
+
     }
 
 

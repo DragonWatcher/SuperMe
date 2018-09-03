@@ -47,7 +47,7 @@
         <include refid="Base_Column_List" />
         from meeting_details
         where
-        <if test="de_reserve_id != null">
+        <if test="deReserveId != null">
          AND de_reserve_id = #{deReserveId,jdbcType=INTEGER}
         </if>
         <if test="deMeetingName != null">
@@ -240,10 +240,28 @@
     </where>
   </select>
 
+  <!--通过时间和所选设备查询符合条件的会议详情-->
+  <select id="byEquipmentListSelectMeetingDetails" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM meeting_details
+    WHERE
+    <if test="#{0} != null &amp;&amp; #{1} != null">
+      AND de_meeting_start BETWEEN #{0,jdbcType=TIMESTAMP} AND #{1,jdbcType=TIMESTAMP}
+    </if>
+    <if test="#{2}.size() > 0">
+      de_room_id NOT IN
+      <foreach collection="list" open="(" close=")" separator="," item="roomId">
+        #{roomId}
+      </foreach>
+    </if>
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from meeting_details
     where de_details_id = #{deDetailsId,jdbcType=INTEGER}
   </delete>
+
   <insert id="insert" parameterType="com.ahav.reserve.pojo.MeetingDetails">
     insert into meeting_details (de_details_id, de_grade, de_room_id,
     de_meeting_name, de_reserve_department_id, de_reserve_id,
