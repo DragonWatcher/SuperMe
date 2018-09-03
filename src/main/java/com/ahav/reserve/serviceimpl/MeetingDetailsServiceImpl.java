@@ -717,20 +717,20 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         List<Room> roomAll = RoomMapperImpl.selectRoomAll();
         boolean falg1 = true;
         List<Integer> excludeRoom = new ArrayList<>() ;//不包含所选全部设备的会议室
-        for(Room room:roomAll){
-            //遍历所有会议室
-            for(int i = 0;equipmentList.length>i;i++){
-                //遍历所有所选设备
-                if(room.getMeetingEquipmentList().indexOf(equipmentList[i]) == -1){
-                    //当前会议室不包含某一个所选设备，所以跳出本次循环,并将不符合条件的会议室记录下来
-                    falg1 = false;
-                    excludeRoom.add(room.getMeetingRoomId());
-                    break;
+        if(equipmentList != null){
+            for(Room room:roomAll){
+                //遍历所有会议室
+                for(int i = 0;equipmentList.length>i;i++){
+                    //遍历所有所选设备
+                    if(room.getMeetingEquipmentList().indexOf(equipmentList[i]) == -1){
+                        //当前会议室不包含某一个所选设备，所以跳出本次循环,并将不符合条件的会议室记录下来
+                        falg1 = false;
+                        excludeRoom.add(room.getMeetingRoomId());
+                        break;
+                    }
                 }
             }
-
         }
-
         MeetingTime meetingTime = new MeetingTime();
         //调用接口参数当前操作需要的权限，得到true或false
             /*Power = 调用是否有权限的接口*/

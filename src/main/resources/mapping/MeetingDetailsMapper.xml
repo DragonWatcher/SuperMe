@@ -245,13 +245,13 @@
     SELECT
     <include refid="Base_Column_List" />
     FROM meeting_details
-    WHERE
-    <if test="#{0} != null &amp;&amp; #{1} != null">
-      AND de_meeting_start BETWEEN #{0,jdbcType=TIMESTAMP} AND #{1,jdbcType=TIMESTAMP}
+    WHERE 1 = 1
+    <if test="startTime != null &amp;&amp; endTime != null">
+      AND de_meeting_start BETWEEN #{startTime,jdbcType=TIMESTAMP} AND #{endTime,jdbcType=TIMESTAMP}
     </if>
-    <if test="#{2}.size() > 0">
-      de_room_id NOT IN
-      <foreach collection="list" open="(" close=")" separator="," item="roomId">
+    <if test="excludeRoom.size() > 0">
+      AND de_room_id NOT IN
+      <foreach collection="excludeRoom" open="(" close=")" separator="," item="roomId">
         #{roomId}
       </foreach>
     </if>
