@@ -32,6 +32,7 @@ public class PubTemplateCon {
     @ApiOperation(value="修改pub模板", notes="修改Pub模板的第一步，需要会议详情的id")
     @ApiImplicitParam(paramType="path", name = "deDetailsId", value = "会议详情ID", required = true, dataType = "Integer")
     public JSONObject selectRoomPubTemplate(@PathVariable int deDetailsId) {
+        System.out.println("888888888");
         return roomServiceImpl.selectRoomPubTemplate(deDetailsId);
     }
 
@@ -87,6 +88,8 @@ public class PubTemplateCon {
     public JSONObject addRoomPubTemplate(@PathVariable int roomId){
         return roomServiceImpl.byRoomIdSelectRoomPubTemplate(roomId);
     }
+    
+    
     //继续并添加Pub模板---完成
     @RequestMapping(value = "/reserve/add/addPubTemplate",method = RequestMethod.POST)
     @ResponseBody
