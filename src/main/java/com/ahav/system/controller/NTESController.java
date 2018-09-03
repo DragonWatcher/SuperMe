@@ -37,22 +37,7 @@ public class NTESController {
     @ApiOperation(value = "获取ip地址")
     @GetMapping("/ip")
     public SystemResult reviewIp(HttpServletRequest request) {
-        String xIp = request.getHeader("X-Real-IP");
-        String xFor = request.getHeader("X-Forwarded-For");
-        String ProxyClientIP = request.getHeader("Proxy-Client-IP");
-        String WLProxyClientIP = request.getHeader("WL-Proxy-Client-IP");
-        String HTTP_CLIENT_IP = request.getHeader("HTTP_CLIENT_IP");
-        String HTTP_X_FORWARDED_FOR = request.getHeader("HTTP_X_FORWARDED_FOR");
-        String remoteAddr = request.getRemoteAddr();
-        JSONObject ipList = new JSONObject();
-        ipList.put("X-Real-IP", xIp);
-        ipList.put("xFor", xFor);
-        ipList.put("Proxy-Client-IP", ProxyClientIP);
-        ipList.put("WLProxyClientIP", WLProxyClientIP);
-        ipList.put("HTTP_CLIENT_IP", HTTP_CLIENT_IP);
-        ipList.put("HTTP_X_FORWARDED_FOR", HTTP_X_FORWARDED_FOR);
-        ipList.put("remoteAddr", remoteAddr);
-        return new SystemResult(HttpStatus.OK.value(), "ip", ipList);
+        return new SystemResult(HttpStatus.OK.value(), "remoteAddr", request.getRemoteAddr());
     }
 
 }
