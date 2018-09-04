@@ -139,13 +139,13 @@ public class MeetingDetailsCon {
     @ResponseBody
     @ApiOperation(value="根据设备和时间查询相应的会议详情", notes="添加会议的第二步")
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType="query", name = "equipmentList", value = "设备列表", required = false, allowMultiple = true, dataType = "String"),
+            //allowMultiple=true,————表示是数组格式的参数
+            //dataType = "String"————表示数组中参数的类型
+            @ApiImplicitParam(paramType="query", name = "equipmentList", value = "设备列表", required = false, allowMultiple = true, dataType = "string"),
             @ApiImplicitParam(paramType="query", name = "todayTime", value = "今天时间", required = true, dataType = "Date"),
     })
     public JSONObject byEquipmentListSelectMeetingDetails(String[] equipmentList, Date todayTime){
         return meetingDetailsServiceImpl.byEquipmentListSelectMeetingDetails(equipmentList,todayTime);
     }
-
-
 
 }
