@@ -75,6 +75,7 @@
     <include refid="Base_Column_List" />
     FROM meeting_details
   </select>
+
     <!-- 按照查询条件查询会议详情 -->
   <select id="selectMeetingDetails" parameterType="com.ahav.reserve.pojo.MeetingDetails" resultMap="BaseResultMap">
     SELECT
