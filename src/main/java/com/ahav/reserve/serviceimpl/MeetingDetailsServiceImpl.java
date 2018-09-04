@@ -92,8 +92,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         initPageMap.put("roomAll",roomAll);
         initPageMap.put("meetingTime",meetingTime);
 
-        /*TODO:调用接口查询会议室设备列表
-        * initPageMap.put("会议室设备列表",会议室设备列表);*/
+        /*TODO:调用接口查询设备列表(要求前台要求是一个字符串例1,2,3,5)
+        * initPageMap.put("设备列表",设备列表);*/
 
 
         if(flag){
@@ -721,7 +721,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         return alterMeetingDetails(meetingDetails, pubTemplate);
     }
 
-    //根据设备列表查询相应的会议详情
+    //根据时间和设备列表查询相应的会议详情
     @Override
     public JSONObject byEquipmentListSelectMeetingDetails(String[] equipmentList,Date todayTime) {
         Result result = new Result();
@@ -785,8 +785,6 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             meetingTime.setNextMeetingTime(nextTime.getDeMeetingStart());
         }
 
-        /*TODO:调用接口查询会议室设备列表
-        * jsonObject.put("会议室设备列表",会议室设备列表);*/
         jsonObject.put("meetingTime",meetingTime);
         jsonObject.put("roomAll",roomAll);
 
