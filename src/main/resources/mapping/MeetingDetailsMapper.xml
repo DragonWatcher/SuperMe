@@ -328,6 +328,12 @@
       <if test="deGradeId != null">
         de_grade_id,
       </if>
+      <if test="deShow != null">
+        de_show,
+      </if>
+      <if test="dePubTemplate != null">
+        de_pub_template,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="deDetailsId != null">
