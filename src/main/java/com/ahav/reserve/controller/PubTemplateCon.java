@@ -32,7 +32,6 @@ public class PubTemplateCon {
     @ApiOperation(value="修改pub模板", notes="修改Pub模板的第一步，需要会议详情的id")
     @ApiImplicitParam(paramType="path", name = "deDetailsId", value = "会议详情ID", required = true, dataType = "Integer")
     public JSONObject selectRoomPubTemplate(@PathVariable int deDetailsId) {
-        System.out.println("888888888");
         return roomServiceImpl.selectRoomPubTemplate(deDetailsId);
     }
 
@@ -67,6 +66,7 @@ public class PubTemplateCon {
             @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = true, dataType = "String"),
     })
     public Map updatePubTemplate(MeetingDetails meetingDetails,@RequestBody PubTemplate pubTemplate){//接受一个json对象，要求前台传递的json对象中的每一个key与我们接受类的属性名一一对应，json对象的名与类名一致
+        //目前从swagger中传json对象pubTemplate接收不到
        return meetingDetailsServiceImpl.saveTemplate(meetingDetails,pubTemplate);
     }
 
@@ -111,6 +111,7 @@ public class PubTemplateCon {
             @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = true, dataType = "String"),
     })
     public JSONObject addRoomPubTemplate2(MeetingDetails meetingDetails,@RequestBody PubTemplate pubTemplate){
+        //目前从swagger中传json对象pubTemplate接收不到
         return meetingDetailsServiceImpl.addMeetingDetails(meetingDetails,pubTemplate);
     }
 
