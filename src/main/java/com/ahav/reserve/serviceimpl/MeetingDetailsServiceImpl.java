@@ -603,11 +603,11 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
     //删除pub模板
     @Override
-    public Map deletePubTemplate(int deDetailsId,String pubTemplate) {
+    public Map deletePubTemplate(Integer deDetailsId,String pubTemplate) {
         Result result = new Result();
         Map<String,Object> map = new HashMap<String,Object>();
         int delete = meetingDetailsMapperImpl.deletePubTemplate(deDetailsId, pubTemplate);
-        if(delete > 1){
+        if(delete > 0){
             result.setStatus(200);
             map.put("result",result);
             MeetingDetails meetingDetails = meetingDetailsMapperImpl.selectByPrimaryKey(deDetailsId);
