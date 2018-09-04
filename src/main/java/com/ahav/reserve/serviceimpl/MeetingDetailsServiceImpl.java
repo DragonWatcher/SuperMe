@@ -473,6 +473,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             }
             count++;
         }
+        System.err.println(deptReservePersonId);
         meetingDetails.setDeDepartmentReservePersonId(deptReservePersonId);
 
         //查询出指定日期指定会议室的会议详情
