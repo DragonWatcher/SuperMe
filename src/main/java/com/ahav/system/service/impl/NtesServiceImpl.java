@@ -167,13 +167,12 @@ public class NtesServiceImpl implements NtesService {
         List<String> deptIdListNtes = new ArrayList<>();
         deptListNtes.forEach(d -> deptIdListNtes.add(d.getDeptId()));
 
-        Set<String> deptIdSetDB = deptDBMap.keySet();
         // 筛选出数据库中多余的部门id列表
-        deptIdSetDB = deptIdSetDB.stream().filter(unitId -> !deptIdListNtes.contains(unitId))
-                .collect(Collectors.toSet());
+        Set<String> readyToDelDeptIdSetDB = deptDBMap.keySet().stream()
+                .filter(unitId -> !deptIdListNtes.contains(unitId)).collect(Collectors.toSet());
         // 执行（多余的）部门批量删除
-        if (deptIdSetDB != null && deptIdSetDB.size() != 0) {
-            deptDao.delDeptsBatch(deptIdSetDB);
+        if (readyToDelDeptIdSetDB != null && readyToDelDeptIdSetDB.size() != 0) {
+            deptDao.delDeptsBatch(readyToDelDeptIdSetDB);
         }
 
         // 3. 更新版本号
