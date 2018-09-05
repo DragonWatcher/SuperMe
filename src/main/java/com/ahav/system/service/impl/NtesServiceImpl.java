@@ -171,11 +171,6 @@ public class NtesServiceImpl implements NtesService {
         // 筛选出数据库中多余的部门id列表
         deptIdSetDB = deptIdSetDB.stream().filter(unitId -> !deptIdListNtes.contains(unitId))
                 .collect(Collectors.toSet());
-//        deptIdListNtes.forEach(unitId -> {
-//            // 相同则移除数据库中的部门id列表，剩下的就是数据库中多余的部门id列表
-//            if (deptIdSetDB.contains(unitId))
-//                deptIdSetDB.remove(unitId);
-//        });
         // 执行（多余的）部门批量删除
         if (deptIdSetDB != null && deptIdSetDB.size() != 0) {
             deptDao.delDeptsBatch(deptIdSetDB);
