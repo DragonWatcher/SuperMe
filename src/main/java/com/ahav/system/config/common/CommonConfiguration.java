@@ -29,7 +29,7 @@ public class CommonConfiguration extends WebMvcConfigurerAdapter {
         registry.addMapping("/**")
                 .allowedOrigins("*")
                 .allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE")
-                .allowedHeaders("*")
+                .allowedHeaders("header1", "header2", "header3")
                 .allowCredentials(true);
     }
 }
