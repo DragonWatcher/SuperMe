@@ -75,6 +75,7 @@
     <include refid="Base_Column_List" />
     FROM meeting_details
   </select>
+
     <!-- 按照查询条件查询会议详情 -->
   <select id="selectMeetingDetails" parameterType="com.ahav.reserve.pojo.MeetingDetails" resultMap="BaseResultMap">
     SELECT
@@ -327,6 +328,12 @@
       <if test="deGradeId != null">
         de_grade_id,
       </if>
+      <if test="deShow != null">
+        de_show,
+      </if>
+      <if test="dePubTemplate != null">
+        de_pub_template,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="deDetailsId != null">
@@ -467,14 +474,14 @@
   <!--保持pub模板-->
   <update id="updatePubTemplate">
       UPDATE meeting_details
-      SET de_pub_template = #{0,jdbcType=VARCHAR}
-      WHERE de_details_id = #{1,jdbcType=INTEGER}
+      SET de_pub_template = #{jsonStringPubTemplate,jdbcType=VARCHAR}
+      WHERE de_details_id = #{deDetailsId,jdbcType=INTEGER}
   </update>
   <!--删除Pub模板，但不是真删除只是将预设模板换为无模板的模板-->
   <update id="deletePubTemplate">
      UPDATE meeting_details
-     SET de_pub_template = #{1,jdbcType=VARCHAR}
-      WHERE de_details_id = #{0,jdbcType=INTEGER}
+     SET de_pub_template = #{pubTemplate,jdbcType=VARCHAR}
+     WHERE de_details_id = #{deDetailsId,jdbcType=INTEGER}
   </update>
   <!--获取刚插入的数据的id（要求表的id为自增）-->
   <select id="selectNewestDetailsId" resultType="java.lang.Integer">

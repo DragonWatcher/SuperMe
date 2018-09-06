@@ -44,7 +44,6 @@ public class historySelectCon {
         return meetingDetailsServiceImpl.selectHistory(meetingDetails,pageNum,pageSize);
     }
 
-
     /*@RequestMapping(value = "/test/userLogin",method = RequestMethod.GET)
     @ResponseBody
     public SystemResult userLogin(){

@@ -78,7 +78,7 @@ public class MeetingDetailsCon {
             @ApiImplicitParam(paramType="query", name = "deReservePhone", value = "预定人电话", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deReserveNumber", value = "预定人数", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deMain", value = "主要人员", required = true, dataType = "String"),
-            @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = false, dataType = "String"),
     })
     public Map updateMeetingDetails(MeetingDetails meetingDetails, @RequestBody PubTemplate pubTemplate){
         return meetingDetailsServiceImpl.alterMeetingDetails(meetingDetails,pubTemplate);
@@ -128,7 +128,7 @@ public class MeetingDetailsCon {
             @ApiImplicitParam(paramType="query", name = "deReservePhone", value = "预定人电话", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deReserveNumber", value = "预定人数", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deMain", value = "主要人员", required = true, dataType = "String"),
-            @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = false, dataType = "String"),
     })
     public JSONObject insertMeetingDetails(MeetingDetails meetingDetails,@RequestBody PubTemplate pubTemplate){
         return meetingDetailsServiceImpl.addMeetingDetails(meetingDetails,pubTemplate);
@@ -139,13 +139,13 @@ public class MeetingDetailsCon {
     @ResponseBody
     @ApiOperation(value="根据设备和时间查询相应的会议详情", notes="添加会议的第二步")
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType="query", name = "equipmentList", value = "设备列表", required = false, allowMultiple = true, dataType = "String"),
+            //allowMultiple=true,————表示是数组格式的参数
+            //dataType = "String"————表示数组中参数的类型
+            @ApiImplicitParam(paramType="query", name = "equipmentList", value = "设备列表", required = false, allowMultiple = true, dataType = "string"),
             @ApiImplicitParam(paramType="query", name = "todayTime", value = "今天时间", required = true, dataType = "Date"),
     })
     public JSONObject byEquipmentListSelectMeetingDetails(String[] equipmentList, Date todayTime){
         return meetingDetailsServiceImpl.byEquipmentListSelectMeetingDetails(equipmentList,todayTime);
     }
-
-
 
 }

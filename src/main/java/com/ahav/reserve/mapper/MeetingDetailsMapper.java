@@ -33,7 +33,7 @@ public interface MeetingDetailsMapper {
     List<MeetingDetails> selectMeetingDetails(MeetingDetails meetingDetails);
 
     //保存pub模板
-    public int updatePubTemplate(String jsonStringPubTemplate,int deDetailsId);
+    public int updatePubTemplate(@Param("jsonStringPubTemplate") String jsonStringPubTemplate,@Param("deDetailsId") Integer deDetailsId);
     //根据预定人姓名查询预定人ID
     public int selectReserveId(String reserveName);
     //根据预订人id查询会议详情
@@ -43,7 +43,7 @@ public interface MeetingDetailsMapper {
     //保存修改会议详情，排除当前会议
     List<MeetingDetails> byExcludeDetailsIdselectMeetingDetails(MeetingDetails mDetails);
     //删除pub模板
-    int deletePubTemplate(int deDetailsId,String pubTemplate);
+    int deletePubTemplate(@Param("deDetailsId") Integer deDetailsId,@Param("pubTemplate") String pubTemplate);
     //获取刚插入的会议详情的id
     Integer selectNewestDetailsId();
     //通过时间和所选设备查询符合条件的会议详情

@@ -37,11 +37,17 @@ public class RoomServiceImpl implements IRoomService {
             String dePubTemplate = meetingDetails.getDePubTemplate();//获得当前会议室的模板,返回一个json格式的字符串
             if(body != null && !body.equals("")){
                 result.setStatus(200);
+                //将会议室的pub模板列表包装到JsonObject中
                 JSONArray pubTemplateArray = JSONArray.parseArray(body);//将json数组格式的字符串，转为json数组
                 jsonObject.put("pubTemplateArray",pubTemplateArray);//将json数组封装到json对象中
                 jsonObject.put("result",result);
+                //将当前模板包装到JsonObject中
                 PubTemplate currentPubTemplate = jsonObject.parseObject(dePubTemplate, PubTemplate.class);//将字符串转为json对象
                 jsonObject.put("currentPubTemplate",currentPubTemplate);
+                //将自定义的无模板也包装到JsonObject中
+                String nullPubTemplate1 = "{\"Content\":\"\",\"LayoutId\":-1,\"Thumb\":\"https://gss3.bdstatic.com/-Po3dSag_xI4khGkpoWK1HF6hhy/baike/w%3D268%3Bg%3D0/sign=69fb9c56cb95d143da76e3254bcbe53f/d1a20cf431adcbef5d550e53afaf2edda3cc9f05.jpg\",\"Id\":-1,\"Name\":\"nullTemplate\"}";
+                PubTemplate nullPubTemplate = jsonObject.parseObject(nullPubTemplate1, PubTemplate.class);
+                jsonObject.put("nullPubTemplate",nullPubTemplate);
                 return jsonObject;
             }else {
                 result.setStatus(400);

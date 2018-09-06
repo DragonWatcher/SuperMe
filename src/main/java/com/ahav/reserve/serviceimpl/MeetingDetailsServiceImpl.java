@@ -92,8 +92,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         initPageMap.put("roomAll",roomAll);
         initPageMap.put("meetingTime",meetingTime);
 
-        /*TODO:调用接口查询会议室设备列表
-        * initPageMap.put("会议室设备列表",会议室设备列表);*/
+        /*TODO:调用接口查询设备列表(要求前台要求是一个字符串例1,2,3,5)
+        * initPageMap.put("设备列表",设备列表);*/
 
 
         if(flag){
@@ -473,6 +473,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             }
             count++;
         }
+        System.err.println(deptReservePersonId);
         meetingDetails.setDeDepartmentReservePersonId(deptReservePersonId);
 
         //查询出指定日期指定会议室的会议详情
@@ -550,10 +551,9 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         long time = 0; //总时间
         History history = new History();
         JSONObject jsonObject = new JSONObject();
-        PageHelper.startPage(pageNum,pageSize); //开启分页并设置分页条件
+        PageHelper.startPage(pageNum,pageSize); //开启分页并设置分页条件(默认显示第几页，每页显示多少条数据)
         List<MeetingDetails> historys = meetingDetailsMapperImpl.selectHistory(meetingDetails);
-
-        PageInfo<MeetingDetails> page = new PageInfo<>(historys);//吧查询到对象封装到page中
+        PageInfo<MeetingDetails> page = new PageInfo<>(historys);//吧查询到对象封装到PageInfo中
         for(MeetingDetails his:historys){
             //根据预定人id查询出预定人的姓名，并设置到his对象中
             System.out.println(his.getDeReserveId());
@@ -603,11 +603,11 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
     //删除pub模板
     @Override
-    public Map deletePubTemplate(int deDetailsId,String pubTemplate) {
+    public Map deletePubTemplate(Integer deDetailsId,String pubTemplate) {
         Result result = new Result();
         Map<String,Object> map = new HashMap<String,Object>();
         int delete = meetingDetailsMapperImpl.deletePubTemplate(deDetailsId, pubTemplate);
-        if(delete > 1){
+        if(delete > 0){
             result.setStatus(200);
             map.put("result",result);
             MeetingDetails meetingDetails = meetingDetailsMapperImpl.selectByPrimaryKey(deDetailsId);
@@ -626,6 +626,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     //加载pub模板（）
     @Override
     public void loadPubTemplateCon() {
+        boolean flag = false;
         //遍历序号
         //查询出当天所有会议
         MeetingDetails mDetails =  new MeetingDetails();  //创建一个查询条件体
@@ -650,7 +651,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            /*TODO：调用接口获取预设模板提前开启的时间,存储的时间为整分且以毫秒的形式存储，列只可以选择1分钟，3分钟存储到库中就是60000毫秒，180000毫秒*/
+            /*TODO：调用接口获取预设模板提前开启的时间,存储的时间为整分且以毫秒的形式存储，例只可以选择1分钟，3分钟存储到库中就是60000毫秒，180000毫秒*/
             long time = 300000;//300000相当于5分钟
             /*TODO：调用接口获取当前会议室有没有人，如果有人则不加载预设模板，无人则调用*/
             if(meetingStartTime.getTime()-time == currentTime.getTime()){
@@ -668,8 +669,19 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                 PubTemplate pubTemplate = JSON.parseObject(dePubTemplate, PubTemplate.class);//将json字符串转为对应的对象
                 //调用pub加载pub模板的aqi（调用api就使用restTemplate.getForEntity（"访问的url地址,访问的方法返回类型.class"）.getBody();）
                 restTemplate.getForEntity("http://"+pubIp+"/ajax/presetmode/load?Id="+pubTemplate.getId(), String.class).getBody();
+                flag=true;
             }
         }
+
+        //如果执行到这里说明程序暂停1分钟，
+        if(flag){
+            try {
+                Thread.sleep(60000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
 
     }
 
@@ -708,7 +720,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         return alterMeetingDetails(meetingDetails, pubTemplate);
     }
 
-    //根据设备列表查询相应的会议详情
+    //根据时间和设备列表查询相应的会议详情
     @Override
     public JSONObject byEquipmentListSelectMeetingDetails(String[] equipmentList,Date todayTime) {
         Result result = new Result();
@@ -772,8 +784,6 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             meetingTime.setNextMeetingTime(nextTime.getDeMeetingStart());
         }
 
-        /*TODO:调用接口查询会议室设备列表
-        * jsonObject.put("会议室设备列表",会议室设备列表);*/
         jsonObject.put("meetingTime",meetingTime);
         jsonObject.put("roomAll",roomAll);
 
