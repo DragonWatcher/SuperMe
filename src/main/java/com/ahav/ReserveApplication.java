@@ -19,11 +19,10 @@ public class ReserveApplication {
 		SpringApplication.run(ReserveApplication.class, args);
 		logger.info("======================启动完成=====================");
 	}
+
 	@Autowired
 	private RestTemplateBuilder builder;
-
 	// 使用
-	//
 	// RestTemplateBuilder来实例化RestTemplate对象，spring默认已经注入了RestTemplateBuilder实例
 	@Bean
 	public RestTemplate restTemplate() {

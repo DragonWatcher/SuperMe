@@ -551,10 +551,9 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         long time = 0; //总时间
         History history = new History();
         JSONObject jsonObject = new JSONObject();
-        PageHelper.startPage(pageNum,pageSize); //开启分页并设置分页条件
+        PageHelper.startPage(pageNum,pageSize); //开启分页并设置分页条件(默认显示第几页，每页显示多少条数据)
         List<MeetingDetails> historys = meetingDetailsMapperImpl.selectHistory(meetingDetails);
-
-        PageInfo<MeetingDetails> page = new PageInfo<>(historys);//吧查询到对象封装到page中
+        PageInfo<MeetingDetails> page = new PageInfo<>(historys);//吧查询到对象封装到PageInfo中
         for(MeetingDetails his:historys){
             //根据预定人id查询出预定人的姓名，并设置到his对象中
             System.out.println(his.getDeReserveId());
