@@ -6,11 +6,10 @@ import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Configuration
-public class CommonConfiguration extends WebMvcConfigurationSupport {
+public class CommonConfiguration extends WebMvcConfigurerAdapter {
 
     /**
      * 文件上传配置，在application配置文件中设置不起作用！
