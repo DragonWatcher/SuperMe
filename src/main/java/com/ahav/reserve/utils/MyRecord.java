@@ -1,5 +1,7 @@
 package com.ahav.reserve.utils;
 
+import org.springframework.stereotype.Service;
+
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
@@ -9,6 +11,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+
 
 public class MyRecord extends JFrame implements ActionListener{
 
@@ -40,7 +43,7 @@ public class MyRecord extends JFrame implements ActionListener{
     //构造函数
     public MyRecord()
     {
-        /*//组件初始化
+        //组件初始化
         jp1 = new JPanel();
         jp2 = new JPanel();
         jp3 = new JPanel();
@@ -89,7 +92,6 @@ public class MyRecord extends JFrame implements ActionListener{
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
-*/
     }
 
     public void actionPerformed(ActionEvent e) {
