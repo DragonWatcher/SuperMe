@@ -30,8 +30,8 @@ public class historySelectCon {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType="query", name = "deRoomName", value = "会议室名称", required = false, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deMeetingStatus", value = "是否释放", required = false, dataType = "String"),
-            @ApiImplicitParam(paramType="query", name = "deMeetingStart", value = "查询开始时间", required = true, dataType = "Date"),
-            @ApiImplicitParam(paramType="query", name = "deMeetingOver", value = "查询结束时间", required = true, dataType = "Date"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingStart", value = "查询开始时间", required = false, dataType = "Date"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingOver", value = "查询结束时间", required = false, dataType = "Date"),
             @ApiImplicitParam(paramType="query", name = "deDepartmentReservePersonId", value = "部门预定人id", required = false, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deReserveDepartmentId", value = "预定部门Id", required = false, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deReserveId", value = "预定人Id", required = false, dataType = "Integer"),

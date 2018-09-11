@@ -77,7 +77,9 @@ public class UserRealm extends AuthorizingRealm {
     			System.out.println(role.getChinaRole() + "的权限有："+role.getPermissions());
     			if(perms != null && !perms.isEmpty()){
     				for(Permission permission : perms){
-            			authorizationInfo.addStringPermission(permission.getDescription());
+    					if(permission.getDescription() != null && !"".equals(permission.getDescription())){
+    						authorizationInfo.addStringPermission(permission.getDescription());
+    					}
             		}
     			}
     		}
