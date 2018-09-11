@@ -8,6 +8,7 @@ import com.ahav.reserve.utils.meetingUtils;
 import com.ahav.system.entity.*;
 import com.ahav.system.service.DeptService;
 import com.ahav.system.service.UserService;
+import com.ahav.system.util.CheckPermission;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
@@ -44,14 +45,14 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         Map initPageMap = new HashMap();
         MeetingTime meetingTime = new MeetingTime();
 
-        //调用接口参数当前操作需要的权限，得到true或false
-            /*flag = 调用是否有权限的接口*/
+
         //TODO:调用接口获得当前用户的id
         SystemResult currentUser = userServiceImpl.getCurrentUser();
         SimpleUser user = (SimpleUser)currentUser.getData();
         int deReserveId = user.getUserId();
-        Boolean flag = true;
-/*        int deReserveId = 3;  //预定人id*/
+        //TODO:调用接口参数当前操作需要的权限，得到true或false
+            /*flag = 调用是否有权限的接口*/
+        Boolean flag = CheckPermission.checkPermission("reservation:view:other");
 
         //查询出当天所有的会议
         MeetingDetails mDetails =  new MeetingDetails();  //创建查询体
@@ -182,6 +183,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         }
 
         //TODO:调用接口参数当前操作需要的权限，得到true或false
+        flag = CheckPermission.checkPermission("reservation:view:other");
             /*flag = 调用是否有权限的接口*/
         //TODO:调用接口token获得当前用户的id
         SystemResult currentUser = userServiceImpl.getCurrentUser();
@@ -548,57 +550,118 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     //历史查询
     @Override
     public JSONObject selectHistory(MeetingDetails meetingDetails,Integer pageNum,Integer pageSize) {
-        long time = 0; //总时间
-        History history = new History();
-        JSONObject jsonObject = new JSONObject();
-        PageHelper.startPage(pageNum,pageSize); //开启分页并设置分页条件(默认显示第几页，每页显示多少条数据)
-        List<MeetingDetails> historys = meetingDetailsMapperImpl.selectHistory(meetingDetails);
-        PageInfo<MeetingDetails> page = new PageInfo<>(historys);//吧查询到对象封装到PageInfo中
-        for(MeetingDetails his:historys){
-            //根据预定人id查询出预定人的姓名，并设置到his对象中
-            System.out.println(his.getDeReserveId());
-            SimpleUser userById = (SimpleUser)userServiceImpl.getUserById(his.getDeReserveId()).getData();
-            his.setDeReserve(userById.getTrueName());
-            his.getDeReserveDepartmentId();
-            //根据部门id查询部门的姓名，并设置到his对象中
-            Dept dept = deptServiceImpl.getDeptById(his.getDeReserveDepartmentId());
-            his.setDeReserveDepartment(dept.getDeptName());
-            //根据部门预定人的id查询出部门预定人的姓名（）
-            String deDepartmentReservePersonId = his.getDeDepartmentReservePersonId();
-            String[] split = deDepartmentReservePersonId.split(",");  //将部门预定人的id分割
-            System.out.println(split.length);
-            String [] departmentReservePerson = new String [split.length];
-            for(int i = 0;split.length>i;i++){
-                int departmentReservePersonId = Integer.parseInt(split[i]);
-                //TODO:调用方法：根据部门预定人的id查询出部门预定人的名称
-                SimpleUser user = (SimpleUser)userServiceImpl.getUserById(departmentReservePersonId).getData();
-                departmentReservePerson[i]=user.getTrueName();
+        if(CheckPermission.checkPermission("history:view:other")){  //是否有权限查看其他历史记录
+            long time = 0; //总时间
+            History history = new History();
+            JSONObject jsonObject = new JSONObject();
+            PageHelper.startPage(pageNum,pageSize); //开启分页并设置分页条件(默认显示第几页，每页显示多少条数据)
+            List<MeetingDetails> historys = meetingDetailsMapperImpl.selectHistory(meetingDetails);
+            PageInfo<MeetingDetails> page = new PageInfo<>(historys);//吧查询到对象封装到PageInfo中
+            for(MeetingDetails his:historys){
+                //根据预定人id查询出预定人的姓名，并设置到his对象中
+                System.out.println(his.getDeReserveId());
+                SimpleUser userById = (SimpleUser)userServiceImpl.getUserById(his.getDeReserveId()).getData();
+                his.setDeReserve(userById.getTrueName());
+                his.getDeReserveDepartmentId();
+                //根据部门id查询部门的姓名，并设置到his对象中
+                Dept dept = deptServiceImpl.getDeptById(his.getDeReserveDepartmentId());
+                his.setDeReserveDepartment(dept.getDeptName());
+                //根据部门预定人的id查询出部门预定人的姓名（）
+                String deDepartmentReservePersonId = his.getDeDepartmentReservePersonId();
+                String[] split = deDepartmentReservePersonId.split(",");  //将部门预定人的id分割
+                System.out.println(split.length);
+                String [] departmentReservePerson = new String [split.length];
+                for(int i = 0;split.length>i;i++){
+                    int departmentReservePersonId = Integer.parseInt(split[i]);
+                    //TODO:调用方法：根据部门预定人的id查询出部门预定人的名称
+                    SimpleUser user = (SimpleUser)userServiceImpl.getUserById(departmentReservePersonId).getData();
+                    departmentReservePerson[i]=user.getTrueName();
+                }
+                his.setDeDepartmentReservePerson(departmentReservePerson);
+
+                //将查询到的所有会议的用时时间记录起来
+                time += (his.getDeMeetingOver().getTime() - his.getDeMeetingStart().getTime());
             }
-            his.setDeDepartmentReservePerson(departmentReservePerson);
+            //计算用时多少天多少时多少分
+            long nd = 1000 * 24 * 60 * 60;
+            long nh = 1000 * 60 * 60;
+            long nm = 1000 * 60;
+            //天
+            long day = time / nd;
+            //时
+            long hour = time % nd / nh;
+            //分
+            long minute = time % nd % nh / nm;
+            String deDateCount = day + "天" + hour + "小时" + minute + "分"; //用时共计
 
-            //将查询到的所有会议的用时时间记录起来
-            time += (his.getDeMeetingOver().getTime() - his.getDeMeetingStart().getTime());
+            history.setDeDateCount(deDateCount); //用时共计
+            history.setPage(page);//分页记录
+            history.setPages(page.getPages());//总页数
+            history.setTotal(page.getTotal());//总记录数
+            history.setDeMeetingCount(page.getTotal());//场次共计
+
+            jsonObject.put("history",history);
+            return jsonObject;
+        }else {
+            //TODO:获得当前用户Id
+            SystemResult currentUser = userServiceImpl.getCurrentUser();
+            SimpleUser simpleUser = (SimpleUser)currentUser.getData();
+            int deReserveId = simpleUser.getUserId();
+            meetingDetails.setDeReserveId(deReserveId);
+
+            long time = 0; //总时间
+            History history = new History();
+            JSONObject jsonObject = new JSONObject();
+            PageHelper.startPage(pageNum,pageSize); //开启分页并设置分页条件(默认显示第几页，每页显示多少条数据)
+            List<MeetingDetails> historys = meetingDetailsMapperImpl.selectHistory(meetingDetails);
+            PageInfo<MeetingDetails> page = new PageInfo<>(historys);//吧查询到对象封装到PageInfo中
+            for(MeetingDetails his:historys){
+                //根据预定人id查询出预定人的姓名，并设置到his对象中
+                System.out.println(his.getDeReserveId());
+                SimpleUser userById = (SimpleUser)userServiceImpl.getUserById(his.getDeReserveId()).getData();
+                his.setDeReserve(userById.getTrueName());
+                his.getDeReserveDepartmentId();
+                //根据部门id查询部门的姓名，并设置到his对象中
+                Dept dept = deptServiceImpl.getDeptById(his.getDeReserveDepartmentId());
+                his.setDeReserveDepartment(dept.getDeptName());
+                //根据部门预定人的id查询出部门预定人的姓名（）
+                String deDepartmentReservePersonId = his.getDeDepartmentReservePersonId();
+                String[] split = deDepartmentReservePersonId.split(",");  //将部门预定人的id分割
+                System.out.println(split.length);
+                String [] departmentReservePerson = new String [split.length];
+                for(int i = 0;split.length>i;i++){
+                    int departmentReservePersonId = Integer.parseInt(split[i]);
+                    //TODO:调用方法：根据部门预定人的id查询出部门预定人的名称
+                    SimpleUser user = (SimpleUser)userServiceImpl.getUserById(departmentReservePersonId).getData();
+                    departmentReservePerson[i]=user.getTrueName();
+                }
+                his.setDeDepartmentReservePerson(departmentReservePerson);
+
+                //将查询到的所有会议的用时时间记录起来
+                time += (his.getDeMeetingOver().getTime() - his.getDeMeetingStart().getTime());
+            }
+            //计算用时多少天多少时多少分
+            long nd = 1000 * 24 * 60 * 60;
+            long nh = 1000 * 60 * 60;
+            long nm = 1000 * 60;
+            //天
+            long day = time / nd;
+            //时
+            long hour = time % nd / nh;
+            //分
+            long minute = time % nd % nh / nm;
+            String deDateCount = day + "天" + hour + "小时" + minute + "分"; //用时共计
+
+            history.setDeDateCount(deDateCount); //用时共计
+            history.setPage(page);//分页记录
+            history.setPages(page.getPages());//总页数
+            history.setTotal(page.getTotal());//总记录数
+            history.setDeMeetingCount(page.getTotal());//场次共计
+
+            jsonObject.put("history",history);
+            return jsonObject;
         }
-        //计算用时多少天多少时多少分
-        long nd = 1000 * 24 * 60 * 60;
-        long nh = 1000 * 60 * 60;
-        long nm = 1000 * 60;
-        //天
-        long day = time / nd;
-        //时
-        long hour = time % nd / nh;
-        //分
-        long minute = time % nd % nh / nm;
-        String deDateCount = day + "天" + hour + "小时" + minute + "分"; //用时共计
 
-        history.setDeDateCount(deDateCount); //用时共计
-        history.setPage(page);//分页记录
-        history.setPages(page.getPages());//总页数
-        history.setTotal(page.getTotal());//总记录数
-        history.setDeMeetingCount(page.getTotal());//场次共计
-
-        jsonObject.put("history",history);
-        return jsonObject;
     }
 
     //删除pub模板
