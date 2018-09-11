@@ -766,7 +766,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             String dePubTemplate = meetingDetails.getDePubTemplate();
             result.setStatus(200);
             jsonObject.put("result",result);
-            jsonObject.put("dePubTemplate",dePubTemplate);
+            PubTemplate pubTemplate = jsonObject.parseObject(dePubTemplate, PubTemplate.class);
+            jsonObject.put("pubTemplate",pubTemplate);
             return jsonObject;
         }else{
             result.setStatus(400);
