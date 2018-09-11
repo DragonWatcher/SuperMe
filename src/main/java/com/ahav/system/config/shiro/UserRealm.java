@@ -61,8 +61,9 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
     	logger.info("权限配置-->doGetAuthorizationInfo");
-		
+		//获取登录用户
     	User principal = (User) SecurityUtils.getSubject().getPrincipal();
+    	//获取用户名
 		String loginName = principal.getUsername().toString();
         if (!StringUtils.isEmpty(loginName)) {
         	SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();

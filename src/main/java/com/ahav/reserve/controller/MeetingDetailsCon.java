@@ -145,6 +145,7 @@ public class MeetingDetailsCon {
             @ApiImplicitParam(paramType="query", name = "todayTime", value = "今天时间", required = true, dataType = "Date"),
     })
     public JSONObject byEquipmentListSelectMeetingDetails(String[] equipmentList, Date todayTime){
+    	
         return meetingDetailsServiceImpl.byEquipmentListSelectMeetingDetails(equipmentList,todayTime);
     }
 
