@@ -1,10 +1,14 @@
 package com.ahav.reserve.controller;
 
 import com.ahav.reserve.utils.CreateTokenDemo;
-import com.ahav.reserve.utils.MyRecord;
 import com.ahav.reserve.utils.SpeechTranscriberDemo;
 import com.ahav.reserve.utils.SpeechTranscriberWithMicrophoneDemo;
 import io.swagger.annotations.Api;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -13,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ShareController {
     //语音识别的类
     SpeechTranscriberWithMicrophoneDemo SpeechTranscriberWithMicrophoneDemo = new SpeechTranscriberWithMicrophoneDemo();
-
-    //MyRecord myRecord = new MyRecord();
 
     @RequestMapping("/share/summaryShare/asr")
     public void shishi(){

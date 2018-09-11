@@ -4,6 +4,7 @@ import com.ahav.reserve.pojo.PubTemplate;
 import com.ahav.reserve.pojo.Result;
 import com.ahav.reserve.service.IMeetingDetailsService;
 import com.ahav.reserve.service.IRoomService;
+import com.ahav.reserve.utils.meetingUtils;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Date;
 import java.util.Map;
 
 @Controller
@@ -54,8 +56,8 @@ public class PubTemplateCon {
             @ApiImplicitParam(paramType="query", name = "deGrade", value = "会议级别", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deGradeId", value = "会议级别ID", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deRoomId", value = "会议室Id", required = true, dataType = "Integer"),
-            @ApiImplicitParam(paramType="query", name = "deMeetingStart", value = "会议开始时间", required = true, dataType = "Date"),
-            @ApiImplicitParam(paramType="query", name = "deMeetingOver", value = "会议结束时间", required = true, dataType = "Date"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingStartStr", value = "会议开始时间", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingOverStr", value = "会议结束时间", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deMeetingName", value = "会议详情名称", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deReserveDepartmentId", value = "预定部门Id", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deReserve", value = "预定人", required = true, dataType = "String"),
@@ -65,7 +67,9 @@ public class PubTemplateCon {
             @ApiImplicitParam(paramType="query", name = "deMain", value = "主要人员", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = true, dataType = "String"),
     })
-    public Map updatePubTemplate(MeetingDetails meetingDetails,@RequestBody PubTemplate pubTemplate){//接受一个json对象，要求前台传递的json对象中的每一个key与我们接受类的属性名一一对应，json对象的名与类名一致
+    public Map updatePubTemplate(MeetingDetails meetingDetails, @RequestBody PubTemplate pubTemplate, String deMeetingStartStr,String deMeetingOverStr){//接受一个json对象，要求前台传递的json对象中的每一个key与我们接受类的属性名一一对应，json对象的名与类名一致
+        meetingDetails.setDeMeetingStart(meetingUtils.parse(deMeetingStartStr));
+        meetingDetails.setDeMeetingOver(meetingUtils.parse(deMeetingOverStr));
         //目前从swagger中传json对象pubTemplate接收不到
        return meetingDetailsServiceImpl.saveTemplate(meetingDetails,pubTemplate);
     }
@@ -99,8 +103,8 @@ public class PubTemplateCon {
             @ApiImplicitParam(paramType="query", name = "deGrade", value = "会议级别", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deGradeId", value = "会议级别ID", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deRoomId", value = "会议室Id", required = true, dataType = "Integer"),
-            @ApiImplicitParam(paramType="query", name = "deMeetingStart", value = "会议开始时间", required = true, dataType = "Date"),
-            @ApiImplicitParam(paramType="query", name = "deMeetingOver", value = "会议结束时间", required = true, dataType = "Date"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingStartStr", value = "会议开始时间", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingOverStr", value = "会议结束时间", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deMeetingName", value = "会议详情名称", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deReserveDepartmentId", value = "预定部门Id", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deReserve", value = "预定人", required = true, dataType = "String"),
@@ -110,7 +114,9 @@ public class PubTemplateCon {
             @ApiImplicitParam(paramType="query", name = "deMain", value = "主要人员", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = true, dataType = "String"),
     })
-    public JSONObject addRoomPubTemplate2(MeetingDetails meetingDetails,@RequestBody PubTemplate pubTemplate){
+    public JSONObject addRoomPubTemplate2(MeetingDetails meetingDetails,@RequestBody PubTemplate pubTemplate,String deMeetingStartStr,String deMeetingOverStr){
+        meetingDetails.setDeMeetingStart(meetingUtils.parse(deMeetingStartStr));
+        meetingDetails.setDeMeetingOver(meetingUtils.parse(deMeetingOverStr));
         //目前从swagger中传json对象pubTemplate接收不到
         return meetingDetailsServiceImpl.addMeetingDetails(meetingDetails,pubTemplate);
     }

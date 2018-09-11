@@ -2,6 +2,7 @@ package com.ahav.reserve.controller;
 
 import com.ahav.reserve.pojo.MeetingDetails;
 import com.ahav.reserve.service.IMeetingDetailsService;
+import com.ahav.reserve.utils.meetingUtils;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -30,8 +31,8 @@ public class historySelectCon {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType="query", name = "deRoomName", value = "会议室名称", required = false, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deMeetingStatus", value = "是否释放", required = false, dataType = "String"),
-            @ApiImplicitParam(paramType="query", name = "deMeetingStart", value = "查询开始时间", required = false, dataType = "Date"),
-            @ApiImplicitParam(paramType="query", name = "deMeetingOver", value = "查询结束时间", required = false, dataType = "Date"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingStartStr", value = "查询开始时间", required = false, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingOverStr", value = "查询结束时间", required = false, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deDepartmentReservePersonId", value = "部门预定人id", required = false, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deReserveDepartmentId", value = "预定部门Id", required = false, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deReserveId", value = "预定人Id", required = false, dataType = "Integer"),
@@ -40,7 +41,15 @@ public class historySelectCon {
             @ApiImplicitParam(paramType="query", name = "pageNum", value = "当前页", required = false, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "pageSize", value = "每页展示几条内容", required = false, dataType = "Integer"),
     })
-    public JSONObject selectHistory(MeetingDetails meetingDetails, @RequestParam(defaultValue = "1") Integer pageNum,@RequestParam(defaultValue = "10")Integer pageSize)  {
+    public JSONObject selectHistory(MeetingDetails meetingDetails, @RequestParam(defaultValue = "1") Integer pageNum,@RequestParam(defaultValue = "10")Integer pageSize,String deMeetingStartStr,String deMeetingOverStr) {
+    	if(deMeetingStartStr !=null && !deMeetingStartStr.equals("")){
+    		meetingDetails.setDeMeetingStart(meetingUtils.parse2(deMeetingStartStr));
+            meetingDetails.setDeMeetingOver(meetingUtils.parse2(deMeetingOverStr));
+    	}
+    	if(deMeetingOverStr !=null && !deMeetingOverStr.equals("")){
+            meetingDetails.setDeMeetingOver(meetingUtils.parse2(deMeetingOverStr));
+    	}
+        
         return meetingDetailsServiceImpl.selectHistory(meetingDetails,pageNum,pageSize);
     }
 

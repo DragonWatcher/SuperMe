@@ -3,6 +3,7 @@ package com.ahav.reserve.controller;
 import com.ahav.reserve.pojo.*;
 import com.ahav.reserve.service.IMeetingDetailsService;
 import com.ahav.reserve.service.IRoomService;
+import com.ahav.reserve.utils.meetingUtils;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -43,9 +44,10 @@ public class MeetingDetailsCon {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType="query", name = "deReserve", value = "预订人姓名", required = false, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deMeetingName", value = "会议详情的名称", required = false, dataType = "String"),
-            @ApiImplicitParam(paramType="query", name = "deMeetingStart", value = "会议所在当天的日期", required = true, dataType = "Date")
+            @ApiImplicitParam(paramType="query", name = "deMeetingStartStr", value = "会议所在当天的日期", required = true, dataType = "String")
     })
-    public Map selectMeetingDetails(MeetingDetails meetingDetails){
+    public Map selectMeetingDetails(MeetingDetails meetingDetails,String deMeetingStartStr){
+        meetingDetails.setDeMeetingStart(meetingUtils.parse2(deMeetingStartStr));
         return meetingDetailsServiceImpl.findMeetingDetails(meetingDetails);
     }
 
@@ -69,8 +71,8 @@ public class MeetingDetailsCon {
             @ApiImplicitParam(paramType="query", name = "deGrade", value = "会议级别", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deGradeId", value = "会议级别ID", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deRoomId", value = "会议室Id", required = true, dataType = "Integer"),
-            @ApiImplicitParam(paramType="query", name = "deMeetingStart", value = "会议开始时间", required = true, dataType = "Date"),
-            @ApiImplicitParam(paramType="query", name = "deMeetingOver", value = "会议结束时间", required = true, dataType = "Date"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingStartStr", value = "会议开始时间", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingOverStr", value = "会议结束时间", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deMeetingName", value = "会议详情名称", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deReserveDepartmentId", value = "预定部门Id", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deReserve", value = "预定人", required = true, dataType = "String"),
@@ -80,7 +82,9 @@ public class MeetingDetailsCon {
             @ApiImplicitParam(paramType="query", name = "deMain", value = "主要人员", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = false, dataType = "String"),
     })
-    public Map updateMeetingDetails(MeetingDetails meetingDetails, @RequestBody PubTemplate pubTemplate){
+    public Map updateMeetingDetails(MeetingDetails meetingDetails, @RequestBody PubTemplate pubTemplate,String deMeetingStartStr,String deMeetingOverStr){
+        meetingDetails.setDeMeetingStart(meetingUtils.parse(deMeetingStartStr));
+        meetingDetails.setDeMeetingOver(meetingUtils.parse(deMeetingOverStr));
         return meetingDetailsServiceImpl.alterMeetingDetails(meetingDetails,pubTemplate);
     }
 
@@ -119,8 +123,8 @@ public class MeetingDetailsCon {
             @ApiImplicitParam(paramType="query", name = "deGrade", value = "会议级别", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deGradeId", value = "会议级别ID", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deRoomId", value = "会议室Id", required = true, dataType = "Integer"),
-            @ApiImplicitParam(paramType="query", name = "deMeetingStart", value = "会议开始时间", required = true, dataType = "Date"),
-            @ApiImplicitParam(paramType="query", name = "deMeetingOver", value = "会议结束时间", required = true, dataType = "Date"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingStartStr", value = "会议开始时间", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingOverStr", value = "会议结束时间", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deMeetingName", value = "会议详情名称", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deReserveDepartmentId", value = "预定部门Id", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deReserve", value = "预定人", required = true, dataType = "String"),
@@ -130,7 +134,9 @@ public class MeetingDetailsCon {
             @ApiImplicitParam(paramType="query", name = "deMain", value = "主要人员", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = false, dataType = "String"),
     })
-    public JSONObject insertMeetingDetails(MeetingDetails meetingDetails,@RequestBody PubTemplate pubTemplate){
+    public JSONObject insertMeetingDetails(MeetingDetails meetingDetails,@RequestBody PubTemplate pubTemplate,String deMeetingStartStr,String deMeetingOverStr){
+        meetingDetails.setDeMeetingStart(meetingUtils.parse(deMeetingStartStr));
+        meetingDetails.setDeMeetingOver(meetingUtils.parse(deMeetingOverStr));
         return meetingDetailsServiceImpl.addMeetingDetails(meetingDetails,pubTemplate);
     }
 
@@ -142,10 +148,10 @@ public class MeetingDetailsCon {
             //allowMultiple=true,————表示是数组格式的参数
             //dataType = "String"————表示数组中参数的类型
             @ApiImplicitParam(paramType="query", name = "equipmentList", value = "设备列表", required = false, allowMultiple = true, dataType = "string"),
-            @ApiImplicitParam(paramType="query", name = "todayTime", value = "今天时间", required = true, dataType = "Date"),
+            @ApiImplicitParam(paramType="query", name = "todayTimeStr", value = "今天时间", required = true, dataType = "string"),
     })
-    public JSONObject byEquipmentListSelectMeetingDetails(String[] equipmentList, Date todayTime){
-    	
+    public JSONObject byEquipmentListSelectMeetingDetails(String[] equipmentList, String todayTimeStr){
+        Date todayTime = meetingUtils.parse(todayTimeStr);
         return meetingDetailsServiceImpl.byEquipmentListSelectMeetingDetails(equipmentList,todayTime);
     }
 

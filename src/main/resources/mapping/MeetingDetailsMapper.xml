@@ -137,8 +137,8 @@
       <if test="dePubTemplate != null">
         AND de_pub_template=#{dePubTemplate,jdbcType=VARCHAR}
       </if>
-      ORDER BY de_meeting_start ASC
     </where>
+   ORDER BY de_meeting_start ASC
   </select>
   <!-- 修改会议时根据条件查询会议有没有冲突：排除当前正在修改的会议！！这是专门修改用的方法 -->
   <select id="byExcludeDetailsIdselectMeetingDetails" parameterType="com.ahav.reserve.pojo.MeetingDetails" resultMap="BaseResultMap">
@@ -200,9 +200,9 @@
       </if>
       <if test="dePubTemplate != null">
         AND de_pub_template=#{dePubTemplate,jdbcType=VARCHAR}
-      </if>
-      ORDER BY de_meeting_start ASC
+      </if> 
     </where>
+    ORDER BY de_meeting_start ASC
   </select>
   <!--历史查询-->
   <select id="selectHistory" parameterType="com.ahav.reserve.pojo.MeetingDetails" resultMap="BaseResultMap">
@@ -237,8 +237,8 @@
       <if test="deGradeId != null">
         AND de_grade_id=#{deGradeId,jdbcType=INTEGER}
       </if>
-      ORDER BY de_meeting_start DESC
     </where>
+    ORDER BY de_meeting_start DESC
   </select>
 
   <!--通过时间和所选设备查询符合条件的会议详情-->
