@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahav.task.dao.TaskMapper">
+  <resultMap id="BaseResultMap" type="com.ahav.task.entity.Task">
+    <id column="task_id" jdbcType="VARCHAR" property="taskId" />
+    <result column="task_name" jdbcType="VARCHAR" property="taskName" />
+    <result column="task_describe" jdbcType="VARCHAR" property="taskDescribe" />
+    <result column="publish_time" jdbcType="VARCHAR" property="publishTime" />
+    <result column="task_status" jdbcType="VARCHAR" property="taskStatus" />
+    <result column="publisher" jdbcType="VARCHAR" property="publisher" />
+    <result column="surveyor" jdbcType="VARCHAR" property="surveyor" />
+    <result column="executor" jdbcType="VARCHAR" property="executor" />
+    <result column="start_time" jdbcType="VARCHAR" property="startTime" />
+    <result column="end_time" jdbcType="VARCHAR" property="endTime" />
+    <result column="related_meetings" jdbcType="VARCHAR" property="relatedMeetings" />
+    <result column="acceptance_results" jdbcType="VARCHAR" property="acceptanceResults" />
+    <result column="acceptance_evaluate" jdbcType="VARCHAR" property="acceptanceEvaluate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    task_id, task_name, task_describe, publish_time, task_status, publisher, surveyor, 
+    executor, start_time, end_time, related_meetings, acceptance_results, acceptance_evaluate
+  </sql>
+  <select id="findCounts" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select 
+    count(*)
+    from tasks
+    where 1=1
+      <if test="params.publisher != null">
+        and publisher = #{params.publisher}
+      </if>
+      <if test="params.surveyor != null">
+        and surveyor = #{params.surveyor}
+      </if>
+      <if test="params.executor != null">
+        and executor = #{params.executor}
+      </if>
+      <if test="params.taskStatus != null">
+        and task_status = #{params.taskStatus}
+      </if>
+      <if test="params.relatedMeetings != null">
+        and related_meetings = #{params.relatedMeetings}
+      </if>
+      <if test="params.acceptanceResults != null">
+        and acceptance_results = #{params.acceptanceResults}
+      </if>
+      <if test="params.taskName != null">
+        and task_name = #{params.taskName}
+      </if>
+      <if test="params.publishTime1 != null">
+        and publish_time &gt;= #{params.publishTime1}
+      </if>
+      <if test="params.publishTime2 != null">
+        and publish_time &lt;= #{params.publishTime2}
+      </if>
+      <if test="params.endTime1 != null">
+        and end_time &gt;= #{params.endTime1}
+      </if>
+      <if test="params.endTime2 != null">
+        and end_time &lt;= #{params.endTime2}
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'start_time asc'.toString()">
+        order by tasks.start_time asc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'start_time desc'.toString()">
+        order by tasks.start_time desc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'end_time asc'.toString()">
+        order by tasks.end_time asc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'end_time desc'.toString()">
+        order by tasks.end_time desc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'publish_time asc'.toString()">
+        order by tasks.publish_time asc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'publish_time desc'.toString()">
+        order by tasks.start_time desc
+      </if>
+      limit #{params.start},#{params.pageSize}
+  </select>
+  <select id="findTasks" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select 
+    *
+    from tasks
+    where 1=1
+      <if test="params.publisher != null">
+        and publisher = #{params.publisher}
+      </if>
+      <if test="params.surveyor != null">
+        and surveyor = #{params.surveyor}
+      </if>
+      <if test="params.executor != null">
+        and executor = #{params.executor}
+      </if>
+      <if test="params.taskStatus != null">
+        and task_status = #{params.taskStatus}
+      </if>
+      <if test="params.relatedMeetings != null">
+        and related_meetings = #{params.relatedMeetings}
+      </if>
+      <if test="params.acceptanceResults != null">
+        and acceptance_results = #{params.acceptanceResults}
+      </if>
+      <if test="params.taskName != null">
+        and task_name = #{params.taskName}
+      </if>
+      <if test="params.publishTime1 != null">
+        and publish_time &gt;= #{params.publishTime1}
+      </if>
+      <if test="params.publishTime2 != null">
+        and publish_time &lt;= #{params.publishTime2}
+      </if>
+      <if test="params.endTime1 != null">
+        and end_time &gt;= #{params.endTime1}
+      </if>
+      <if test="params.endTime2 != null">
+        and end_time &lt;= #{params.endTime2}
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'start_time asc'.toString()">
+        order by tasks.start_time asc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'start_time desc'.toString()">
+        order by tasks.start_time desc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'end_time asc'.toString()">
+        order by tasks.end_time asc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'end_time desc'.toString()">
+        order by tasks.end_time desc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'publish_time asc'.toString()">
+        order by tasks.publish_time asc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'publish_time desc'.toString()">
+        order by tasks.start_time desc
+      </if>
+      limit #{params.start},#{params.pageSize}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from tasks
+    where task_id = #{taskId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ahav.task.entity.Task">
+    insert into tasks (task_id, task_name, task_describe, 
+      publish_time, task_status, publisher, 
+      surveyor, executor, start_time, 
+      end_time, related_meetings, acceptance_results, 
+      acceptance_evaluate)
+    values (#{taskId,jdbcType=VARCHAR}, #{taskName,jdbcType=VARCHAR}, #{taskDescribe,jdbcType=VARCHAR}, 
+      #{publishTime,jdbcType=VARCHAR}, #{taskStatus,jdbcType=VARCHAR}, #{publisher,jdbcType=VARCHAR}, 
+      #{surveyor,jdbcType=VARCHAR}, #{executor,jdbcType=VARCHAR}, #{startTime,jdbcType=VARCHAR}, 
+      #{endTime,jdbcType=VARCHAR}, #{relatedMeetings,jdbcType=VARCHAR}, #{acceptanceResults,jdbcType=VARCHAR}, 
+      #{acceptanceEvaluate,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ahav.task.entity.Task">
+    insert into tasks
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="taskId != null">
+        task_id,
+      </if>
+      <if test="taskName != null">
+        task_name,
+      </if>
+      <if test="taskDescribe != null">
+        task_describe,
+      </if>
+      <if test="publishTime != null">
+        publish_time,
+      </if>
+      <if test="taskStatus != null">
+        task_status,
+      </if>
+      <if test="publisher != null">
+        publisher,
+      </if>
+      <if test="surveyor != null">
+        surveyor,
+      </if>
+      <if test="executor != null">
+        executor,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="relatedMeetings != null">
+        related_meetings,
+      </if>
+      <if test="acceptanceResults != null">
+        acceptance_results,
+      </if>
+      <if test="acceptanceEvaluate != null">
+        acceptance_evaluate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="taskId != null">
+        #{taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="taskName != null">
+        #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="taskDescribe != null">
+        #{taskDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="publishTime != null">
+        #{publishTime,jdbcType=VARCHAR},
+      </if>
+      <if test="taskStatus != null">
+        #{taskStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="publisher != null">
+        #{publisher,jdbcType=VARCHAR},
+      </if>
+      <if test="surveyor != null">
+        #{surveyor,jdbcType=VARCHAR},
+      </if>
+      <if test="executor != null">
+        #{executor,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="relatedMeetings != null">
+        #{relatedMeetings,jdbcType=VARCHAR},
+      </if>
+      <if test="acceptanceResults != null">
+        #{acceptanceResults,jdbcType=VARCHAR},
+      </if>
+      <if test="acceptanceEvaluate != null">
+        #{acceptanceEvaluate,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ahav.task.entity.Task">
+    update tasks
+    <set>
+      <if test="taskName != null">
+        task_name = #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="taskDescribe != null">
+        task_describe = #{taskDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="publishTime != null">
+        publish_time = #{publishTime,jdbcType=VARCHAR},
+      </if>
+      <if test="taskStatus != null">
+        task_status = #{taskStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="publisher != null">
+        publisher = #{publisher,jdbcType=VARCHAR},
+      </if>
+      <if test="surveyor != null">
+        surveyor = #{surveyor,jdbcType=VARCHAR},
+      </if>
+      <if test="executor != null">
+        executor = #{executor,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="relatedMeetings != null">
+        related_meetings = #{relatedMeetings,jdbcType=VARCHAR},
+      </if>
+      <if test="acceptanceResults != null">
+        acceptance_results = #{acceptanceResults,jdbcType=VARCHAR},
+      </if>
+      <if test="acceptanceEvaluate != null">
+        acceptance_evaluate = #{acceptanceEvaluate,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where task_id = #{taskId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ahav.task.entity.Task">
+    update tasks
+    set task_name = #{taskName,jdbcType=VARCHAR},
+      task_describe = #{taskDescribe,jdbcType=VARCHAR},
+      publish_time = #{publishTime,jdbcType=VARCHAR},
+      task_status = #{taskStatus,jdbcType=VARCHAR},
+      publisher = #{publisher,jdbcType=VARCHAR},
+      surveyor = #{surveyor,jdbcType=VARCHAR},
+      executor = #{executor,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=VARCHAR},
+      end_time = #{endTime,jdbcType=VARCHAR},
+      related_meetings = #{relatedMeetings,jdbcType=VARCHAR},
+      acceptance_results = #{acceptanceResults,jdbcType=VARCHAR},
+      acceptance_evaluate = #{acceptanceEvaluate,jdbcType=VARCHAR}
+    where task_id = #{taskId,jdbcType=VARCHAR}
+  </update>
+  
+</mapper>

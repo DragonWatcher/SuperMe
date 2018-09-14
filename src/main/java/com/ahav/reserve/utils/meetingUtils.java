@@ -33,4 +33,28 @@ public class meetingUtils {
         }
         return date;
     }
+
+    //将字符串转("yyyy-MM-dd HH:mm")为时间
+    public static Date parse(String date){
+        DateFormat b=new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date parse = null;
+        try{
+            parse = b.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return parse;
+    }
+
+    //将字符串("yyyy-MM-dd")转为时间
+    public static Date parse2(String date){
+        DateFormat b=new SimpleDateFormat("yyyy-MM-dd");
+        Date parse = null;
+        try{
+            parse = b.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return parse;
+    }
 }

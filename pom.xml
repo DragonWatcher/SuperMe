@@ -18,13 +18,36 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+		<sdk.version>2.0.2</sdk.version>
 	</properties>
 
 	<dependencies>
+		<!--阿里智能语音jar包-->
+		<!--<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.0.13</version>
+		</dependency>-->
+		<dependency>
+			<groupId>com.alibaba.nls</groupId>
+			<artifactId>nls-sdk-short-asr</artifactId>
+			<version>${sdk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.nls</groupId>
+			<artifactId>nls-sdk-long-asr</artifactId>
+			<version>${sdk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.nls</groupId>
+			<artifactId>nls-sdk-tts</artifactId>
+			<version>${sdk.version}</version>
+		</dependency>
 		<!-- alibaba的druid数据库连接池 -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
@@ -179,12 +202,83 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
+			<!--阿里智能语音jar包-->
+			<!--<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>-->
 		</plugins>
 	</build>
+	<!--阿里智能语音jar包-->
+	<profiles>
+	<profile>
+		<id>Demo</id>
+		<activation>
+			<property>
+				<name>Demo</name>
+			</property>
+		</activation>
+		<build>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>1.6.0</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>java</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<mainClass>com.alibaba.nls.client.example.SpeechRecognizerDemo</mainClass>
+						<cleanupDaemonThreads>false</cleanupDaemonThreads>
+					</configuration>
+				</plugin>
+			</plugins>
+		</build>
+	</profile>
+	<profile>
+		<id>Token</id>
+		<activation>
+			<property>
+				<name>Token</name>
+			</property>
+		</activation>
+		<build>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>1.6.0</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>java</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<mainClass>com.alibaba.nls.client.example.CreateTokenDemo</mainClass>
+						<cleanupDaemonThreads>false</cleanupDaemonThreads>
+					</configuration>
+				</plugin>
+			</plugins>
+		</build>
+	</profile>
+</profiles>
     <!-- maven私有库 -->
-        <repositories>
+	<repositories>
         <repository>
             <id>ahg-nexus</id>
             <url>http://123.57.226.216:8081/repository/maven-ahg/</url>
