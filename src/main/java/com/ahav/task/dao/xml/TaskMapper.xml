@@ -20,11 +20,121 @@
     task_id, task_name, task_describe, publish_time, task_status, publisher, surveyor, 
     executor, start_time, end_time, related_meetings, acceptance_results, acceptance_evaluate
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="findCounts" parameterType="java.util.Map" resultType="java.lang.Integer">
     select 
-    <include refid="Base_Column_List" />
+    count(*)
     from tasks
-    where task_id = #{taskId,jdbcType=VARCHAR}
+    where 1=1
+      <if test="params.publisher != null">
+        and publisher = #{params.publisher}
+      </if>
+      <if test="params.surveyor != null">
+        and surveyor = #{params.surveyor}
+      </if>
+      <if test="params.executor != null">
+        and executor = #{params.executor}
+      </if>
+      <if test="params.taskStatus != null">
+        and task_status = #{params.taskStatus}
+      </if>
+      <if test="params.relatedMeetings != null">
+        and related_meetings = #{params.relatedMeetings}
+      </if>
+      <if test="params.acceptanceResults != null">
+        and acceptance_results = #{params.acceptanceResults}
+      </if>
+      <if test="params.taskName != null">
+        and task_name = #{params.taskName}
+      </if>
+      <if test="params.publishTime1 != null">
+        and publish_time &gt;= #{params.publishTime1}
+      </if>
+      <if test="params.publishTime2 != null">
+        and publish_time &lt;= #{params.publishTime2}
+      </if>
+      <if test="params.endTime1 != null">
+        and end_time &gt;= #{params.endTime1}
+      </if>
+      <if test="params.endTime2 != null">
+        and end_time &lt;= #{params.endTime2}
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'start_time asc'.toString()">
+        order by tasks.start_time asc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'start_time desc'.toString()">
+        order by tasks.start_time desc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'end_time asc'.toString()">
+        order by tasks.end_time asc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'end_time desc'.toString()">
+        order by tasks.end_time desc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'publish_time asc'.toString()">
+        order by tasks.publish_time asc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'publish_time desc'.toString()">
+        order by tasks.start_time desc
+      </if>
+      limit #{params.start},#{params.pageSize}
+  </select>
+  <select id="findTasks" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select 
+    *
+    from tasks
+    where 1=1
+      <if test="params.publisher != null">
+        and publisher = #{params.publisher}
+      </if>
+      <if test="params.surveyor != null">
+        and surveyor = #{params.surveyor}
+      </if>
+      <if test="params.executor != null">
+        and executor = #{params.executor}
+      </if>
+      <if test="params.taskStatus != null">
+        and task_status = #{params.taskStatus}
+      </if>
+      <if test="params.relatedMeetings != null">
+        and related_meetings = #{params.relatedMeetings}
+      </if>
+      <if test="params.acceptanceResults != null">
+        and acceptance_results = #{params.acceptanceResults}
+      </if>
+      <if test="params.taskName != null">
+        and task_name = #{params.taskName}
+      </if>
+      <if test="params.publishTime1 != null">
+        and publish_time &gt;= #{params.publishTime1}
+      </if>
+      <if test="params.publishTime2 != null">
+        and publish_time &lt;= #{params.publishTime2}
+      </if>
+      <if test="params.endTime1 != null">
+        and end_time &gt;= #{params.endTime1}
+      </if>
+      <if test="params.endTime2 != null">
+        and end_time &lt;= #{params.endTime2}
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'start_time asc'.toString()">
+        order by tasks.start_time asc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'start_time desc'.toString()">
+        order by tasks.start_time desc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'end_time asc'.toString()">
+        order by tasks.end_time asc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'end_time desc'.toString()">
+        order by tasks.end_time desc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'publish_time asc'.toString()">
+        order by tasks.publish_time asc
+      </if>
+      <if test="params.orderBy != null and params.orderBy == 'publish_time desc'.toString()">
+        order by tasks.start_time desc
+      </if>
+      limit #{params.start},#{params.pageSize}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from tasks
