@@ -74,7 +74,7 @@ public class DeptServiceImpl implements DeptService{
         List<DeptStructure> subDeptStructs = new ArrayList<>();
         // 查询子部门列表，并将Dept转换为DeptStructure，存入subDeptStructs
         deptDao.selectSubDepts(deptStructure.getDeptId()).forEach(d -> subDeptStructs.add(new DeptStructure(d)));
-        deptStructure.setSubDeptStructure(subDeptStructs);
+        deptStructure.setSubDeptStructure(subDeptStructs.size() == 0 ? null : subDeptStructs);
         // 查询部门成员列表
         List<JSONObject> deptUsersJoList = new ArrayList<>();
         userDao.selectUsersByDept(deptStructure.getDeptId()).forEach(user -> {
@@ -87,7 +87,7 @@ public class DeptServiceImpl implements DeptService{
 
             deptUsersJoList.add(userJo);
         });
-        deptStructure.setUsers(deptUsersJoList);
+        deptStructure.setUsers(deptUsersJoList.size() == 0 ? null : deptUsersJoList);
         // 递归
         subDeptStructs.forEach(subDS -> packagingDepts(subDS));
     }
