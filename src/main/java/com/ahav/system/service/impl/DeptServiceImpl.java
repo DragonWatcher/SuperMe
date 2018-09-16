@@ -53,14 +53,12 @@ public class DeptServiceImpl implements DeptService{
     
     @Override
     public SystemResult viewDeptsAndUsers() {
-        // 查询父级部门，即parentId为null的部门
-        List<Dept> parents = deptDao.selectParentDepts();
-        
         List<DeptStructure> deptStructure = new ArrayList<>();
-        parents.forEach(parent -> deptStructure.add(new DeptStructure(parent)));
-        
+        // 查询父级部门，即parentId为null的部门
+        deptDao.selectParentDepts().forEach(parent -> deptStructure.add(new DeptStructure(parent)));
+
         deptStructure.forEach(ds -> packagingDepts(ds));
-        
+
         return new SystemResult(HttpStatus.OK.value(), "组织架构查看", deptStructure);
     }
     
@@ -96,11 +94,7 @@ public class DeptServiceImpl implements DeptService{
      * @param deptStructure
      */
     private void packagingDepts(DeptStructure deptStructure) {
-        List<DeptStructure> subDeptStructs = new ArrayList<>();
-        // 查询子部门列表，并将Dept转换为DeptStructure，存入subDeptStructs
-        deptDao.selectSubDepts(deptStructure.getDeptId()).forEach(d -> subDeptStructs.add(new DeptStructure(d)));
-        deptStructure.setSubDeptStructure(subDeptStructs.size() == 0 ? null : subDeptStructs);
-        // 查询部门成员列表
+        // 1. 查询部门成员列表
         List<JSONObject> deptUsersJoList = new ArrayList<>();
         userDao.selectUsersByDept(deptStructure.getDeptId()).forEach(user -> {
             // 为了前端观察方便，对其他字段进行隐藏，采用jsonobject对象返回
@@ -113,7 +107,11 @@ public class DeptServiceImpl implements DeptService{
             deptUsersJoList.add(userJo);
         });
         deptStructure.setUsers(deptUsersJoList.size() == 0 ? null : deptUsersJoList);
-        // 递归
+        List<DeptStructure> subDeptStructs = new ArrayList<>();
+        // 2. 查询子部门列表，并将Dept转换为DeptStructure，存入subDeptStructs
+        deptDao.selectSubDepts(deptStructure.getDeptId()).forEach(d -> subDeptStructs.add(new DeptStructure(d)));
+        deptStructure.setSubDeptStructure(subDeptStructs.size() == 0 ? null : subDeptStructs);
+        // 3. 递归
         subDeptStructs.forEach(subDS -> packagingDepts(subDS));
     }
 
