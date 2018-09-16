@@ -77,6 +77,23 @@ public interface DeptDao {
     Dept getDeptById(String deptId);
     
     /**
+     * 查找父级部门
+     * <br>作者： mht<br> 
+     * 时间：2018年9月16日-下午10:09:28<br>
+     * @return
+     */
+    List<Dept> selectParentDepts();
+    
+    /**
+     * 查询子部门列表
+     * <br>作者： mht<br> 
+     * 时间：2018年9月16日-下午9:27:07<br>
+     * @param parentId
+     * @return
+     */
+    List<Dept> selectSubDepts(String parentId);
+    
+    /**
      * 查询网易数据版本
      * <br>作者： mht<br> 
      * 时间：2018年8月29日-下午3:19:16<br>

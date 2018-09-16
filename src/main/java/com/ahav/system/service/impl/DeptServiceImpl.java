@@ -1,5 +1,6 @@
 package com.ahav.system.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.ahav.system.dao.DeptDao;
 import com.ahav.system.entity.Dept;
+import com.ahav.system.entity.DeptStructure;
 import com.ahav.system.entity.SystemResult;
 import com.ahav.system.service.DeptService;
 
@@ -42,6 +44,30 @@ public class DeptServiceImpl implements DeptService{
         public void setDelDeptList(List<Dept> delDeptList) {
             this.delDeptList = delDeptList;
         }
+    }
+    
+    @Override
+    public SystemResult viewDeptsAndUsers() {
+        // 查询父级部门为null的部门
+        List<Dept> parents = deptDao.selectParentDepts();
+        
+        List<DeptStructure> deptStructure = new ArrayList<>();
+        parents.forEach(parent -> deptStructure.add(new DeptStructure(parent)));
+        
+        deptStructure.forEach(ds -> packagingDepts(ds));
+        
+        return new SystemResult(HttpStatus.OK.value(), "组织架构查看", deptStructure);
+    }
+    
+    private void packagingDepts(DeptStructure deptStructure) {
+        List<Dept> subDepts = deptDao.selectSubDepts(deptStructure.getDeptId());
+
+        List<DeptStructure> subDeptStruct = new ArrayList<>();
+
+        subDepts.forEach(d -> subDeptStruct.add(new DeptStructure(d)));
+        deptStructure.setSubDeptStructure(subDeptStruct);
+        // 递归
+        subDeptStruct.forEach(subDS -> packagingDepts(subDS));
     }
     
     @Override

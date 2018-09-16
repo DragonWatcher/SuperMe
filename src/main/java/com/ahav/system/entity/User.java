@@ -16,7 +16,6 @@ import java.util.Date;
  */
 public class User extends SimpleUser {
     private String pwd;
-    /** 用户真实姓名 */
     private String email;
     /** 规则: @see: com.ahav.util.Encrypt.genSalt */
     private String salt;

@@ -45,6 +45,22 @@
         SELECT * FROM sys_dept WHERE dept_id = #{deptId}
     </select>
     
+    <!-- 查找父级部门 -->
+    <select id="selectParentDepts" resultType="com.ahav.system.entity.Dept">
+        SELECT dept_id, dept_name, parent_id FROM sys_dept
+		where parent_id IS NULL
+		ORDER BY dept_rank DESC
+    </select>
+    
+    <!-- 根据父级部门Id查询子部门列表 -->
+    <select id="selectSubDepts" resultType="com.ahav.system.entity.Dept">
+		SELECT sub.dept_id, sub.dept_name, sub.parent_id 
+		FROM sys_dept sub
+		LEFT JOIN sys_dept parent
+		ON sub.parent_id = parent.dept_id
+		WHERE parent.dept_id = #{parentId}
+    </select>
+    
     <!-- 根据数据名称查询数据版本 -->
     <select id="selectUnitDataVer" resultType="long">
         SELECT data_ver
