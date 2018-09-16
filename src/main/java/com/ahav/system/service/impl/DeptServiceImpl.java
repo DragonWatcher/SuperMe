@@ -64,6 +64,31 @@ public class DeptServiceImpl implements DeptService{
         return new SystemResult(HttpStatus.OK.value(), "组织架构查看", deptStructure);
     }
     
+    @Override
+    public SystemResult saveDeptSettings(DeptSettings depts) {
+        List<Dept> deptList = depts.getDeptList();
+        List<Dept> delDeptList = depts.getDelDeptList();
+        // 执行删除
+        for (Dept dept : delDeptList) {
+            deptDao.delDeptById(dept.getDeptId());
+        }
+        // 添加或更新
+        for (Dept dept : deptList) {
+            if (dept.getDeptId() != null) {// 更新部门信息
+                deptDao.updateDept(dept);
+            } else {// 添加部门信息
+                deptDao.insertDept(dept);
+            }
+        }
+
+        return new SystemResult(HttpStatus.OK.value(), "保存部门设置成功！", deptDao.allDepts());
+    }
+
+    @Override
+    public Dept getDeptById(String deptId) {
+        return deptDao.getDeptById(deptId);
+    }
+    
     /**
      * 递归实现-组织架构封装
      * <br>作者： mht<br> 
@@ -90,31 +115,6 @@ public class DeptServiceImpl implements DeptService{
         deptStructure.setUsers(deptUsersJoList.size() == 0 ? null : deptUsersJoList);
         // 递归
         subDeptStructs.forEach(subDS -> packagingDepts(subDS));
-    }
-    
-    @Override
-    public SystemResult saveDeptSettings(DeptSettings depts) {
-        List<Dept> deptList = depts.getDeptList();
-        List<Dept> delDeptList = depts.getDelDeptList();
-        // 执行删除
-        for (Dept dept : delDeptList) {
-            deptDao.delDeptById(dept.getDeptId());
-        }
-        // 添加或更新
-        for (Dept dept : deptList) {
-            if (dept.getDeptId() != null) {// 更新部门信息
-                deptDao.updateDept(dept);
-            } else {// 添加部门信息
-                deptDao.insertDept(dept);
-            }
-        }
-
-        return new SystemResult(HttpStatus.OK.value(), "保存部门设置成功！", deptDao.allDepts());
-    }
-
-    @Override
-    public Dept getDeptById(String deptId) {
-        return deptDao.getDeptById(deptId);
     }
 
 }
