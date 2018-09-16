@@ -99,6 +99,15 @@ public interface UserDao {
     List<User> selectUserByDeptIdAndRoleId(@Param("deptId") String deptId, @Param("roleId") Integer roleId);
     
     /**
+     * 根据部门id查找用户列表
+     * <br>作者： mht<br> 
+     * 时间：2018年9月16日-下午11:09:36<br>
+     * @param deptId
+     * @return
+     */
+    List<User> selectUsersByDept(String deptId);
+    
+    /**
      * 添加新成员 <br>
      * 作者： mht<br>
      * 时间：2018年8月3日-下午10:49:01<br>

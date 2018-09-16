@@ -8,15 +8,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.ahav.system.dao.DeptDao;
+import com.ahav.system.dao.UserDao;
 import com.ahav.system.entity.Dept;
 import com.ahav.system.entity.DeptStructure;
 import com.ahav.system.entity.SystemResult;
+import com.ahav.system.entity.User;
 import com.ahav.system.service.DeptService;
+import com.alibaba.fastjson.JSONObject;
 
 @Service
 public class DeptServiceImpl implements DeptService{
     @Autowired
     private DeptDao deptDao;
+    @Autowired
+    private UserDao userDao;
 
     @Override
     public SystemResult allDepts() {
@@ -48,7 +53,7 @@ public class DeptServiceImpl implements DeptService{
     
     @Override
     public SystemResult viewDeptsAndUsers() {
-        // 查询父级部门为null的部门
+        // 查询父级部门，即parentId为null的部门
         List<Dept> parents = deptDao.selectParentDepts();
         
         List<DeptStructure> deptStructure = new ArrayList<>();
@@ -59,15 +64,32 @@ public class DeptServiceImpl implements DeptService{
         return new SystemResult(HttpStatus.OK.value(), "组织架构查看", deptStructure);
     }
     
+    /**
+     * 递归实现-组织架构封装
+     * <br>作者： mht<br> 
+     * 时间：2018年9月16日-下午10:59:44<br>
+     * @param deptStructure
+     */
     private void packagingDepts(DeptStructure deptStructure) {
-        List<Dept> subDepts = deptDao.selectSubDepts(deptStructure.getDeptId());
+        List<DeptStructure> subDeptStructs = new ArrayList<>();
+        // 查询子部门列表，并将Dept转换为DeptStructure，存入subDeptStructs
+        deptDao.selectSubDepts(deptStructure.getDeptId()).forEach(d -> subDeptStructs.add(new DeptStructure(d)));
+        deptStructure.setSubDeptStructure(subDeptStructs);
+        // 查询部门成员列表
+        List<JSONObject> deptUsersJoList = new ArrayList<>();
+        userDao.selectUsersByDept(deptStructure.getDeptId()).forEach(user -> {
+            // 为了前端观察方便，对其他字段进行隐藏，采用jsonobject对象返回
+            JSONObject userJo = new JSONObject();
+            userJo.put("userId", user.getUserId());
+            userJo.put("username", user.getUsername());
+            userJo.put("trueName", user.getTrueName());
+            userJo.put("email", user.getEmail());
 
-        List<DeptStructure> subDeptStruct = new ArrayList<>();
-
-        subDepts.forEach(d -> subDeptStruct.add(new DeptStructure(d)));
-        deptStructure.setSubDeptStructure(subDeptStruct);
+            deptUsersJoList.add(userJo);
+        });
+        deptStructure.setUsers(deptUsersJoList);
         // 递归
-        subDeptStruct.forEach(subDS -> packagingDepts(subDS));
+        subDeptStructs.forEach(subDS -> packagingDepts(subDS));
     }
     
     @Override

@@ -137,6 +137,12 @@
 		AND r.role_id = #{roleId}
 	</select>
 	
+	<select id="selectUsersByDept" resultType="com.ahav.system.entity.User">
+	   SELECT user_id, username, true_name, email 
+		FROM sys_user
+		WHERE department_id = #{deptId}
+	</select>
+	
 	<!-- 用户界面换肤 -->
 	<update id="updateUserColor" parameterType="com.ahav.system.entity.SimpleUser">
         UPDATE sys_user

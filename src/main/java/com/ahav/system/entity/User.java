@@ -27,6 +27,13 @@ public class User extends SimpleUser {
 
     public User() {
     }
+    
+    public User(Integer userId, String username, String trueName, String email) {
+        this.userId = userId;
+        this.username = username;
+        this.trueName = trueName;
+        this.email = email;
+    }
 
     /**
      * User u = (User) simpleUser; TODO:强转报错！！时间宽裕时进一步测试。
