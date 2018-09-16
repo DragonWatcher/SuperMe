@@ -14,6 +14,7 @@ import com.ahav.system.entity.DeptStructure;
 import com.ahav.system.entity.SystemResult;
 import com.ahav.system.entity.User;
 import com.ahav.system.service.DeptService;
+import com.ahav.util.MyJSONObject;
 import com.alibaba.fastjson.JSONObject;
 
 @Service
@@ -98,11 +99,11 @@ public class DeptServiceImpl implements DeptService{
         List<JSONObject> deptUsersJoList = new ArrayList<>();
         userDao.selectUsersByDept(deptStructure.getDeptId()).forEach(user -> {
             // 为了前端观察方便，对其他字段进行隐藏，采用jsonobject对象返回
-            JSONObject userJo = new JSONObject();
-            userJo.put("userId", user.getUserId());
-            userJo.put("username", user.getUsername());
-            userJo.put("trueName", user.getTrueName());
-            userJo.put("email", user.getEmail());
+            JSONObject userJo = new MyJSONObject()
+                    .put("userId", user.getUserId())
+                    .put("username", user.getUsername())
+                    .put("trueName", user.getTrueName())
+                    .put("email", user.getEmail());
 
             deptUsersJoList.add(userJo);
         });
