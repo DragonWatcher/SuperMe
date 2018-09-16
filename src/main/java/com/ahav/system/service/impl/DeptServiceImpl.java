@@ -14,7 +14,7 @@ import com.ahav.system.entity.DeptStructure;
 import com.ahav.system.entity.SystemResult;
 import com.ahav.system.entity.User;
 import com.ahav.system.service.DeptService;
-import com.ahav.util.MyJSONObject;
+import com.ahav.system.util.MyJSONObject;
 import com.alibaba.fastjson.JSONObject;
 
 @Service

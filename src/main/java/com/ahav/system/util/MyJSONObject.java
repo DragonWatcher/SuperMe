@@ -1,4 +1,4 @@
-package com.ahav.util;
+package com.ahav.system.util;
 
 import com.alibaba.fastjson.JSONObject;
 
