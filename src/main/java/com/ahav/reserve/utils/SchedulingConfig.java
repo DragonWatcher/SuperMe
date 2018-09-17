@@ -26,6 +26,6 @@ public class SchedulingConfig implements Runnable{
     @Scheduled(fixedRate = 4000) //指定定时任务每4秒钟执行一次
     @Override
     public synchronized void run() {
-        getToken();
+//        getToken();
     }
 }

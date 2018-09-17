@@ -37,7 +37,7 @@ public class PermissionServiceImpl implements PermissionService {
 				perIds.add(rps.get(n));
 			}
 			List<Permission> pers = perDao.selectPermissionByPermissionIds(perIds);
-			pers = analysisPermission(pers);
+//			pers = analysisPermission(pers);
 			return pers;
 		}
 	}
