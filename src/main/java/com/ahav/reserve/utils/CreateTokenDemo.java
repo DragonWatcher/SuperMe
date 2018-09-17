@@ -32,10 +32,9 @@ public class CreateTokenDemo {
         final String akSecrete = Common.AccessKeySecret; //AccessKeySecret
         try {
             AccessToken accessToken = AccessToken.apply(akId, akSecrete);
-System.out.println("Created token: " + accessToken.getToken() +
-                    // 有效时间，单位为秒
+            System.out.println("Created token: " + accessToken.getToken() +
+                    //有效时间，单位为秒
                     ", expire time(s): " + accessToken.getExpireTime());
-
             Common.token=accessToken.getToken();
             System.out.println("Created token: " + Common.token);
         } catch (Exception e) {

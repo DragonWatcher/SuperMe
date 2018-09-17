@@ -1,13 +1,7 @@
 package com.ahav.reserve.controller;
 
-import com.ahav.reserve.utils.SpeechTranscriberDemo;
 import com.ahav.reserve.utils.SpeechTranscriberWithMicrophoneDemo;
 import io.swagger.annotations.Api;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -27,11 +21,6 @@ public class ShareController {
         SpeechTranscriberWithMicrophoneDemo.realtimeTranscribeDown();
     }
 
-    @RequestMapping("/share/yinpin")
-    public void yinpin(){
-        SpeechTranscriberDemo SpeechTranscriberDemo = new SpeechTranscriberDemo();
-        SpeechTranscriberDemo.main();
-    }
 
 /*    @RequestMapping("/share/kaish")
     public void sdsad1(){
