@@ -24,5 +24,6 @@ public interface NtesService {
      * 时间：2018年8月30日-下午4:43:31<br>
      * @return
      */
+    @Deprecated
     SystemResult updLocalAccounts();
 }
