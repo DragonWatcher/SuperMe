@@ -297,7 +297,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SystemResult updUserProfile(MultipartFile newProfile) {
-        String profilesPath = System.getProperty("user.dir") + SystemConstant.STATIC_RES_PATH + SystemConstant.PROFILES_PATH;
+        String root = System.getProperty("user.dir").replace("\\", "/");
+        String profilesPath = root + SystemConstant.STATIC_RES_PATH + SystemConstant.PROFILES_PATH;
 
         if (!newProfile.isEmpty()) {
             // 当前用户
@@ -319,7 +320,7 @@ public class UserServiceImpl implements UserService {
                 File folder = new File(profilesPath);
                 if (!folder.exists())
                     folder.mkdirs();
-                out = new BufferedOutputStream(new FileOutputStream(System.getProperty("user.dir") + SystemConstant.STATIC_RES_PATH + newProfileName));
+                out = new BufferedOutputStream(new FileOutputStream(root + SystemConstant.STATIC_RES_PATH + newProfileName));
                 // 写入新文件
                 out.write(newProfile.getBytes());
                 out.flush();

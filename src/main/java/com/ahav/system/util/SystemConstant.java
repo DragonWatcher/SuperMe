@@ -29,6 +29,6 @@ public final class SystemConstant {
     public static final String PAGE_SIZE = "10";
     
     /** 头像保存路径 */
-    public static final String STATIC_RES_PATH = "\\src\\main\\resources\\static";
-    public static final String PROFILES_PATH = "\\userprofiles\\";
+    public static final String STATIC_RES_PATH = "/src/main/resources/static";
+    public static final String PROFILES_PATH = "/userprofiles/";
 }
