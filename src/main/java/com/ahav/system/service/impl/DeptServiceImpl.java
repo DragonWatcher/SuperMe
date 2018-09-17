@@ -1,5 +1,6 @@
 package com.ahav.system.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,14 +8,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.ahav.system.dao.DeptDao;
+import com.ahav.system.dao.UserDao;
 import com.ahav.system.entity.Dept;
+import com.ahav.system.entity.DeptStructure;
 import com.ahav.system.entity.SystemResult;
+import com.ahav.system.entity.User;
 import com.ahav.system.service.DeptService;
+import com.ahav.system.util.MyJSONObject;
+import com.alibaba.fastjson.JSONObject;
 
 @Service
 public class DeptServiceImpl implements DeptService{
     @Autowired
     private DeptDao deptDao;
+    @Autowired
+    private UserDao userDao;
 
     @Override
     public SystemResult allDepts() {
@@ -45,6 +53,17 @@ public class DeptServiceImpl implements DeptService{
     }
     
     @Override
+    public SystemResult viewDeptsAndUsers() {
+        List<DeptStructure> deptStructure = new ArrayList<>();
+        // 查询父级部门，即parentId为null的部门
+        deptDao.selectParentDepts().forEach(parent -> deptStructure.add(new DeptStructure(parent)));
+
+        deptStructure.forEach(ds -> packagingDepts(ds));
+
+        return new SystemResult(HttpStatus.OK.value(), "组织架构查看", deptStructure);
+    }
+    
+    @Override
     public SystemResult saveDeptSettings(DeptSettings depts) {
         List<Dept> deptList = depts.getDeptList();
         List<Dept> delDeptList = depts.getDelDeptList();
@@ -67,6 +86,34 @@ public class DeptServiceImpl implements DeptService{
     @Override
     public Dept getDeptById(String deptId) {
         return deptDao.getDeptById(deptId);
+    }
+    
+    /**
+     * 递归实现-组织架构封装
+     * <br>作者： mht<br> 
+     * 时间：2018年9月16日-下午10:59:44<br>
+     * @param deptStructure
+     */
+    private void packagingDepts(DeptStructure deptStructure) {
+        // 1. 查询部门成员列表
+        List<JSONObject> deptUsersJoList = new ArrayList<>();
+        userDao.selectUsersByDept(deptStructure.getDeptId()).forEach(user -> {
+            // 为了前端观察方便，对其他字段进行隐藏，采用jsonobject对象返回
+            JSONObject userJo = new MyJSONObject()
+                    .put("userId", user.getUserId())
+                    .put("username", user.getUsername())
+                    .put("trueName", user.getTrueName())
+                    .put("email", user.getEmail());
+
+            deptUsersJoList.add(userJo);
+        });
+        deptStructure.setUsers(deptUsersJoList.size() == 0 ? null : deptUsersJoList);
+        List<DeptStructure> subDeptStructs = new ArrayList<>();
+        // 2. 查询子部门列表，并将Dept转换为DeptStructure，存入subDeptStructs
+        deptDao.selectSubDepts(deptStructure.getDeptId()).forEach(d -> subDeptStructs.add(new DeptStructure(d)));
+        deptStructure.setSubDeptStructure(subDeptStructs.size() == 0 ? null : subDeptStructs);
+        // 3. 递归
+        subDeptStructs.forEach(subDS -> packagingDepts(subDS));
     }
 
 }

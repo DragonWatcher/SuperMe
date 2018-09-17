@@ -1,11 +1,13 @@
 package com.ahav.system.controller;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.FormParam;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +38,7 @@ import springfox.documentation.annotations.ApiIgnore;
  * 日期： 2018年8月3日-下午10:42:57<br>
  */
 @Api("成员管理：牟昊天")
+@CrossOrigin(allowedHeaders = "*")
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -169,7 +172,8 @@ public class UserController {
      */
     @ApiOperation(value = "获得当前用户")
     @GetMapping("/current")
-    public SystemResult getCurrentUser() {
+    public SystemResult getCurrentUser(HttpServletResponse res) {
+        res.setHeader("Access-Control-Allow-Origin", "*");
         return userService.getCurrentUser();
     }
     

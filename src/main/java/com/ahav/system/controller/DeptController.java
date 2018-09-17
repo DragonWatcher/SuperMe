@@ -20,17 +20,25 @@ import io.swagger.annotations.ApiOperation;
 public class DeptController {
     @Autowired
     private DeptService deptService;
+
+    @ApiOperation(value = "组织架构查看")
+    @GetMapping(value = "/users")
+    public SystemResult viewDeptsAndUsers() {
+        return deptService.viewDeptsAndUsers();
+    }
     
     @ApiOperation(value = "查询部门列表")
     @GetMapping
+    @Deprecated
     public SystemResult findAllDepts() {
         return deptService.allDepts();
     }
-    
+
     @ApiOperation(value = "更新部门设置")
     @PostMapping
+    @Deprecated
     public SystemResult saveDeptSettings(@RequestBody DeptSettings depts) {
         return deptService.saveDeptSettings(depts);
     }
-    
+
 }

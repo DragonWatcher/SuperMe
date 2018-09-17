@@ -16,9 +16,9 @@ public class SimpleUser {
     /** 用户真实姓名 */
     protected String trueName;
     /** 账号对应的界面颜色 */
-    private String color;
+    protected String color;
     /** 用户头像存储路径 */
-    private String profilePath;
+    protected String profilePath;
     /** 用户所在部门 */
     protected Dept dept;
     /** 用户角色 */

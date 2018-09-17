@@ -14,6 +14,14 @@ public interface DeptService {
     SystemResult allDepts();
     
     /**
+     * 查看企业组织架构
+     * <br>作者： mht<br> 
+     * 时间：2018年9月16日-下午8:27:38<br>
+     * @return
+     */
+    SystemResult viewDeptsAndUsers();
+    
+    /**
      * 更新已有部门、添加新增部门、删除废弃部门
      * <br>作者： mht<br> 
      * 时间：2018年8月9日-下午9:41:57<br>
