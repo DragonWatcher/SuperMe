@@ -7,7 +7,10 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.shiro.SecurityUtils;
+import org.apache.tomcat.jni.Global;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -294,10 +297,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SystemResult updUserProfile(MultipartFile newProfile) {
-        // 根据windows和linux配置不同的头像保存路径
-        String OSName = System.getProperty("os.name");
-        String profilesPath = OSName.toLowerCase().startsWith("win") ? SystemConstant.WINDOWS_PROFILES_PATH
-                : SystemConstant.LINUX_PROFILES_PATH;
+        String profilesPath = System.getProperty("user.dir") + SystemConstant.STATIC_RES_PATH + SystemConstant.PROFILES_PATH;
 
         if (!newProfile.isEmpty()) {
             // 当前用户
@@ -307,7 +307,8 @@ public class UserServiceImpl implements UserService {
             String newProfileName = profilePathAndNameDB;
             // 若头像名称不存在
             if (profilePathAndNameDB == null || "".equals(profilePathAndNameDB)) {
-                newProfileName = profilesPath + System.currentTimeMillis() + newProfile.getOriginalFilename();
+                // 可直接访问的图片路径
+                newProfileName = SystemConstant.PROFILES_PATH + System.currentTimeMillis() + newProfile.getOriginalFilename();
                 // 路径存库
                 currentUser.setProfilePath(newProfileName);
                 userDao.updateUserProfilePath(currentUser);
@@ -318,7 +319,7 @@ public class UserServiceImpl implements UserService {
                 File folder = new File(profilesPath);
                 if (!folder.exists())
                     folder.mkdirs();
-                out = new BufferedOutputStream(new FileOutputStream(newProfileName));
+                out = new BufferedOutputStream(new FileOutputStream(System.getProperty("user.dir") + SystemConstant.STATIC_RES_PATH + newProfileName));
                 // 写入新文件
                 out.write(newProfile.getBytes());
                 out.flush();
