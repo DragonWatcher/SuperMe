@@ -67,7 +67,10 @@ public class TaskServiceImpl implements TaskService{
 			try {
 				method = clz.getMethod("get" + getMethodName(declaredFields[i].getName()));
 				Object invoke = method.invoke(query);
-				map.put(declaredFields[i].getName(), invoke);
+				//如果当前字段为null或者空字符串，则不加入参数集合
+				if(invoke != null && !"".equals(invoke)){
+					map.put(declaredFields[i].getName(), invoke);
+				}
 //				System.out.println("属性：" + declaredFields[i].getName() + ",值是：" + invoke);
 //				System.out.println(map.toString());
 			} catch (NoSuchMethodException e) {
@@ -96,8 +99,22 @@ public class TaskServiceImpl implements TaskService{
 	}
 
 	@Override
-	public boolean deleteTask(Integer taskId) {
-		// TODO Auto-generated method stub
+	public boolean deleteTask(String taskId) {
+		int flag = taskDao.deleteByPrimaryKey(taskId);
+		if(flag==1){
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean updateTask(Task task) {
+		Task t = taskDao.selectByPrimaryKey(task.getTaskId());
+		t.setAcceptanceResults(task.getAcceptanceResults());
+		int b = taskDao.updateByPrimaryKey(t);
+		if(b == 1){
+			return true;
+		}
 		return false;
 	}
 

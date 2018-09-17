@@ -13,7 +13,9 @@ public interface TaskService {
 
 	Integer findCounts(Query query);
 
-	boolean deleteTask(Integer taskId);
+	boolean deleteTask(String taskId);
+
+	boolean updateTask(Task task);
 
 //	List<Task> findTasks(Integer pageSize, Integer currentPage, String orderBy, String publisher, String surveyor,
 //			String executor, String taskStatus, String acceptanceResults, String relatedMeetings, String endTime1,
