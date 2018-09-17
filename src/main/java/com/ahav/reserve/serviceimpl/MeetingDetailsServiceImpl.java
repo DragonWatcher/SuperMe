@@ -23,6 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
+import static com.ahav.reserve.utils.meetingUtils.transformTimeFormat;
+
 
 @Service
 public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
@@ -63,6 +65,11 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         List<MeetingDetails> meetingDetailsAll = meetingDetailsMapperImpl.selectMeetingDetails(mDetails);
 
         for(MeetingDetails meetingDetails:meetingDetailsAll){
+
+            //将会议开始和结束时间转为指定格式的时间
+            meetingDetails.setDeMeetingStart(meetingUtils.transformTimeFormat(meetingDetails.getDeMeetingStart()));
+            meetingDetails.setDeMeetingOver(meetingUtils.transformTimeFormat(meetingDetails.getDeMeetingOver()));
+
             //根据会议室ID查询出会议室的名称，并设置到MeetingDetails对象中
             String roomName = RoomMapperImpl.selectRoomName(meetingDetails.getDeRoomId());
             meetingDetails.setDeRoomName(roomName);
@@ -172,6 +179,9 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
         //  List<MeetingDetails> meetingDetailsList = meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
         for(MeetingDetails meetingDetails1 :meetingDetailsList){
+            //将会议开始和结束时间转为指定格式的时间
+            meetingDetails1.setDeMeetingStart(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingStart()));
+            meetingDetails1.setDeMeetingOver(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingOver()));
             //调用接口：根据会议室Id查询出会议室的名称，并设置到MeetingDetails对象中
             meetingDetails1.setDeRoomName(RoomMapperImpl.selectRoomName(meetingDetails1.getDeRoomId()));
             //TODO:调用接口：根据部门id查询部门名称，并设置到MeetingDetails对象中
@@ -360,6 +370,9 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                 if(i>0){
                     result.setStatus(200);
                     MeetingDetails meetingDetails1 = meetingDetailsMapperImpl.selectByPrimaryKey(meetingDetails.getDeDetailsId());
+                    //将会议开始和结束时间转为指定格式的时间
+                    meetingDetails1.setDeMeetingStart(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingStart()));
+                    meetingDetails1.setDeMeetingOver(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingOver()));
                     //根据会议室ID查询出会议室名称
                     Integer deRoomId1 = meetingDetails1.getDeRoomId();
                     String roomName = RoomMapperImpl.selectRoomName(deRoomId1);
@@ -522,6 +535,9 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                 if(update == 1){
                     Integer detailsId = meetingDetailsMapperImpl.selectNewestDetailsId();//获取最新插入的会议详情的id
                     MeetingDetails meetingDetails1 = meetingDetailsMapperImpl.selectByPrimaryKey(detailsId);
+                    //将会议开始和结束时间转为指定格式的时间
+                    meetingDetails1.setDeMeetingStart(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingStart()));
+                    meetingDetails1.setDeMeetingOver(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingOver()));
                     result.setStatus(200);
                     jsonObject.put("meetingDetails",meetingDetails1);
                     jsonObject.put("result",result);
@@ -556,6 +572,11 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             JSONObject jsonObject = new JSONObject();
             PageHelper.startPage(pageNum,pageSize); //开启分页并设置分页条件(默认显示第几页，每页显示多少条数据)
             List<MeetingDetails> historys = meetingDetailsMapperImpl.selectHistory(meetingDetails);
+            for(MeetingDetails his:historys){
+                //将会议开始和结束时间转为指定格式的时间
+                his.setDeMeetingStart(meetingUtils.transformTimeFormat(his.getDeMeetingStart()));
+                his.setDeMeetingOver(meetingUtils.transformTimeFormat(his.getDeMeetingOver()));
+            }
             PageInfo<MeetingDetails> page = new PageInfo<>(historys);//吧查询到对象封装到PageInfo中
             for(MeetingDetails his:historys){
                 //根据预定人id查询出预定人的姓名，并设置到his对象中
@@ -614,6 +635,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             JSONObject jsonObject = new JSONObject();
             PageHelper.startPage(pageNum,pageSize); //开启分页并设置分页条件(默认显示第几页，每页显示多少条数据)
             List<MeetingDetails> historys = meetingDetailsMapperImpl.selectHistory(meetingDetails);
+
             PageInfo<MeetingDetails> page = new PageInfo<>(historys);//吧查询到对象封装到PageInfo中
             for(MeetingDetails his:historys){
                 //根据预定人id查询出预定人的姓名，并设置到his对象中
@@ -824,6 +846,9 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         List<MeetingDetails> meetingDetailsAll = meetingDetailsMapperImpl.byEquipmentListSelectMeetingDetails(startTime,endTime,excludeRoom);
 
         for(MeetingDetails meetingDetails:meetingDetailsAll){
+            //将会议开始和结束时间转为指定格式的时间
+            meetingDetails.setDeMeetingStart(meetingUtils.transformTimeFormat(meetingDetails.getDeMeetingStart()));
+            meetingDetails.setDeMeetingOver(meetingUtils.transformTimeFormat(meetingDetails.getDeMeetingOver()));
             //根据会议室ID查询出会议室的名称，并设置到MeetingDetails对象中
             String roomName = RoomMapperImpl.selectRoomName(meetingDetails.getDeRoomId());
             meetingDetails.setDeRoomName(roomName);

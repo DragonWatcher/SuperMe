@@ -143,7 +143,7 @@ public class MeetingDetailsCon {
     //根据设备和时间查询相应的会议详情
     @RequestMapping(value = "/reserve/add/byEquipmentListSelectMeetingDetails",method = RequestMethod.GET)
     @ResponseBody
-    @ApiOperation(value="根据设备和时间查询相应的会议详情", notes="添加会议的第二步")
+    @ApiOperation(value="根据设备和时间查询相应的会议详情", notes="")
     @ApiImplicitParams({
             //allowMultiple=true,————表示是数组格式的参数
             //dataType = "String"————表示数组中参数的类型
