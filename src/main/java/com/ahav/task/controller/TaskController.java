@@ -7,6 +7,7 @@ import javax.ws.rs.FormParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ahav.system.util.CheckPermission;
 import com.ahav.task.entity.Query;
 import com.ahav.task.entity.Task;
 import com.ahav.task.service.TaskService;
@@ -43,7 +45,7 @@ public class TaskController {
 	 * @return
 	 */
 	@RequestMapping(value = "/tasks", produces = "application/json;utf-8", method = RequestMethod.POST)
-	@ApiOperation(value = "发布任务", notes = "发布任务接口")
+	@ApiOperation(value = "发布任务", notes = "发布任务接口。如果没有权限则返回 405")
 	@ApiImplicitParams(value = {
 			@ApiImplicitParam(name = "publisher", value = "发布人", required = true, dataType = "String"),
 		@ApiImplicitParam(name = "surveyor", value = "验收人", required = true, dataType = "String"),
@@ -57,8 +59,15 @@ public class TaskController {
 	public JSONObject addTask(@RequestBody Task task){
 		System.out.println("发布任务");
 		JSONObject jo = new JSONObject();
-		boolean b = taskService.addTask(task);
-		jo.put("msg", b);
+		boolean checkPermission = CheckPermission.checkPermission("all");
+		if(checkPermission){
+			boolean b = taskService.addTask(task);
+			jo.put("code", HttpStatus.OK.value());
+			jo.put("msg", b);
+		}else{
+			jo.put("code", HttpStatus.METHOD_NOT_ALLOWED.value());
+		}
+		
 		return jo;
 	}
 	
@@ -85,7 +94,7 @@ public class TaskController {
 	 * @return
 	 */
 	@ApiOperation(value = "条件查询", notes = "任务模块多条件查询接口,whichPage为必传参数  代表是哪个页面,取值为1、2、3,1代表发布历史页面,2代表任务验收页面,3代表我的任务页面；"
-			+ "当whichPage=1时，publisher为必传参数；当whichPage=2时，surveyor为必传参数；当whichPage=3时，executor为必传参数")
+			+ "当whichPage=1时，publisher为必传参数；当whichPage=2时，surveyor为必传参数；当whichPage=3时，executor为必传参数。如果没有权限则返回 405")
 	@ApiImplicitParams(value = {
 			@ApiImplicitParam(name = "pageSize", value = "每页条数", required = false, dataType = "String"),
 		@ApiImplicitParam(name = "currentPage", value = "当前页数", required = false, dataType = "String"),
@@ -108,49 +117,88 @@ public class TaskController {
 		//计算mysql查询开始行
 		query.setStart();
 		JSONObject jo = new JSONObject();
-		List<Task> tasks = null;
-		if(query.getWhichPage() != null && "1".equals(query.getWhichPage())){
-			//发布历史
-			if(query.getPublisher() != null && !"".equals(query.getPublisher())){
-				tasks = taskService.findTasks(query);
+		boolean checkPermission = CheckPermission.checkPermission("all");
+		if(checkPermission){
+			List<Task> tasks = null;
+			if(query.getWhichPage() != null && "1".equals(query.getWhichPage())){
+				//发布历史
+				if(query.getPublisher() != null && !"".equals(query.getPublisher())){
+					tasks = taskService.findTasks(query);
+				}else{
+					jo.put("msg", "publisher不合法");
+				}
+			}else if(query.getWhichPage() != null && "2".equals(query.getWhichPage())){
+				//任务验收
+				if(query.getSurveyor() != null && !"".equals(query.getSurveyor())){
+					tasks = taskService.findTasks(query);
+				}else{
+					jo.put("msg", "surveyor不合法");
+				}
+			}else if(query.getWhichPage() != null && "3".equals(query.getWhichPage())){
+				//我的任务
+				if(query.getExecutor() != null && !"".equals(query.getExecutor())){
+					tasks = taskService.findTasks(query);
+				}else{
+					jo.put("msg", "executor不合法");
+				}
 			}else{
-				jo.put("msg", "publisher不合法");
+				jo.put("msg", "whichPage不合法");
 			}
-		}else if(query.getWhichPage() != null && "2".equals(query.getWhichPage())){
-			//任务验收
-			if(query.getSurveyor() != null && !"".equals(query.getSurveyor())){
-				tasks = taskService.findTasks(query);
+			jo.put("code", HttpStatus.OK.value());
+			jo.put("tasks", tasks);
+			//查询满足条件的总条数
+			Integer counts = taskService.findCounts(query);
+			Integer pages;
+			if(counts / query.getPageSize() == 0){
+				pages = counts / query.getPageSize();
 			}else{
-				jo.put("msg", "surveyor不合法");
+				pages = counts / query.getPageSize() + 1;
 			}
-		}else if(query.getWhichPage() != null && "3".equals(query.getWhichPage())){
-			//我的任务
-			if(query.getExecutor() != null && !"".equals(query.getExecutor())){
-				tasks = taskService.findTasks(query);
-			}else{
-				jo.put("msg", "executor不合法");
-			}
+			jo.put("pages", pages);
 		}else{
-			jo.put("msg", "whichPage不合法");
+			jo.put("code", HttpStatus.METHOD_NOT_ALLOWED.value());
 		}
-		jo.put("tasks", tasks);
-		//查询满足条件的总条数
-		Integer counts = taskService.findCounts(query);
-		Integer pages;
-		if(counts / query.getPageSize() == 0){
-			pages = counts / query.getPageSize();
-		}else{
-			pages = counts / query.getPageSize() + 1;
-		}
-		jo.put("pages", pages);
+		
 		return jo;
 	}
 	
-	@RequestMapping(value = "/tasks/{taskIds}", produces = "application/json;utf-8", method = RequestMethod.DELETE)
-	public JSONObject delTasks(@PathVariable Integer taskId){
+	/**
+	 * 删除任务id接口
+	 * @param taskId
+	 * @return
+	 */
+	@ApiOperation(value = "删除任务", notes = "删除任务的接口，参数是任务id，直接拼在url后面。如果没有权限则返回 405")
+	@ApiImplicitParam(value = "taskId", required = true)
+	@RequestMapping(value = "/tasks/{taskId}", method = RequestMethod.DELETE)
+	public JSONObject delTasks(@PathVariable String taskId){
 		JSONObject jo = new JSONObject();
-		boolean b = taskService.deleteTask(taskId);
-		jo.put("msg", b);
+		boolean checkPermission = CheckPermission.checkPermission("all");
+		if(checkPermission){
+			boolean b = taskService.deleteTask(taskId);
+			jo.put("code", HttpStatus.OK.value());
+			jo.put("msg", b);
+		}else{
+			jo.put("code", HttpStatus.METHOD_NOT_ALLOWED.value());
+		}
+		return jo;
+	}
+	
+	@ApiOperation(value = "更新任务", notes = "更新任务信息统一接口，如修改验收结果。如果没有权限则返回 405")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "taskId", value = "任务id",required = true),
+		@ApiImplicitParam(name = "acceptanceResults", value = "验收结果",required = true)
+	})
+	@RequestMapping(value = "/tasks", produces = "application/json;utf-8", method = RequestMethod.PUT)
+	public JSONObject updateTasks(@RequestBody Task task){
+		JSONObject jo = new JSONObject();
+		boolean checkPermission = CheckPermission.checkPermission("all");
+		if(checkPermission){
+			boolean b = taskService.updateTask(task);
+			jo.put("code", HttpStatus.OK.value());
+			jo.put("msg", b);
+		}else{
+			jo.put("code", HttpStatus.METHOD_NOT_ALLOWED.value());
+		}
 		return jo;
 	}
 }

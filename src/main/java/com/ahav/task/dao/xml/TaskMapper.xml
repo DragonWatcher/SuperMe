@@ -20,6 +20,11 @@
     task_id, task_name, task_describe, publish_time, task_status, publisher, surveyor, 
     executor, start_time, end_time, related_meetings, acceptance_results, acceptance_evaluate
   </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/>
+  	from tasks
+  	where task_id = #{taskId}
+  </select>
   <select id="findCounts" parameterType="java.util.Map" resultType="java.lang.Integer">
     select 
     count(*)
