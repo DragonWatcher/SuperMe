@@ -10,6 +10,10 @@
     where role_id = #{roleId,jdbcType=INTEGER}
       and permission_id = #{permissionId,jdbcType=INTEGER}
   </delete>
+  <delete id="deleteByRoleId" parameterType="java.lang.Integer">
+    delete from sys_role_permission
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </delete>
   <insert id="insert" parameterType="com.ahav.system.entity.RolePermissionKey">
     insert into sys_role_permission (role_id, permission_id)
     values (#{roleId,jdbcType=INTEGER}, #{permissionId,jdbcType=INTEGER})

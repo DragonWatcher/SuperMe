@@ -40,6 +40,6 @@ public interface UserRoleDao {
 
     int insertSelective(UserRoleKey record);
 
-    void deleteUserRole(Integer roleId);
+    int deleteUserRole(Integer roleId);
 
 }

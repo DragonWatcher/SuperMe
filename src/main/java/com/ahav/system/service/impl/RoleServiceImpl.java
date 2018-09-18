@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ahav.system.dao.RoleMapper;
+import com.ahav.system.dao.RoleMenuMapper;
+import com.ahav.system.dao.RolePermissionMapper;
 import com.ahav.system.dao.UserRoleDao;
 import com.ahav.system.entity.Role;
 import com.ahav.system.service.RoleService;
@@ -18,6 +20,12 @@ public class RoleServiceImpl implements RoleService {
     
     @Autowired
     private UserRoleDao userRoleDao;
+    
+    @Autowired
+    private RolePermissionMapper rolePerDao;
+    
+    @Autowired
+    private RoleMenuMapper roleMenuDao;
 
     public boolean addRole(Role role){
     	//除了系统自带的三个角色不允许删除，添加的其他角色均设置为可删除状态：enableDelete=true
@@ -33,8 +41,12 @@ public class RoleServiceImpl implements RoleService {
 		// 根据角色ID删除角色
 		int deleteByPrimaryKey = roleDao.deleteByPrimaryKey(roleId);
 		if(deleteByPrimaryKey == 1){
-			//删除角色的同时删除关联表以及角色对应的用户User也被删除
+			//删除角色的同时删除用户角色的关联关系
 			userRoleDao.deleteUserRole(roleId);
+			//删除角色的同时删除角色权限的关联关系
+			rolePerDao.deleteByRoleId(roleId);
+			//删除角色的同时删除角色菜单的关联关系
+			roleMenuDao.deleteByRoleId(roleId);
 			return true;
 		}
 		return false;
