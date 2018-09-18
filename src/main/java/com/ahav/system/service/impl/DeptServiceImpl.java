@@ -111,7 +111,7 @@ public class DeptServiceImpl implements DeptService{
         subDeptStructs.forEach(subDS -> packagingDepts(subDS));
         
         subDeptStructs.addAll(userDSList);
-        deptStructure.setNodes(subDeptStructs);
+        deptStructure.setChildren(subDeptStructs);
     }
 
 }

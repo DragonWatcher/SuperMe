@@ -11,23 +11,23 @@ import java.util.List;
 public class DeptStructure {
     private String id;
     /** 部门名称 */
-    private String text;
+    private String name;
     /** 是否是父节点*/
     private boolean isParent;
     /** 子部门或和列表 */
-    private List<DeptStructure> nodes;
+    private List<DeptStructure> children;
     
     public DeptStructure() { }
     
     public DeptStructure(Dept d) {
         this.id = d.getDeptId();
-        this.text = d.getDeptName();
+        this.name = d.getDeptName();
         this.isParent = true;
     }
     
     public DeptStructure(User user) {
         this.id = String.valueOf(user.getUserId());
-        this.text = user.getTrueName();
+        this.name = user.getTrueName();
         this.isParent = false;
     }
     
@@ -39,12 +39,12 @@ public class DeptStructure {
         this.id = id;
     }
 
-    public String getText() {
-        return text;
+    public String getName() {
+        return name;
     }
 
-    public void setText(String name) {
-        this.text = name;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean getIsParent() {
@@ -55,11 +55,11 @@ public class DeptStructure {
         this.isParent = isParent;
     }
 
-    public List<DeptStructure> getNodes() {
-        return nodes;
+    public List<DeptStructure> getChildren() {
+        return children;
     }
 
-    public void setNodes(List<DeptStructure> nodes) {
-        this.nodes = nodes;
+    public void setChildren(List<DeptStructure> nodes) {
+        this.children = nodes;
     }
 }
