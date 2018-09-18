@@ -5,6 +5,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
+
 //关于时间的工具类
 public class meetingUtils {
     //获得下一天的开始时间,参数日期
@@ -34,15 +36,12 @@ public class meetingUtils {
         return date;
     }
 
-    //将时间转为指定的格式的时间(如:查询历史前台就要这种格式的时间)
-    public static Date transformTimeFormat(Date date){
+    //将时间转为指定的格式的字符串(如:查询历史前台就要这种格式的时间字符串)
+    public static String  transformTimeFormat(Date date){
         DateFormat b=new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        try{
-            date = b.parse(b.format(date));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return date;
+        String dateStr;
+        dateStr = b.format(date);
+        return dateStr;
     }
 
 
@@ -68,5 +67,12 @@ public class meetingUtils {
             e.printStackTrace();
         }
         return parse;
+    }
+
+    //生成uuid
+    public static String getUUID32(){
+        String uuid = UUID.randomUUID().toString().toLowerCase();
+        return uuid;
+//  return UUID.randomUUID().toString().replace("-", "").toLowerCase();
     }
 }

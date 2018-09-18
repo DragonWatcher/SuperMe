@@ -22,6 +22,7 @@ public class ShareController {
     }
 
 
+
 /*    @RequestMapping("/share/kaish")
     public void sdsad1(){
         myRecord.capture();

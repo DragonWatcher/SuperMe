@@ -14,7 +14,7 @@
 
 package com.ahav.reserve.utils;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
+
 import com.ahav.reserve.config.Common;
 import com.alibaba.nls.client.protocol.InputFormatEnum;
 import com.alibaba.nls.client.protocol.NlsClient;
@@ -22,6 +22,9 @@ import com.alibaba.nls.client.protocol.SampleRateEnum;
 import com.alibaba.nls.client.protocol.asr.SpeechTranscriber;
 import com.alibaba.nls.client.protocol.asr.SpeechTranscriberListener;
 import com.alibaba.nls.client.protocol.asr.SpeechTranscriberResponse;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -124,13 +127,8 @@ public class SpeechTranscriberWithMicrophoneDemo {
 
             while ((nByte = targetDataLine.read(buffer, 0, bufSize)) > 0) {
                 // Step4 直接发送麦克风数据流
-
                 transcriber.send(buffer);
-                System.out.println("16进制："   + binary(buffer, 16));
-                /*for (int p =0;p<buffer.length;p++){
-                    System.err.println(buffer[p]);
-                }*/
-                //System.out.println("88888888888888888888888888888888888888888888888888888888888");
+              /*  System.out.println("16进制："   + binary(buffer, 16));*/
                 list.add(buffer);
                 buffer= new byte[bufSize];
             }
@@ -158,20 +156,21 @@ public class SpeechTranscriberWithMicrophoneDemo {
         SpeechTranscriberWithMicrophoneDemo1(appKey, token);
         process();  //开启
     }
+
     //实时转录结束
     public void realtimeTranscribeDown() {
+        String uuidRecordingName = meetingUtils.getUUID32();  //通过uuid生成录音名称
         //保存录音--（将btye数组写入成一个文件）
         for (int o = 0; o < list.size(); o++) {
             BufferedOutputStream bos = null;
             FileOutputStream fos = null;
-            /*ByteArrayOutputStream  fos = null;*/
             File file = null;
             try {
-                File dir = new File("F:/" + File.separator + "mmmm25.pcm");
+                File dir = new File("F:" + File.separator + "recording" + uuidRecordingName+".pcm"); //判断是否存在这个目录
                 if (!dir.exists() && dir.isDirectory()) {//判断文件目录是否存在
                     dir.mkdirs();
                 }
-                file = new File("F:/" + File.separator + "mmmm25.pcm");  //File.separator分割符
+                file = new File("F:" + File.separator + "recording" + uuidRecordingName+".pcm");  //File.separator分割符
                 fos = new FileOutputStream(file, true);  //append为true时会在这个文件后面继续追加内容，否则会覆盖
                 bos = new BufferedOutputStream(fos);
                 bos.write(list.get(o));
@@ -196,13 +195,22 @@ public class SpeechTranscriberWithMicrophoneDemo {
                 }
             }
         }
+
+
+        try {
+            //pcm转wav     recordingPcmPath1等属性说明在类头处查看
+            PcmToWav.convertAudioFiles("F:" + File.separator + "recording" + uuidRecordingName+".pcm","F:" + File.separator + "recording" + uuidRecordingName+".wav");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         shutdown();  //关闭
     }
 
-    //转16进制
+   /* //转16进制
     public static String binary(byte[] bytes, int radix){
         return new BigInteger(1, bytes).toString(radix);// 这里的1代表正数
-    }
+    }*/
 
     //保存pcm文件
     public void setAccessToken(){

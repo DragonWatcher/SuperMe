@@ -64,12 +64,12 @@
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
-			<version>2.2.2</version>
+			<version>2.7.0</version>
 		</dependency>
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger-ui</artifactId>
-			<version>2.2.2</version>
+			<version>2.7.0</version>
 		</dependency>
 		<!--昊天-->
 		<!--<dependency>
@@ -175,6 +175,17 @@
 			<version>2.4</version>
 		</dependency>
         <!-- 网易企业邮箱接口maven依赖 END -->
+        <!--邮箱配置-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+        <!--热部署-->
+        <!-- <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency> -->
 	</dependencies>
 
 	<build>
@@ -302,4 +313,11 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
+    <distributionManagement>
+        <repository>
+            <id>ahg-nexus</id>
+            <name>ahg maven</name>
+            <url>http://123.57.226.216:8081/repository/maven-ahg/</url>
+        </repository>
+    </distributionManagement>
 </project>
