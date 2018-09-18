@@ -96,24 +96,22 @@ public class DeptServiceImpl implements DeptService{
      */
     private void packagingDepts(DeptStructure deptStructure) {
         // 1. 查询部门成员列表
-        List<JSONObject> deptUsersJoList = new ArrayList<>();
-        userDao.selectUsersByDept(deptStructure.getDeptId()).forEach(user -> {
-            // 为了前端观察方便，对其他字段进行隐藏，采用jsonobject对象返回
-            JSONObject userJo = new MyJSONObject()
-                    .put("userId", user.getUserId())
-                    .put("username", user.getUsername())
-                    .put("trueName", user.getTrueName())
-                    .put("email", user.getEmail());
-
-            deptUsersJoList.add(userJo);
+        List<DeptStructure> userDSList = new ArrayList<>();
+        userDao.selectUsersByDept(deptStructure.getId()).forEach(userDB -> {
+            DeptStructure userDS = new DeptStructure(userDB);
+            userDSList.add(userDS);
         });
-        deptStructure.setUsers(deptUsersJoList.size() == 0 ? null : deptUsersJoList);
         List<DeptStructure> subDeptStructs = new ArrayList<>();
         // 2. 查询子部门列表，并将Dept转换为DeptStructure，存入subDeptStructs
-        deptDao.selectSubDepts(deptStructure.getDeptId()).forEach(d -> subDeptStructs.add(new DeptStructure(d)));
-        deptStructure.setSubDeptStructure(subDeptStructs.size() == 0 ? null : subDeptStructs);
+        List<Dept> deptDBList = deptDao.selectSubDepts(deptStructure.getId());
+        
+        deptDBList.forEach(d -> subDeptStructs.add(new DeptStructure(d)));
+        
         // 3. 递归
         subDeptStructs.forEach(subDS -> packagingDepts(subDS));
+        
+        subDeptStructs.addAll(userDSList);
+        deptStructure.setChildren(subDeptStructs);
     }
 
 }
