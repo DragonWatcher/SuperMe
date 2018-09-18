@@ -39,11 +39,11 @@ public class DeptStructure {
         this.id = id;
     }
 
-    public String getName() {
+    public String getText() {
         return text;
     }
 
-    public void setName(String name) {
+    public void setText(String name) {
         this.text = name;
     }
 
@@ -55,11 +55,11 @@ public class DeptStructure {
         this.isParent = isParent;
     }
 
-    public List<DeptStructure> getChildren() {
+    public List<DeptStructure> getNodes() {
         return nodes;
     }
 
-    public void setChildren(List<DeptStructure> children) {
-        this.nodes = children;
+    public void setNodes(List<DeptStructure> nodes) {
+        this.nodes = nodes;
     }
 }
