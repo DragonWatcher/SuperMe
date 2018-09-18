@@ -15,6 +15,8 @@ public class Dept {
     private Integer deptRank;
     private String describe;
     
+    public Dept() {}
+    
     public Dept(String deptId) {
         this.deptId = deptId;
     }

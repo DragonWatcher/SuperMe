@@ -98,6 +98,8 @@
         <association property="dept" javaType="com.ahav.system.entity.Dept">
             <id column="dept_id" property="deptId"/>
             <result column="dept_name" property="deptName"/>
+            <result column="parent_id" property="parentId"/>
+            <result column="dept_rank" property="deptRank"/>
             <result column="describe" property="describe"/>
         </association>
         <!-- 角色关联对象 -->
