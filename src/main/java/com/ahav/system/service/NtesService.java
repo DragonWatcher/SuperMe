@@ -1,6 +1,7 @@
 package com.ahav.system.service;
 
 import com.ahav.system.entity.SystemResult;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * 网易邮箱接口服务类
@@ -24,6 +25,5 @@ public interface NtesService {
      * 时间：2018年8月30日-下午4:43:31<br>
      * @return
      */
-    @Deprecated
-    SystemResult updLocalAccounts();
+    JSONObject getNtesAccountData();
 }

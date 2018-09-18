@@ -16,13 +16,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.ahav.system.dao.DeptDao;
+import com.ahav.system.dao.UserDao;
 import com.ahav.system.entity.Dept;
 import com.ahav.system.entity.SystemResult;
+import com.ahav.system.entity.User;
 import com.ahav.system.enums.NtesDataVer;
 import com.ahav.system.enums.NtesFunc;
 import com.ahav.system.rsatool.HttpPost;
 import com.ahav.system.rsatool.RSASignatureToQiye;
 import com.ahav.system.service.NtesService;
+import com.ahav.system.service.UserService;
 import com.ahav.system.util.SystemConstant;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -34,6 +37,12 @@ public class NtesServiceImpl implements NtesService {
 
     @Autowired
     private DeptDao deptDao;
+    
+    @Autowired
+    private UserDao userDao;
+    
+    @Autowired
+    private UserService userService;
 
     private volatile JSONObject apiResult;
 
@@ -89,12 +98,11 @@ public class NtesServiceImpl implements NtesService {
     }
 
     @Override
-    public SystemResult updLocalAccounts() {
-        Long accountVer = deptDao.selectUnitDataVer(NtesDataVer.ACCOUNT_VER);
+    public JSONObject getNtesAccountData() {
         // ntes接口调用
-        JSONObject apiResult = getNtesData(NtesFunc.UNIT_GET_ACCOUNT_LIST, accountVer);
+        JSONObject apiResult = getNtesAccountData(NtesFunc.UNIT_GET_ACCOUNT_LIST, null);
 
-        return new SystemResult(HttpStatus.OK.value(), null, apiResult);
+        return apiResult;
     }
 
     /**
@@ -179,5 +187,41 @@ public class NtesServiceImpl implements NtesService {
         new Thread(() -> deptDao.updateDataVer(NtesDataVer.UNIT_VER, verFromNtes)).start();
 
         return new SystemResult(HttpStatus.OK.value(), "部门信息更新成功！", Boolean.TRUE);
+    }
+    
+    private JSONObject getNtesAccountData(NtesFunc ntesFunc, Long dataVer) {
+        String url = SystemConstant.NTES_API_BASE_URL + ntesFunc.func();
+        long time = System.currentTimeMillis();
+
+        String sign = "domain=" + SystemConstant.AHAV_DOMAIN + "&product=" + SystemConstant.QIYE_PRODUCT + "&time="
+                + time + (dataVer != null ? ("&ver=" + dataVer) : "");
+        // 签名
+        sign = RSASignatureToQiye.generateSigature(SystemConstant.PRI_KEY, sign);
+        // url生成
+        url = url + "?" + "domain=" + SystemConstant.AHAV_DOMAIN + "&product=" + SystemConstant.QIYE_PRODUCT + "&sign="
+                + sign + "&time=" + time + (dataVer != null ? ("&ver=" + dataVer) : "");
+
+        String res = new HttpPost().post(url);
+        final JSONObject apiResult = JSONObject.parseObject(res);
+        // 临时执行保存
+        new Thread(() -> pubLocalAccount(apiResult)).start();
+        
+        return apiResult;
+    }
+    
+    /**
+     * 临时展示用
+     * <br>作者： mht<br> 
+     * 时间：2018年9月18日-上午10:02:53<br>
+     */
+    private void pubLocalAccount(JSONObject userListJo) {
+        JSONArray accList = userListJo.getJSONObject("con").getJSONArray("list");
+        accList.forEach(accObj -> {
+            JSONObject acc = JSONObject.parseObject(accObj.toString());
+            User user = new User(null, acc.getString("nickname"), acc.getString("nickname"), null);
+            user.setDept(new Dept(acc.getString("unit_id")));
+
+            userService.createOrUpdUser(user);
+        });
     }
 }
