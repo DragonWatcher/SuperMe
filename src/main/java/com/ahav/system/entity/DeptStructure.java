@@ -2,8 +2,6 @@ package com.ahav.system.entity;
 
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
-
 /**
  * 组织架构实体类 <br>
  * 类名：OrganizationStructure<br>
@@ -11,48 +9,57 @@ import com.alibaba.fastjson.JSONObject;
  * 日期： 2018年9月16日-下午9:03:34<br>
  */
 public class DeptStructure {
-    private String deptId;
+    private String id;
     /** 部门名称 */
-    private String deptName;
-    /** 子部门名称列表 */
-    private List<DeptStructure> subDeptStructure;
-    /** 部门成员列表 */
-    private List<JSONObject> users;
+    private String text;
+    /** 是否是父节点*/
+    private boolean isParent;
+    /** 子部门或和列表 */
+    private List<DeptStructure> nodes;
+    
+    public DeptStructure() { }
     
     public DeptStructure(Dept d) {
-        this.deptId = d.getDeptId();
-        this.deptName = d.getDeptName();
+        this.id = d.getDeptId();
+        this.text = d.getDeptName();
+        this.isParent = true;
+    }
+    
+    public DeptStructure(User user) {
+        this.id = String.valueOf(user.getUserId());
+        this.text = user.getTrueName();
+        this.isParent = false;
+    }
+    
+    public String getId() {
+        return id;
     }
 
-    public String getDeptId() {
-        return deptId;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void setDeptId(String deptId) {
-        this.deptId = deptId;
+    public String getText() {
+        return text;
     }
 
-    public String getDeptName() {
-        return deptName;
+    public void setText(String name) {
+        this.text = name;
     }
 
-    public void setDeptName(String deptName) {
-        this.deptName = deptName;
+    public boolean getIsParent() {
+        return isParent;
     }
 
-    public List<DeptStructure> getSubDeptStructure() {
-        return subDeptStructure;
+    public void setIsParent(boolean isParent) {
+        this.isParent = isParent;
     }
 
-    public void setSubDeptStructure(List<DeptStructure> subDeptStructure) {
-        this.subDeptStructure = subDeptStructure;
+    public List<DeptStructure> getNodes() {
+        return nodes;
     }
 
-    public List<JSONObject> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<JSONObject> users) {
-        this.users = users;
+    public void setNodes(List<DeptStructure> nodes) {
+        this.nodes = nodes;
     }
 }

@@ -21,10 +21,12 @@
     <!-- 根据用户id删除用户-角色对应关系 -->
     <delete id="deleteUserRole" parameterType="int">
         DELETE FROM sys_user_role
-        WHERE user_id = #{userId}
+        WHERE role_id = #{roleId}
     </delete>
+    
 	<select id="findRoleId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
 	  	select role_id from sys_user_role
 	  	where user_id=#{userId,jdbcType=INTEGER}
 	</select>
+	
 </mapper>

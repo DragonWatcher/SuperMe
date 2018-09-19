@@ -15,6 +15,12 @@ public class Dept {
     private Integer deptRank;
     private String describe;
     
+    public Dept() {}
+    
+    public Dept(String deptId) {
+        this.deptId = deptId;
+    }
+    
     public Dept(String deptId, String deptName, String parentId, Integer deptRank, String describe) {
         this.deptId = deptId;
         this.deptName = deptName;

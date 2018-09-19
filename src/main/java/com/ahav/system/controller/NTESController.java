@@ -35,8 +35,8 @@ public class NTESController {
     
     @ApiOperation(value = "账号更新接口")
     @GetMapping("/accounts")
-    public SystemResult updLocalAccount() {
-        return ntesService.updLocalAccounts();
+    public JSONObject updLocalAccount() {
+        return ntesService.getNtesAccountData();
     }
     
     @ApiOperation(value = "获取ip地址")

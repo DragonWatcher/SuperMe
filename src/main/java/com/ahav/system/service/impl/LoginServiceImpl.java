@@ -10,9 +10,12 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.ahav.system.dao.UserDao;
+import com.ahav.system.dao.UserRoleDao;
 import com.ahav.system.entity.SimpleUser;
 import com.ahav.system.entity.SystemResult;
 import com.ahav.system.entity.User;
@@ -30,10 +33,31 @@ import com.ahav.system.util.SystemConstant;
 @Service
 public class LoginServiceImpl implements LoginService {
     private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
+    
+    @Autowired
+    private UserDao userDao;
+    
+    @Autowired
+    private UserRoleDao userRoleDao;
 
     @Override
     public SystemResult login(String username, String password) {
         SystemResult loginResult = null;
+        
+        /**
+         * 通过username去查找数据库，看当前用户是否有角色；
+         * 如果有角色则继续登录，
+         * 如果没有角色则给出提示“请绑定角色再登录”
+         * wxh于2018/9/18与田永华讨论后修改
+         * 
+         */
+        User user = userDao.findByName(username);
+        int roleId = userRoleDao.findRoleId(user.getUserId());
+//        if(roleId != null){
+//        	
+//        }
+        
+        
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);
         // 通过shiro获取当前用户
         Subject currentUser = SecurityUtils.getSubject();
