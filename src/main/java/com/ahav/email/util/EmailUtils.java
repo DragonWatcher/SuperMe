@@ -5,7 +5,6 @@ import java.io.File;
 import java.util.Properties;
 
 import javax.mail.internet.MimeMessage;
-
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
@@ -13,8 +12,9 @@ import com.ahav.email.pojo.Email;
 import com.ahav.email.pojo.ReceiveMail;
 
 /**
- * 发送邮件工具类
- */
+ * 发送邮件工具类*/
+
+
 
 public class EmailUtils {
     public static boolean sendMail(Email sendMail, ReceiveMail receiveMail) {

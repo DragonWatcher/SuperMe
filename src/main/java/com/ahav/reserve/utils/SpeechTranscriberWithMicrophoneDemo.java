@@ -30,6 +30,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.TargetDataLine;
+import javax.validation.constraints.Pattern;
 import java.io.*;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class SpeechTranscriberWithMicrophoneDemo {
     private String accessToken;
     NlsClient client;
     ArrayList<byte[]> list = new ArrayList();
+    boolean flag = true;
 
     public void SpeechTranscriberWithMicrophoneDemo1(String appKey, String token) {
         this.appKey = appKey;
@@ -126,11 +128,17 @@ public class SpeechTranscriberWithMicrophoneDemo {
             byte[] buffer = new byte[bufSize];
 
             while ((nByte = targetDataLine.read(buffer, 0, bufSize)) > 0) {
-                // Step4 直接发送麦克风数据流
-                transcriber.send(buffer);
-              /*  System.out.println("16进制："   + binary(buffer, 16));*/
-                list.add(buffer);
-                buffer= new byte[bufSize];
+
+                if(flag){
+
+                }else{
+                    // Step4 直接发送麦克风数据流
+                    transcriber.send(buffer);
+                    /*System.out.println("16进制："   + binary(buffer, 16));*/
+                    list.add(buffer);
+                    buffer= new byte[bufSize];
+                }
+
             }
 
             // Step5 通知服务端语音数据发送完毕,等待服务端处理完成
@@ -215,5 +223,14 @@ public class SpeechTranscriberWithMicrophoneDemo {
     //保存pcm文件
     public void setAccessToken(){
 
+    }
+
+    //暂停
+    public void setStop(){
+        flag = true;
+    }
+    //开始
+    public void setStart(){
+        flag = false;
     }
 }
