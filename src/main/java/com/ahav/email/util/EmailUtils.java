@@ -16,6 +16,7 @@ import com.ahav.email.pojo.ReceiveMail;
 
 
 
+
 public class EmailUtils {
     public static boolean sendMail(Email sendMail, ReceiveMail receiveMail) {
         boolean result = true;

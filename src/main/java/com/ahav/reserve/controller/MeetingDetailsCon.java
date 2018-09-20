@@ -27,6 +27,16 @@ public class MeetingDetailsCon {
 
 
     //查询所有会议(初始化预约管理页面/添加预约界面)
+    @RequestMapping(value = {"/test"},method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value="test", notes="test")
+    @ApiImplicitParam(value = "test")
+    public String test(){
+        String date = "{\n" + " \"data\": [\n" + "{ \"id\": \"2\", \"start_date\": \"2017-05-24 00:00:00\", \"end_date\": \"2017-06-08 00:00:00\", \"text\": \"French Open\", \"details\": \"Philippe-Chatrier Court\\n Paris, FRA\"},\n" + "    { \"id\": \"3\", \"start_date\": \"2017-06-10 00:00:00\", \"end_date\": \"2017-06-13 00:00:00\", \"text\": \"Aegon Championship\", \"details\": \"The Queens Club\\n London, ENG\"}]\n" + "}";
+        return date;
+    }
+
+    //查询所有会议(初始化预约管理页面/添加预约界面)
     @RequestMapping(value = {"/reserve/manage/initReserveManage","/initAddReserve"},method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value="初始化预约管理/添加预约界面", notes="初始化预约管理页面/添加预约界面不需要任何参数")

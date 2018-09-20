@@ -10,6 +10,7 @@ import com.ahav.system.service.DeptService;
 import com.ahav.system.service.UserService;
 import com.ahav.system.util.CheckPermission;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -43,10 +44,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     @Override
     public Map findMeetingDetailsAll() {
         Result result = new Result();
-
         Map initPageMap = new HashMap();
         MeetingTime meetingTime = new MeetingTime();
-
 
         //TODO:调用接口获得当前用户的id
         SystemResult currentUser = userServiceImpl.getCurrentUser();
@@ -99,10 +98,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         List<Room> roomAll = RoomMapperImpl.selectRoomAll();
         initPageMap.put("roomAll",roomAll);
         initPageMap.put("meetingTime",meetingTime);
-
         /*TODO:调用接口查询设备列表(要求前台要求是一个字符串例1,2,3,5)
         * initPageMap.put("设备列表",设备列表);*/
-
 
         if(flag){
             //可以查看所有会议详情
@@ -111,7 +108,6 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             }
 
             initPageMap.put("meetingDetailsAll",meetingDetailsAll);
-
             result.setStatus(200);
             initPageMap.put("result",result);
             return initPageMap;
@@ -524,7 +520,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         }
 
         if(pubTemplate != null){
-            String jsonTemplate = JSON.toJSONString(pubTemplate); //将json对象转为json字符串
+            String jsonTemplate = JSON.toJSONString(pubTemplate); //将对象转为json字符串
+            /*JSONArray.toJSONString()*/
             meetingDetails.setDePubTemplate(jsonTemplate);
         }
 
