@@ -1,4 +1,3 @@
-/*
 package com.ahav.email.pojo;
 
 import io.swagger.annotations.ApiModel;
@@ -73,4 +72,3 @@ public class ReceiveMail {
         this.files = files;
     }
 }
-*/
