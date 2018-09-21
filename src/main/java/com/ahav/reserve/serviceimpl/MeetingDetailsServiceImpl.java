@@ -10,6 +10,7 @@ import com.ahav.system.service.DeptService;
 import com.ahav.system.service.UserService;
 import com.ahav.system.util.CheckPermission;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -43,10 +44,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
     @Override
     public Map findMeetingDetailsAll() {
         Result result = new Result();
-
         Map initPageMap = new HashMap();
         MeetingTime meetingTime = new MeetingTime();
-
 
         //TODO:调用接口获得当前用户的id
         SystemResult currentUser = userServiceImpl.getCurrentUser();
@@ -67,8 +66,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         for(MeetingDetails meetingDetails:meetingDetailsAll){
 
             //将会议开始和结束时间转为指定格式的时间
-            meetingDetails.setDeMeetingStartStr(meetingUtils.transformTimeFormat(meetingDetails.getDeMeetingStart()));
-            meetingDetails.setDeMeetingOverStr(meetingUtils.transformTimeFormat(meetingDetails.getDeMeetingOver()));
+            meetingDetails.setStart_date(meetingUtils.transformTimeFormat(meetingDetails.getDeMeetingStart()));
+            meetingDetails.setEnd_date(meetingUtils.transformTimeFormat(meetingDetails.getDeMeetingOver()));
 
             //根据会议室ID查询出会议室的名称，并设置到MeetingDetails对象中
             String roomName = RoomMapperImpl.selectRoomName(meetingDetails.getDeRoomId());
@@ -99,10 +98,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         List<Room> roomAll = RoomMapperImpl.selectRoomAll();
         initPageMap.put("roomAll",roomAll);
         initPageMap.put("meetingTime",meetingTime);
-
         /*TODO:调用接口查询设备列表(要求前台要求是一个字符串例1,2,3,5)
         * initPageMap.put("设备列表",设备列表);*/
-
 
         if(flag){
             //可以查看所有会议详情
@@ -111,7 +108,6 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             }
 
             initPageMap.put("meetingDetailsAll",meetingDetailsAll);
-
             result.setStatus(200);
             initPageMap.put("result",result);
             return initPageMap;
@@ -180,8 +176,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         //  List<MeetingDetails> meetingDetailsList = meetingDetailsMapperImpl.selectMeetingDetails(meetingDetails);
         for(MeetingDetails meetingDetails1 :meetingDetailsList){
             //将会议开始和结束时间转为指定格式的时间
-            meetingDetails1.setDeMeetingStartStr(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingStart()));
-            meetingDetails1.setDeMeetingOverStr(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingOver()));
+            meetingDetails1.setStart_date(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingStart()));
+            meetingDetails1.setEnd_date(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingOver()));
             //调用接口：根据会议室Id查询出会议室的名称，并设置到MeetingDetails对象中
             meetingDetails1.setDeRoomName(RoomMapperImpl.selectRoomName(meetingDetails1.getDeRoomId()));
             //TODO:调用接口：根据部门id查询部门名称，并设置到MeetingDetails对象中
@@ -371,8 +367,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                     result.setStatus(200);
                     MeetingDetails meetingDetails1 = meetingDetailsMapperImpl.selectByPrimaryKey(meetingDetails.getDeDetailsId());
                     //将会议开始和结束时间转为指定格式的时间
-                    meetingDetails1.setDeMeetingStartStr(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingStart()));
-                    meetingDetails1.setDeMeetingOverStr(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingOver()));
+                    meetingDetails1.setStart_date(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingStart()));
+                    meetingDetails1.setEnd_date(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingOver()));
                     //根据会议室ID查询出会议室名称
                     Integer deRoomId1 = meetingDetails1.getDeRoomId();
                     String roomName = RoomMapperImpl.selectRoomName(deRoomId1);
@@ -524,7 +520,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         }
 
         if(pubTemplate != null){
-            String jsonTemplate = JSON.toJSONString(pubTemplate); //将json对象转为json字符串
+            String jsonTemplate = JSON.toJSONString(pubTemplate); //将对象转为json字符串
+            /*JSONArray.toJSONString()*/
             meetingDetails.setDePubTemplate(jsonTemplate);
         }
 
@@ -536,8 +533,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                     Integer detailsId = meetingDetailsMapperImpl.selectNewestDetailsId();//获取最新插入的会议详情的id
                     MeetingDetails meetingDetails1 = meetingDetailsMapperImpl.selectByPrimaryKey(detailsId);
                     //将会议开始和结束时间转为指定格式的时间
-                    meetingDetails1.setDeMeetingStartStr(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingStart()));
-                    meetingDetails1.setDeMeetingOverStr(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingOver()));
+                    meetingDetails1.setStart_date(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingStart()));
+                    meetingDetails1.setEnd_date(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingOver()));
                     result.setStatus(200);
                     jsonObject.put("meetingDetails",meetingDetails1);
                     jsonObject.put("result",result);
@@ -574,8 +571,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             List<MeetingDetails> historys = meetingDetailsMapperImpl.selectHistory(meetingDetails);
             for(MeetingDetails his:historys){
                 //将会议开始和结束时间转为指定格式的时间
-                his.setDeMeetingStartStr(meetingUtils.transformTimeFormat(his.getDeMeetingStart()));
-                his.setDeMeetingOverStr(meetingUtils.transformTimeFormat(his.getDeMeetingOver()));
+                his.setStart_date(meetingUtils.transformTimeFormat(his.getDeMeetingStart()));
+                his.setEnd_date(meetingUtils.transformTimeFormat(his.getDeMeetingOver()));
             }
             PageInfo<MeetingDetails> page = new PageInfo<>(historys);//吧查询到对象封装到PageInfo中
             for(MeetingDetails his:historys){
@@ -847,8 +844,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
         for(MeetingDetails meetingDetails:meetingDetailsAll){
             //将会议开始和结束时间转为指定格式的时间
-            meetingDetails.setDeMeetingStartStr(meetingUtils.transformTimeFormat(meetingDetails.getDeMeetingStart()));
-            meetingDetails.setDeMeetingOverStr(meetingUtils.transformTimeFormat(meetingDetails.getDeMeetingOver()));
+            meetingDetails.setStart_date(meetingUtils.transformTimeFormat(meetingDetails.getDeMeetingStart()));
+            meetingDetails.setEnd_date(meetingUtils.transformTimeFormat(meetingDetails.getDeMeetingOver()));
             //根据会议室ID查询出会议室的名称，并设置到MeetingDetails对象中
             String roomName = RoomMapperImpl.selectRoomName(meetingDetails.getDeRoomId());
             meetingDetails.setDeRoomName(roomName);

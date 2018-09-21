@@ -36,8 +36,8 @@ public class meetingUtils {
         return date;
     }
 
-    //将时间转为指定的格式的字符串(如:查询历史前台就要这种格式的时间字符串)
-    public static String  transformTimeFormat(Date date){
+    //将时间转为指定的格式的时间字符串(如:查询历史前台就要这种格式的时间字符串)
+    public static String transformTimeFormat(Date date){
         DateFormat b=new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String dateStr;
         dateStr = b.format(date);
@@ -69,10 +69,10 @@ public class meetingUtils {
         return parse;
     }
 
-    //生成uuid
+    //获取uuid
     public static String getUUID32(){
-        String uuid = UUID.randomUUID().toString().toLowerCase();
+        String uuid = UUID.randomUUID().toString().replace("-", "").toLowerCase();
         return uuid;
-//  return UUID.randomUUID().toString().replace("-", "").toLowerCase();
     }
+
 }

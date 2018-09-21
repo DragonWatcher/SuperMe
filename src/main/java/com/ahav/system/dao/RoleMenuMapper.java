@@ -20,4 +20,6 @@ public interface RoleMenuMapper {
     int updateByPrimaryKey(RoleMenu record);
 
     List<RoleMenu> findMenuIds(int roleId);
+
+	int deleteByRoleId(Integer roleId);
 }

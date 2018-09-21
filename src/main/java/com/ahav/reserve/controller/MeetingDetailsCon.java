@@ -4,7 +4,9 @@ import com.ahav.reserve.pojo.*;
 import com.ahav.reserve.service.IMeetingDetailsService;
 import com.ahav.reserve.service.IRoomService;
 import com.ahav.reserve.utils.meetingUtils;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -25,6 +27,19 @@ public class MeetingDetailsCon {
     @Autowired
     private IRoomService roomServiceImpl;
 
+
+    //查询所有会议(初始化预约管理页面/添加预约界面)
+    @RequestMapping(value = {"/test"},method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value="test", notes="test")
+    @ApiImplicitParam(value = "test")
+    public JSONObject test(){
+        JSONObject jsonObject = new JSONObject();
+        String date1 = "[\n" + "{ \"id\": \"2\", \"start_date\": \"2017-05-24 00:00:00\", \"end_date\": \"2017-06-08 00:00:00\", \"text\": \"French Open\", \"details\": \"Philippe-Chatrier Court\\n Paris, FRA\"},\n" + "    { \"id\": \"3\", \"start_date\": \"2017-06-10 00:00:00\", \"end_date\": \"2017-06-13 00:00:00\", \"text\": \"Aegon Championship\", \"details\": \"The Queens Club\\n London, ENG\"}]";
+        JSONArray date = JSONArray.parseArray(date1);
+        jsonObject.put("date",date);
+        return jsonObject;
+    }
 
     //查询所有会议(初始化预约管理页面/添加预约界面)
     @RequestMapping(value = {"/reserve/manage/initReserveManage","/initAddReserve"},method = RequestMethod.GET)

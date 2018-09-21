@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.ahav.email.mapper.EmailMapper" >
-  <resultMap id="BaseResultMap" type="com.ahav.email.pojo.Email" >
+<resultMap id="BaseResultMap" type="com.ahav.email.pojo.Email" >
     <id column="server_id" property="serverId" jdbcType="INTEGER" />
     <result column="server_address" property="serverAddress" jdbcType="VARCHAR" />
     <result column="portocol_type" property="portocolType" jdbcType="VARCHAR" />
@@ -9,50 +9,50 @@
     <result column="sender_pwd" property="senderPwd" jdbcType="VARCHAR" />
     <result column="company" property="company" jdbcType="VARCHAR" />
     <result column="ssl_port" property="sslPort" jdbcType="INTEGER" />
-  </resultMap>
-  <sql id="Base_Column_List" >
+</resultMap>
+<sql id="Base_Column_List" >
     server_id, server_address, portocol_type, sender, sender_pwd, company, ssl_port
-  </sql>
-  <select id="selectEmail" resultMap="BaseResultMap" >
+</sql>
+<select id="selectEmail" resultMap="BaseResultMap" >
     select
     <include refid="Base_Column_List" />
     from email
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+</select>
+<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from email
     where server_id = #{serverId,jdbcType=INTEGER}
-  </delete>
-  <insert id="insert" parameterType="com.ahav.email.pojo.Email" >
-    insert into email (server_id, server_address, portocol_type, 
-      sender, sender_pwd, company, 
-      ssl_port)
-    values (#{serverId,jdbcType=INTEGER}, #{serverAddress,jdbcType=VARCHAR}, #{portocolType,jdbcType=VARCHAR}, 
-      #{sender,jdbcType=VARCHAR}, #{senderPwd,jdbcType=VARCHAR}, #{company,jdbcType=VARCHAR}, 
-      #{sslPort,jdbcType=INTEGER})
-  </insert>
+</delete>
+<insert id="insert" parameterType="com.ahav.email.pojo.Email" >
+    insert into email (server_id, server_address, portocol_type,
+    sender, sender_pwd, company,
+    ssl_port)
+    values (#{serverId,jdbcType=INTEGER}, #{serverAddress,jdbcType=VARCHAR}, #{portocolType,jdbcType=VARCHAR},
+    #{sender,jdbcType=VARCHAR}, #{senderPwd,jdbcType=VARCHAR}, #{company,jdbcType=VARCHAR},
+    #{sslPort,jdbcType=INTEGER})
+</insert>
 
-  <update id="updateEmail" parameterType="com.ahav.email.pojo.Email" >
+<update id="updateEmail" parameterType="com.ahav.email.pojo.Email" >
     update email
     <set >
-      <if test="serverAddress != null" >
-        server_address = #{serverAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="portocolType != null" >
-        portocol_type = #{portocolType,jdbcType=VARCHAR},
-      </if>
-      <if test="sender != null" >
-        sender = #{sender,jdbcType=VARCHAR},
-      </if>
-      <if test="senderPwd != null" >
-        sender_pwd = #{senderPwd,jdbcType=VARCHAR},
-      </if>
-      <if test="company != null" >
-        company = #{company,jdbcType=VARCHAR},
-      </if>
-      <if test="sslPort != null" >
-        ssl_port = #{sslPort,jdbcType=INTEGER},
-      </if>
+        <if test="serverAddress != null" >
+            server_address = #{serverAddress,jdbcType=VARCHAR},
+        </if>
+        <if test="portocolType != null" >
+            portocol_type = #{portocolType,jdbcType=VARCHAR},
+        </if>
+        <if test="sender != null" >
+            sender = #{sender,jdbcType=VARCHAR},
+        </if>
+        <if test="senderPwd != null" >
+            sender_pwd = #{senderPwd,jdbcType=VARCHAR},
+        </if>
+        <if test="company != null" >
+            company = #{company,jdbcType=VARCHAR},
+        </if>
+        <if test="sslPort != null" >
+            ssl_port = #{sslPort,jdbcType=INTEGER},
+        </if>
     </set>
     where server_id = #{serverId,jdbcType=INTEGER}
-  </update>
+</update>
 </mapper>

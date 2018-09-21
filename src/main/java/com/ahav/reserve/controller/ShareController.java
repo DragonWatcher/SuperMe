@@ -21,19 +21,14 @@ public class ShareController {
         SpeechTranscriberWithMicrophoneDemo.realtimeTranscribeDown();
     }
 
-
-
-/*    @RequestMapping("/share/kaish")
-    public void sdsad1(){
-        myRecord.capture();
+    @RequestMapping("/share/summaryShare/asrStop")
+    public void stop(){
+        SpeechTranscriberWithMicrophoneDemo.setStop();
     }
-    @RequestMapping("/share/baocun")
-    public void sdsad2(){
-        myRecord.stop();
+
+    @RequestMapping("/share/summaryShare/asrStart")
+    public void start(){
+        SpeechTranscriberWithMicrophoneDemo.setStart();
     }
-    @RequestMapping("/share/guanbi")
-    public void sdsad3(){
-        myRecord.save();
-    }*/
 
 }

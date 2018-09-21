@@ -36,6 +36,8 @@ public class MenuController {
 	 
 	 /**
 	  * 根据登录用户返回有权限的菜单
+	  * 
+	  * 说明：根据sys_role_menu表查询当前用户有哪些页面的权限
 	  * @param userId
 	  * @return
 	  */

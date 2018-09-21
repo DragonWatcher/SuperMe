@@ -14,4 +14,6 @@ public interface RolePermissionMapper {
     int insertSelective(RolePermissionKey record);
 
     List<RolePermissionKey> selectPermissionIds(Integer roleId);
+
+	int deleteByRoleId(Integer roleId);
 }
