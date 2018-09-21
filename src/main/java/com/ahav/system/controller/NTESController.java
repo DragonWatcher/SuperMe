@@ -17,7 +17,7 @@ import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Api("网易接口测试")
+@Api("网易接口测试：牟昊天")
 @RestController
 @RequestMapping("/ntes")
 public class NTESController {
@@ -27,19 +27,19 @@ public class NTESController {
     @Autowired
     private LoginService loginService;
     
-    @ApiOperation(value = "部门更新接口")
+    @ApiOperation(value = "部门更新接口", notes = "同步网易企业邮箱部门列表，此接口仅测试时使用，未来将该接口改造成定时更新的方式")
     @GetMapping("/units")
     public SystemResult updLocalDeptTable() {
         return ntesService.updLocalDepts();
     }
     
-    @ApiOperation(value = "账号更新接口")
+    @ApiOperation(value = "账号更新接口", notes = "账号同步接口，拉取网易企业中对应企业的成员列表，OA对接后此接口将废弃")
     @GetMapping("/accounts")
     public JSONObject updLocalAccount() {
         return ntesService.getNtesAccountData();
     }
     
-    @ApiOperation(value = "获取ip地址")
+    @ApiOperation(value = "获取ip地址", notes = "获取请求对象的外网IP地址，本机调用不会生效，可两台电脑之间访问调用")
     @GetMapping("/ip")
     public SystemResult reviewIp(HttpServletRequest request) {
         return new SystemResult(HttpStatus.OK.value(), "remoteAddr", request.getRemoteAddr());
