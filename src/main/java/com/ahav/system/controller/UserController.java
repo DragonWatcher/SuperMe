@@ -1,6 +1,5 @@
 package com.ahav.system.controller;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.FormParam;
 
@@ -29,7 +28,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * 用户请求控制器
@@ -50,23 +48,15 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @ApiIgnore
-    @ApiOperation(value = "测试是否已登录")
-    @GetMapping("/test")
-    public String test() {
-        // 测试登录登出前后的状态变化
-        return "登录状态...";
-    }
-    
     /**
      * 登录
      * <br>作者： mht<br> 
      * 时间：2018年8月3日-下午9:32:05<br>
      */
-    @ApiOperation(value = "用户登录", notes = "用户名密码以formdata表单提交。可登陆用户名密码：mht,123456")
+    @ApiOperation(value = "用户登录", notes = "Meeting登录采用form表单提交用户名和密码.可登陆用户名密码：admin,12345678")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "username", paramType = "form"),
-            @ApiImplicitParam(name = "password", paramType = "form") })
+            @ApiImplicitParam(required = true, name = "username", value = "用户名", paramType = "form", dataType = "String"),
+            @ApiImplicitParam(required = true, name = "password", value = "登录密码", paramType = "form", dataType = "String") })
     @PostMapping("/login")
     public SystemResult login(@FormParam("username") String username, @FormParam("password") String password) {
         logger.info("请求登录...");
@@ -79,7 +69,7 @@ public class UserController {
      * <br>作者： mht<br> 
      * 时间：2018年8月3日-下午9:32:11<br>
      */
-    @ApiOperation(value = "用户登出")
+    @ApiOperation(value = "用户登出", notes = "用户登出")
     @GetMapping("/logout")
     public SystemResult logout() {
         logger.info("用户登出...");
@@ -91,7 +81,8 @@ public class UserController {
      * <br>作者： mht<br> 
      * 时间：2018年8月9日-下午11:42:01<br>
      */
-    @ApiOperation(value = "用户名查重")
+    @ApiOperation(value = "用户名查重", notes = "用户账号查重是为了在添加用户时，页面异步调用，如果有重复用户名，则提示重复信息")
+    @ApiImplicitParam(name = "username", value = "待验重的用户名", required = true)
     @GetMapping("/username/{username}")
     public SystemResult checkUsername(@PathVariable String username) {
         return userService.checkUsername(username);
@@ -102,7 +93,10 @@ public class UserController {
      * <br>作者： mht<br> 
      * 时间：2018年8月9日-下午11:41:29<br>
      */
-    @ApiOperation(value = "添加用户", notes = "格式：{\"dept\":{\"deptId\":1},\"role\":{\"roleId\":3},\"trueName\":\"小明\",\"username\":\"mfy1\"}")
+    @ApiOperation(value = "添加用户", notes = "单个用户添加，<br>"
+            + "格式：{\"dept\":{\"deptId\":1},\"role\":{\"roleId\":3},\"trueName\":\"小明\",\"username\":\"mfy1\"}<br>"
+            + "传入的User对象封装了部门及角色对象，页面只需要传入上述格式中的字段即可")
+    @ApiImplicitParam(name = "user", value = "用户对象", required = true)
     @PostMapping
 //    @RequiresRoles("admin") TODO:超级管理员角色拦截
     public SystemResult createUser(@RequestBody User user) {
@@ -114,7 +108,8 @@ public class UserController {
      * <br>作者： mht<br> 
      * 时间：2018年8月11日-下午5:52:28<br>
      */
-    @ApiOperation(value = "更新用户")
+    @ApiOperation(value = "更新用户", notes = "成员编辑页面，修改：角色、部门、姓名、账号，四个信息，传入的结构和添加用户功能雷同")
+    @ApiImplicitParam(name = "user", value = "用户对象", required = true)
     @PutMapping
     public SystemResult updateUser(@RequestBody User user) {
         return userService.createOrUpdUser(user);
@@ -125,7 +120,8 @@ public class UserController {
      * <br>作者： mht<br> 
      * 时间：2018年8月11日-下午6:19:34<br>
      */
-    @ApiOperation(value = "重置密码")
+    @ApiOperation(value = "重置密码", notes = "系统内置一个初始密码，页面点击重置密码后，直接传入用户ID，即可还原到系统原始密码")
+    @ApiImplicitParam(name = "userId", value = "用户id", required = true)
     @PutMapping("/{userId}")
     public SystemResult resetPassword(@PathVariable Integer userId) {
         return userService.resetPassword(userId);
@@ -135,7 +131,14 @@ public class UserController {
      * <br>作者： mht<br> 
      * 时间：2018年8月11日-上午9:58:19<br>
      */
-    @ApiOperation(value = "查询用户列表")
+    @ApiOperation(value = "查询用户列表", notes = "查找成员，通过筛选条件:角色id，部门id，用户名进行查找")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "pageNum", value = "页号", required = false, defaultValue = SystemConstant.FIRST_PAGE),
+            @ApiImplicitParam(name = "pageSize", value = "条数", required = false,defaultValue = SystemConstant.PAGE_SIZE),
+            @ApiImplicitParam(name = "roleId", value = "角色ID", required = false),
+            @ApiImplicitParam(name = "deptId", value = "部门ID", required = false),
+            @ApiImplicitParam(name = "username", value = "用户名", required = false)
+    })
     @GetMapping
     public SystemResult selectUsers(@RequestParam(defaultValue = SystemConstant.FIRST_PAGE) Integer pageNum,
             @RequestParam(defaultValue = SystemConstant.PAGE_SIZE) Integer pageSize, Integer roleId, Integer deptId,
@@ -148,7 +151,8 @@ public class UserController {
      * <br>作者： mht<br> 
      * 时间：2018年8月11日-上午10:02:13<br>
      */
-    @ApiOperation(value = "id查找用户")
+    @ApiOperation(value = "id查找用户", notes = "根据用户ID精确查找")
+    @ApiImplicitParam(name = "userId", value = "用户id", required = true)
     @GetMapping("/{userId}")
     public SystemResult selectUser(@PathVariable Integer userId) {
         return userService.getUserById(userId);
@@ -159,7 +163,8 @@ public class UserController {
      * <br>作者： mht<br> 
      * 时间：2018年8月11日-下午5:54:10<br>
      */
-    @ApiOperation(value = "删除用户")
+    @ApiOperation(value = "删除用户", notes = "删除单条用户，需要传入userId")
+    @ApiImplicitParam(name = "userId", value = "用户ID", required = true)
     @DeleteMapping("/{userId}")
     public SystemResult deleteUser(@PathVariable Integer userId) {
         return userService.deleteUser(userId);
@@ -170,10 +175,9 @@ public class UserController {
      * <br>作者： mht<br> 
      * 时间：2018年8月11日-下午9:05:40<br>
      */
-    @ApiOperation(value = "获得当前用户")
+    @ApiOperation(value = "获得当前用户", notes = "获取当前用户简要信息")
     @GetMapping("/current")
-    public SystemResult getCurrentUser(HttpServletResponse res) {
-        res.setHeader("Access-Control-Allow-Origin", "*");
+    public SystemResult getCurrentUser() {
         return userService.getCurrentUser();
     }
     
@@ -182,7 +186,8 @@ public class UserController {
      * <br>作者： mht<br> 
      * 时间：2018年8月11日-下午8:51:47<br>
      */
-    @ApiOperation(value = "校验用户原密码")
+    @ApiOperation(value = "校验用户原密码", notes = "在用户自己修改密码时，需要异步调用此接口进行用户原密码校验")
+    @ApiImplicitParam(name = "password", value = "用户原来密码", required = true)
     @PostMapping("/{password}")
     public SystemResult checkPassword(@PathVariable String password) {
         return userService.checkPassword(password);
@@ -193,19 +198,22 @@ public class UserController {
      * <br>作者： mht<br> 
      * 时间：2018年8月11日-下午9:17:11<br>
      */
-    @ApiOperation(value = "修改用户密码")
+    @ApiOperation(value = "修改用户密码", notes = "修改密码需要传入User对象的username，trueName，pwd，这三个参数用户生成用户的密码和salt")
+    @ApiImplicitParam(required = true, name = "user", value = "用户对象")
     @PutMapping("/password")
     public SystemResult updatePassword(@RequestBody User user) {
         return userService.updatePassword(user);
     }
     
-    @ApiOperation(value = "预订人姓名模糊查询")
+    @ApiOperation(value = "预订人姓名模糊查询", notes = "预订人姓名模糊查询")
+    @ApiImplicitParam(name = "trueName", value = "真实姓名", required = true)
     @GetMapping("/truename/{trueName}")
     public SystemResult getUserByTrueName(@PathVariable String trueName) {
         return userService.getUserByTrueName(trueName);
     }
     
     @ApiOperation(value = "设置当前用户的界面颜色", notes = "put请求，传入color字符串")
+    @ApiImplicitParam(name = "color", value = "用户选定的页面颜色", required = true)
     @PutMapping("/colors")
     public SystemResult setUserColor(@RequestParam(required = true) String color) {
         return userService.updUserColor(color);
