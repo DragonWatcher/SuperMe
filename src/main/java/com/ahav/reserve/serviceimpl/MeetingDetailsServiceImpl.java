@@ -597,7 +597,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                     //TODO:调用方法：根据部门预定人的id查询出部门预定人的名称
                     SimpleUser user = (SimpleUser)userServiceImpl.getUserById(departmentReservePersonId).getData();
                     
-                    departmentReservePerson[i]=user.getTrueName();
+                    departmentReservePerson[i]=user.getTrueName(); 
                 }
                 his.setDeDepartmentReservePerson(departmentReservePerson);
 
