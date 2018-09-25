@@ -15,6 +15,8 @@ import com.ahav.task.entity.Query;
 import com.ahav.task.entity.Task;
 import com.ahav.task.service.TaskService;
 import com.ahav.util.GeneralUtils;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 @Service
 public class TaskServiceImpl implements TaskService{
@@ -56,6 +58,14 @@ public class TaskServiceImpl implements TaskService{
 		Map map = queryToMap(query);
 		List<Task>  tasks = taskDao.findTasks(map);
 		return tasks;
+	}
+	@Override
+	public PageInfo findTasksPages(Query query) {
+		PageHelper.startPage(query.getCurrentPage(), query.getPageSize()); //一定要放在查询之前
+		Map map = queryToMap(query);
+		List<Task>  tasks = taskDao.findTasks(map);
+		PageInfo info = new PageInfo<>(tasks);
+		return info;
 	}
 	
 	//反射工具方法

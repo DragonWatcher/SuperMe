@@ -142,7 +142,7 @@
       <if test="params.orderBy != null and params.orderBy == 'publish_time desc'.toString()">
         order by tasks.start_time desc
       </if>
-      limit #{params.start},#{params.pageSize}
+      <!-- limit #{params.start},#{params.pageSize} -->
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from tasks

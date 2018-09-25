@@ -20,6 +20,7 @@ import com.ahav.task.entity.Query;
 import com.ahav.task.entity.Task;
 import com.ahav.task.service.TaskService;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageInfo;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -123,24 +124,28 @@ public class TaskController {
 		boolean checkPermission = CheckPermission.checkPermission("all");
 		if(checkPermission){
 			List<Task> tasks = null;
+			PageInfo info = null;
 			if(query.getWhichPage() != null && "1".equals(query.getWhichPage())){
 				//发布历史
 				if(query.getPublisher() != null && !"".equals(query.getPublisher())){
-					tasks = taskService.findTasks(query);
+//					tasks = taskService.findTasks(query);
+					info = taskService.findTasksPages(query);
 				}else{
 					jo.put("msg", "publisher不合法");
 				}
 			}else if(query.getWhichPage() != null && "2".equals(query.getWhichPage())){
 				//任务验收
 				if(query.getSurveyor() != null && !"".equals(query.getSurveyor())){
-					tasks = taskService.findTasks(query);
+//					tasks = taskService.findTasks(query);
+					info = taskService.findTasksPages(query);
 				}else{
 					jo.put("msg", "surveyor不合法");
 				}
 			}else if(query.getWhichPage() != null && "3".equals(query.getWhichPage())){
 				//我的任务
 				if(query.getExecutor() != null && !"".equals(query.getExecutor())){
-					tasks = taskService.findTasks(query);
+//					tasks = taskService.findTasks(query);
+					info = taskService.findTasksPages(query);
 				}else{
 					jo.put("msg", "executor不合法");
 				}
@@ -148,7 +153,8 @@ public class TaskController {
 				jo.put("msg", "whichPage不合法");
 			}
 			jo.put("code", HttpStatus.OK.value());
-			jo.put("tasks", tasks);
+//			jo.put("tasks", tasks);
+			jo.put("tasks", info);
 			//查询满足条件的总条数
 			Integer counts = taskService.findCounts(query);
 			Integer pages = counts / query.getPageSize();
