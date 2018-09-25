@@ -26,9 +26,10 @@ public class TaskServiceImpl implements TaskService{
 	public boolean addTask(Task task) {
 		try {
 			SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd HH:mm");
-			//获取当前系统时间
+			//获取当前系统时间,如：18-09-19 14:00，精确到小时；因为定时任务每小时执行一次
 			long currentTimeMillis = System.currentTimeMillis();
 			String publishTime  = format.format(currentTimeMillis);
+			publishTime = publishTime.substring(0, publishTime.lastIndexOf(":")) + ":00";
 			task.setPublishTime(publishTime);
 //		//获取当前登录用户（这个参数由前端传递过来）
 //		User principal = (User) SecurityUtils.getSubject().getPrincipal();
@@ -110,12 +111,37 @@ public class TaskServiceImpl implements TaskService{
 	@Override
 	public boolean updateTask(Task task) {
 		Task t = taskDao.selectByPrimaryKey(task.getTaskId());
-		t.setAcceptanceResults(task.getAcceptanceResults());
+		if(task.getTaskStatus() != null && !"".equals(task.getTaskStatus())){
+			t.setTaskStatus(task.getTaskStatus());
+		}
+		if(task.getAcceptanceResults() != null && !"".equals(task.getAcceptanceResults())){
+			t.setAcceptanceResults(task.getAcceptanceResults());
+		}
+		if(task.getAcceptanceEvaluate() != null && !"".equals(task.getAcceptanceEvaluate())){
+			t.setAcceptanceEvaluate(task.getAcceptanceEvaluate());
+		}
+		if(task.getFinishResults() != null && !"".equals(task.getFinishResults())){
+			t.setFinishResults(task.getFinishResults());
+		}
+		if(task.getFinishEvaluate() != null && !"".equals(task.getFinishEvaluate())){
+			t.setFinishEvaluate(task.getFinishEvaluate());
+		}
 		int b = taskDao.updateByPrimaryKey(t);
 		if(b == 1){
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void updateTasks() {
+		taskDao.updateTasks();
+	}
+
+	@Override
+	public Task findByTaskId(String taskId) {
+		Task task = taskDao.selectByPrimaryKey(taskId);
+		return task;
 	}
 
 //	@Override

@@ -35,7 +35,7 @@ public class MeetingDetailsCon {
     @ApiImplicitParam(value = "test")
     public JSONObject test(){
         JSONObject jsonObject = new JSONObject();
-        String date1 = "[\n" + "{ \"id\": \"2\", \"start_date\": \"2017-05-24 00:00:00\", \"end_date\": \"2017-06-08 00:00:00\", \"text\": \"French Open\", \"details\": \"Philippe-Chatrier Court\\n Paris, FRA\"},\n" + "    { \"id\": \"3\", \"start_date\": \"2017-06-10 00:00:00\", \"end_date\": \"2017-06-13 00:00:00\", \"text\": \"Aegon Championship\", \"details\": \"The Queens Club\\n London, ENG\"}]";
+        String date1 = "[\n" + "{ \"id\": \"2\", \"start_date\": \"2018-09-20 11:00:00\", \"end_date\": \"2018-09-20 20:00:00\", \"text\": \"French Open\", \"details\": \"Philippe-Chatrier Court\\n Paris, FRA\"},\n" + "    { \"id\": \"3\", \"start_date\": \"2018-09-21 07:00:00\", \"end_date\": \"2018-09-21 11:00:00\", \"text\": \"Aegon Championship\", \"details\": \"The Queens Club\\n London, ENG\"}]";
         JSONArray date = JSONArray.parseArray(date1);
         jsonObject.put("date",date);
         return jsonObject;

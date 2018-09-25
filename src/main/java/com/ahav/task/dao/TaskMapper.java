@@ -27,6 +27,8 @@ public interface TaskMapper {
 
 	Integer findCounts(@Param("params") Map query);
 
+	void updateTasks();
+
 //	List<Task> findTasks(Integer pageSize, Integer currentPage, String orderBy, String publisher, String surveyor,
 //			String executor, String taskStatus, String acceptanceResults, String relatedMeetings, String endTime1,
 //			String endTime2, String taskName, String publishTime1, String publishTime2, String keyWord);
