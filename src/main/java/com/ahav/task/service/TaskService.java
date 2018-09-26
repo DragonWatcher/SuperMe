@@ -4,11 +4,12 @@ import java.util.List;
 
 import com.ahav.task.entity.Query;
 import com.ahav.task.entity.Task;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 
 public interface TaskService {
 
-	boolean addTask(Task task);
+	JSONObject addTask(Task task);
 
 	List<Task> findTasks(Query query);
 	PageInfo findTasksPages(Query query);
