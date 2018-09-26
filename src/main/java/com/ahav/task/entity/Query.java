@@ -5,7 +5,7 @@ public class Query {
 	private Integer pageSize = 2;
 	private Integer currentPage = 1;
 	private Integer start;
-	private String orderBy = "start_time asc";
+	private String orderBy = "publish_time asc";
 	private String whichPage;
 	private String publisher;
 	private String surveyor; 

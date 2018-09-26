@@ -156,12 +156,12 @@ public class TaskController {
 //			jo.put("tasks", tasks);
 			jo.put("tasks", info);
 			//查询满足条件的总条数
-			Integer counts = taskService.findCounts(query);
-			Integer pages = counts / query.getPageSize();
-			if(counts % query.getPageSize() > 0){
-				pages++;
-			}
-			jo.put("pages", pages);
+//			Integer counts = taskService.findCounts(query);
+//			Integer pages = counts / query.getPageSize();
+//			if(counts % query.getPageSize() > 0){
+//				pages++;
+//			}
+//			jo.put("pages", pages);
 		}else{
 			jo.put("code", HttpStatus.METHOD_NOT_ALLOWED.value());
 		}
