@@ -51,10 +51,11 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         SystemResult currentUser = userServiceImpl.getCurrentUser();
         SimpleUser user = (SimpleUser)currentUser.getData();
         int deReserveId = user.getUserId();
+        /*int deReserveId = 18;  //TODO:自测*/
         //TODO:调用接口参数当前操作需要的权限，得到true或false
             /*flag = 调用是否有权限的接口*/
         Boolean flag = CheckPermission.checkPermission("reservation:view:other");
-
+       /* Boolean flag = true; //TODO:自测*/
         //查询出当天所有的会议
         MeetingDetails mDetails =  new MeetingDetails();  //创建查询体
         Date startTime = meetingUtils.getStartTime(new Date());

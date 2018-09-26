@@ -1,5 +1,7 @@
 package com.ahav.reserve.controller;
 
+import com.ahav.reserve.mapper.MeetingDetailsMapper;
+import com.ahav.reserve.mapper.RoomMapper;
 import com.ahav.reserve.pojo.*;
 import com.ahav.reserve.service.IMeetingDetailsService;
 import com.ahav.reserve.service.IRoomService;
@@ -16,7 +18,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -27,19 +32,43 @@ public class MeetingDetailsCon {
     @Autowired
     private IRoomService roomServiceImpl;
 
+    @Autowired
+    private MeetingDetailsMapper meetingDetailsMapperImpl;
+    @Autowired
+    private RoomMapper RoomMapperImpl;
+
 
     //查询所有会议(初始化预约管理页面/添加预约界面)
     @RequestMapping(value = {"/test"},method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value="test", notes="test")
     @ApiImplicitParam(value = "test")
-    public JSONObject test(){
+    public JSONObject test(HttpServletResponse response){
+        response.setHeader("Access-Control-Allow-Origin", "*");
         JSONObject jsonObject = new JSONObject();
         String date1 = "[\n" + "{ \"id\": \"2\", \"start_date\": \"2018-09-20 11:00:00\", \"end_date\": \"2018-09-20 20:00:00\", \"text\": \"French Open\", \"details\": \"Philippe-Chatrier Court\\n Paris, FRA\"},\n" + "    { \"id\": \"3\", \"start_date\": \"2018-09-21 07:00:00\", \"end_date\": \"2018-09-21 11:00:00\", \"text\": \"Aegon Championship\", \"details\": \"The Queens Club\\n London, ENG\"}]";
         JSONArray date = JSONArray.parseArray(date1);
         jsonObject.put("date",date);
         return jsonObject;
     }
+
+/*    //查询所有会议(初始化预约管理页面/添加预约界面)
+    @RequestMapping(value = {"/test2"},method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value="test2", notes="test2")
+    @ApiImplicitParam(value = "test2")
+    public JSONObject test2(){
+        JSONObject jsonObject = new JSONObject();
+        List list = new ArrayList();
+        String string = "{\"LayoutId\":6,\"Thumb\":\"/images/preset/2018_06_04_13_30_06.png\",\"Id\":11,\"Name\":\"2018-06-04\"}";
+        List<MeetingDetails> meetingDetailsAll = meetingDetailsMapperImpl.selectMeetingDetailsAll();
+        List<Room> rooms = RoomMapperImpl.selectRoomAll();
+        list.add(meetingDetailsAll);
+        list.add(rooms);
+        jsonObject.put("data",list);
+        return jsonObject;
+       // System.out.println(jsonObject);
+    }*/
 
     //查询所有会议(初始化预约管理页面/添加预约界面)
     @RequestMapping(value = {"/reserve/manage/initReserveManage","/initAddReserve"},method = RequestMethod.GET)
