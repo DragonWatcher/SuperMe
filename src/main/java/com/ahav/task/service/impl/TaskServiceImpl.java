@@ -3,6 +3,7 @@ package com.ahav.task.service.impl;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,16 @@ public class TaskServiceImpl implements TaskService{
 			task.setTaskId(taskId);
 			//设置任务初始状态
 			task.setTaskStatus("进行中");
-			int insert = taskDao.insert(task);
+			Date start = format.parse(task.getStartTime());
+			Date end = format.parse(task.getEndTime());
+			int compareTo = start.compareTo(end);
+			if(compareTo < 0){
+				//start在end之前
+				int insert = taskDao.insert(task);
+			}else{
+				//start在end之后
+				return false;
+			}
 			// TODO Auto-generated catch block
 			//发布任务：插入数据库的同时发送邮件
 			
