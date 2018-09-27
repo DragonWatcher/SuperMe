@@ -305,17 +305,20 @@ public class UserServiceImpl implements UserService {
             // 当前用户
             User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
             String profilePathAndNameDB = userDao.selectUserById(currentUser.getUserId()).getProfilePath();
-            // 默认以原来的头像名称为新头像的名称，这样可以直接替换掉文件夹中对应的旧头像
-            String newProfileName = profilePathAndNameDB;
-            // 若头像名称不存在
-            if (profilePathAndNameDB == null || "".equals(profilePathAndNameDB)) {
-                // 可直接访问的图片路径
-                newProfileName = SystemConstant.PROFILES_PATH + System.currentTimeMillis() + newProfile.getOriginalFilename();
-                // 路径存库
-                currentUser.setProfilePath(newProfileName);
-                userDao.updateUserProfilePath(currentUser);
+            // 封装页面可直接访问的图片路径
+            String newProfileName = SystemConstant.PROFILES_PATH + System.currentTimeMillis() + newProfile.getOriginalFilename();
+            // 路径存库
+            currentUser.setProfilePath(newProfileName);
+            userDao.updateUserProfilePath(currentUser);
+            
+            // 删除旧的头像图片
+            if (profilePathAndNameDB != null || !"".equals(profilePathAndNameDB)) {
+                File oldProfile = new File(root + SystemConstant.STATIC_RES_PATH + profilePathAndNameDB);
+                logger.info("删除旧头像：" + oldProfile.getPath());
+                oldProfile.delete();
             }
-            // 磁盘保存
+            
+            // 磁盘保存新图片
             BufferedOutputStream out = null;
             try {
                 File folder = new File(profilesPath);

@@ -65,15 +65,18 @@ public class TaskServiceImpl implements TaskService{
 					task.setTaskId(taskId);
 					int insert = taskDao.insert(task);
 				}
+				jo.put("msg", true);
 			}else{
 				//start在end之后
-				jo.put("msg", "日期有误");
+				jo.put("message", "日期有误");
+				jo.put("msg", false);
 			}
 			// TODO Auto-generated catch block
 			//发布任务：插入数据库的同时发送邮件
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			jo.put("msg", false);
 		}
 		return jo;
 	}

@@ -46,7 +46,7 @@ public class MeetingDetailsCon {
     public JSONObject test(HttpServletResponse response){
         response.setHeader("Access-Control-Allow-Origin", "*");
         JSONObject jsonObject = new JSONObject();
-        String date1 = "[\n" + "{ \"id\": \"2\", \"start_date\": \"2018-09-20 11:00:00\", \"end_date\": \"2018-09-20 20:00:00\", \"text\": \"French Open\", \"details\": \"Philippe-Chatrier Court\\n Paris, FRA\"},\n" + "    { \"id\": \"3\", \"start_date\": \"2018-09-21 07:00:00\", \"end_date\": \"2018-09-21 11:00:00\", \"text\": \"Aegon Championship\", \"details\": \"The Queens Club\\n London, ENG\"}]";
+        String date1 = "[\n" + "{ \"id\": \"2\", \"start_date\": \"2018-09-26 11:00:00\", \"end_date\": \"2018-09-26 20:00:00\", \"text\": \"French Open\", \"details\": \"Philippe-Chatrier Court\\n Paris, FRA\"},\n" + "    { \"id\": \"3\", \"start_date\": \"2018-09-27 07:00:00\", \"end_date\": \"2018-09-27 11:00:00\", \"text\": \"Aegon Championship\", \"details\": \"The Queens Club\\n London, ENG\"}]";
         JSONArray date = JSONArray.parseArray(date1);
         jsonObject.put("date",date);
         return jsonObject;
