@@ -74,6 +74,7 @@ public class MeetingDetailsCon {
     @RequestMapping(value = {"/task/release/task/selectMeetingDetails/{deReserveId}"},method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value="任务/发布任务页面", notes="任务发布页面/根据预定人id查询当天所预约的会议名称")
+    @ApiImplicitParam(paramType="path", name = "deReserveId", value = "预订人id", required = true, dataType = "Integer")
     public JSONObject byDeReserveIdSelectMeetingDetails(@PathVariable Integer deReserveId){
         return meetingDetailsServiceImpl.byDeReserveIdSelectMeetingDetails(deReserveId);
     }
