@@ -310,9 +310,14 @@ public class UserServiceImpl implements UserService {
             // 路径存库
             currentUser.setProfilePath(newProfileName);
             userDao.updateUserProfilePath(currentUser);
+            
             // 删除旧的头像图片
-            File oldProfile = new File(root + SystemConstant.STATIC_RES_PATH + profilePathAndNameDB);
-            oldProfile.delete();
+            if (profilePathAndNameDB != null || !"".equals(profilePathAndNameDB)) {
+                File oldProfile = new File(root + SystemConstant.STATIC_RES_PATH + profilePathAndNameDB);
+                logger.info("删除旧头像：" + oldProfile.getPath());
+                oldProfile.delete();
+            }
+            
             // 磁盘保存新图片
             BufferedOutputStream out = null;
             try {
