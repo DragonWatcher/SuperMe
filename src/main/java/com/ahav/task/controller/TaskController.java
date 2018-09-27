@@ -62,9 +62,8 @@ public class TaskController {
 		JSONObject jo = new JSONObject();
 		boolean checkPermission = CheckPermission.checkPermission("all");
 		if(checkPermission){
-			boolean b = taskService.addTask(task);
+			jo = taskService.addTask(task);
 			jo.put("code", HttpStatus.OK.value());
-			jo.put("msg", b);
 		}else{
 			jo.put("code", HttpStatus.METHOD_NOT_ALLOWED.value());
 		}
