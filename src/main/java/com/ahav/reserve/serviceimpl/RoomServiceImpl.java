@@ -24,11 +24,11 @@ public class RoomServiceImpl implements IRoomService {
 
     //修改pub模板（查看会议室的pub模板）
     @Override
-    public JSONObject selectRoomPubTemplate(int deDetailsId) {
+    public JSONObject selectRoomPubTemplate(int id) {
         //查询对应会议室对应的pub的Ip
         Result result = new Result();
         JSONObject jsonObject = new JSONObject();
-        MeetingDetails meetingDetails = meetingDetailsMapperImpl.selectByPrimaryKey(deDetailsId);
+        MeetingDetails meetingDetails = meetingDetailsMapperImpl.selectByPrimaryKey(id);
         if(meetingDetails != null){
             Room room = roomMapperImpl.selectByPrimaryKey(meetingDetails.getDeRoomId());
             String pubIp = room.getPubIp();
