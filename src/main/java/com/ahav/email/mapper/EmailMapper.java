@@ -1,6 +1,6 @@
 package com.ahav.email.mapper;
 
-        import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Mapper;
 
         import com.ahav.email.pojo.Email;
 

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ahav.reserve.mapper.MeetingDetailsMapper">
   <resultMap id="BaseResultMap" type="com.ahav.reserve.pojo.MeetingDetails">
-    <id column="de_details_id" jdbcType="INTEGER" property="deDetailsId" />
+    <id column="de_details_id" jdbcType="INTEGER" property="id" />
     <result column="de_grade" jdbcType="VARCHAR" property="deGrade" />
     <result column="de_room_id" jdbcType="INTEGER" property="deRoomId" />
     <result column="de_meeting_name" jdbcType="VARCHAR" property="deMeetingName" />
@@ -11,7 +11,7 @@
     <result column="de_reserve_phone" jdbcType="VARCHAR" property="deReservePhone" />
     <result column="de_reserve_number" jdbcType="INTEGER" property="deReserveNumber" />
     <result column="de_main" jdbcType="VARCHAR" property="deMain" />
-    <result column="de_meeting_postil" jdbcType="VARCHAR" property="deMeetingPostil" />
+    <result column="de_meeting_postil" jdbcType="VARCHAR" property="text" />
     <result column="de_meeting_over" jdbcType="TIMESTAMP" property="deMeetingOver" />
     <result column="de_meeting_start" jdbcType="TIMESTAMP" property="deMeetingStart" />
     <result column="de_department_reserve_person_id" jdbcType="VARCHAR" property="deDepartmentReservePersonId" />
@@ -60,7 +60,7 @@
     select
     <include refid="Base_Column_List" />
     from meeting_details
-    where de_details_id = #{deDetailsId,jdbcType=INTEGER}
+    where de_details_id = #{id,jdbcType=INTEGER}
   </select>
   <!--根据会议室ID查询会议详情-->
   <select id="selectRoomIdMeetingDetails" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -83,8 +83,8 @@
     FROM meeting_details
     <where>
 
-      <if test="deDetailsId != null">
-        AND de_details_id = #{deDetailsId,jdbcType=INTEGER}
+      <if test="id != null">
+        AND de_details_id = #{id,jdbcType=INTEGER}
       </if>
       <if test="deGrade != null">
         AND de_grade=#{deGrade,jdbcType=VARCHAR}
@@ -110,8 +110,8 @@
       <if test="deMain != null">
         AND de_main=#{deMain,jdbcType=VARCHAR}
       </if>
-      <if test="deMeetingPostil != null">
-        AND de_meeting_postil=#{deMeetingPostil,jdbcType=VARCHAR}
+      <if test="text != null">
+        AND de_meeting_postil=#{text,jdbcType=VARCHAR}
       </if>
       <!--      &lt;if test="deMeetingOver != null"&gt;
               AND de_meeting_over=#{deMeetingOver,jdbcType=TIMESTAMP}
@@ -147,8 +147,8 @@
     FROM meeting_details
     <where>
 
-      <if test="deDetailsId != null">
-        AND de_details_id != #{deDetailsId,jdbcType=INTEGER}
+      <if test="id != null">
+        AND de_details_id != #{id,jdbcType=INTEGER}
       </if>
       <if test="deGrade != null">
         AND de_grade=#{deGrade,jdbcType=VARCHAR}
@@ -174,8 +174,8 @@
       <if test="deMain != null">
         AND de_main=#{deMain,jdbcType=VARCHAR}
       </if>
-      <if test="deMeetingPostil != null">
-        AND de_meeting_postil=#{deMeetingPostil,jdbcType=VARCHAR}
+      <if test="text != null">
+        AND de_meeting_postil=#{text,jdbcType=VARCHAR}
       </if>
       <!--      &lt;if test="deMeetingOver != null"&gt;
               AND de_meeting_over=#{deMeetingOver,jdbcType=TIMESTAMP}
@@ -210,8 +210,8 @@
     <include refid="Base_Column_List" />
     FROM meeting_details
     <where>
-      <if test="deDetailsId != null">
-        AND de_details_id != #{deDetailsId,jdbcType=INTEGER}
+      <if test="id != null">
+        AND de_details_id != #{id,jdbcType=INTEGER}
       </if>
       <if test="deMeetingName != null">
         AND de_meeting_name LIKE "%"#{deMeetingName,jdbcType=VARCHAR}"%"
@@ -260,7 +260,7 @@
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from meeting_details
-    where de_details_id = #{deDetailsId,jdbcType=INTEGER}
+    where de_details_id = #{id,jdbcType=INTEGER}
   </delete>
 
   <insert id="insert" parameterType="com.ahav.reserve.pojo.MeetingDetails">
@@ -270,9 +270,9 @@
     de_meeting_over, de_meeting_start, de_department_reserve_person_id,
     de_meeting_status, de_date_count,
     de_grade_id,de_show,de_pub_template)
-    values (#{deDetailsId,jdbcType=INTEGER}, #{deGrade,jdbcType=VARCHAR}, #{deRoomId,jdbcType=INTEGER},
+    values (#{id,jdbcType=INTEGER}, #{deGrade,jdbcType=VARCHAR}, #{deRoomId,jdbcType=INTEGER},
     #{deMeetingName,jdbcType=VARCHAR}, #{deReserveDepartmentId,jdbcType=VARCHAR},
-    #{deReserveId,jdbcType=INTEGER}, #{deReservePhone,jdbcType=VARCHAR}, #{deReserveNumber,jdbcType=INTEGER}, #{deMain,jdbcType=VARCHAR}, #{deMeetingPostil,jdbcType=VARCHAR},
+    #{deReserveId,jdbcType=INTEGER}, #{deReservePhone,jdbcType=VARCHAR}, #{deReserveNumber,jdbcType=INTEGER}, #{deMain,jdbcType=VARCHAR}, #{text,jdbcType=VARCHAR},
     #{deMeetingOver,jdbcType=TIMESTAMP}, #{deMeetingStart,jdbcType=TIMESTAMP}, #{deDepartmentReservePersonId,jdbcType=INTEGER}
     #{deMeetingStatus,jdbcType=VARCHAR}, #{deDateCount,jdbcType=TIMESTAMP},
     #{deGradeId,jdbcType=INTEGER},#{deShow,jdbcType=INTEGER},#{dePubTemplate,jdbcType=VARCHAR})
@@ -280,7 +280,7 @@
   <insert id="insertSelective" parameterType="com.ahav.reserve.pojo.MeetingDetails">
     insert into meeting_details
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="deDetailsId != null">
+      <if test="id != null">
         de_details_id,
       </if>
       <if test="deGrade != null">
@@ -307,7 +307,7 @@
       <if test="deMain != null">
         de_main,
       </if>
-      <if test="deMeetingPostil != null">
+      <if test="text != null">
         de_meeting_postil,
       </if>
       <if test="deMeetingOver != null">
@@ -336,8 +336,8 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="deDetailsId != null">
-        #{deDetailsId,jdbcType=INTEGER},
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
       </if>
       <if test="deGrade != null">
         #{deGrade,jdbcType=VARCHAR},
@@ -363,8 +363,8 @@
       <if test="deMain != null">
         #{deMain,jdbcType=VARCHAR},
       </if>
-      <if test="deMeetingPostil != null">
-        #{deMeetingPostil,jdbcType=VARCHAR},
+      <if test="text != null">
+        #{text,jdbcType=VARCHAR},
       </if>
       <if test="deMeetingOver != null">
         #{deMeetingOver,jdbcType=TIMESTAMP},
@@ -419,8 +419,8 @@
       <if test="deMain != null">
         de_main = #{deMain,jdbcType=VARCHAR},
       </if>
-      <if test="deMeetingPostil != null">
-        de_meeting_postil = #{deMeetingPostil,jdbcType=VARCHAR},
+      <if test="text != null">
+        de_meeting_postil = #{text,jdbcType=VARCHAR},
       </if>
       <if test="deMeetingOver != null">
         de_meeting_over = #{deMeetingOver,jdbcType=TIMESTAMP},
@@ -447,7 +447,7 @@
         de_pub_template = #{dePubTemplate,jdbcType=VARCHAR},
       </if>
     </set>
-    where de_details_id = #{deDetailsId,jdbcType=INTEGER}
+    where de_details_id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.ahav.reserve.pojo.MeetingDetails">
     update meeting_details
@@ -459,7 +459,7 @@
     de_reserve_phone = #{deReservePhone,jdbcType=VARCHAR},
     de_reserve_number = #{deReserveNumber,jdbcType=INTEGER},
     de_main = #{deMain,jdbcType=VARCHAR},
-    de_meeting_postil = #{deMeetingPostil,jdbcType=VARCHAR},
+    de_meeting_postil = #{text,jdbcType=VARCHAR},
     de_meeting_over = #{deMeetingOver,jdbcType=TIMESTAMP},
     de_meeting_start = #{deMeetingStart,jdbcType=TIMESTAMP},
     de_department_reserve_person_id = #{deDepartmentReservePersonId,jdbcType=VARCHAR},
@@ -469,19 +469,19 @@
     de_grade_id = #{deGradeId,jdbcType=INTEGER},
     de_show = #{deShow,jdbcType=INTEGER},
     de_pub_template = #{dePubTemplate,jdbcType=VARCHAR}
-    where de_details_id = #{deDetailsId,jdbcType=INTEGER}
+    where de_details_id = #{id,jdbcType=INTEGER}
   </update>
   <!--保持pub模板-->
   <update id="updatePubTemplate">
       UPDATE meeting_details
       SET de_pub_template = #{jsonStringPubTemplate,jdbcType=VARCHAR}
-      WHERE de_details_id = #{deDetailsId,jdbcType=INTEGER}
+      WHERE de_details_id = #{id,jdbcType=INTEGER}
   </update>
   <!--删除Pub模板，但不是真删除只是将预设模板换为无模板的模板-->
   <update id="deletePubTemplate">
      UPDATE meeting_details
      SET de_pub_template = #{pubTemplate,jdbcType=VARCHAR}
-     WHERE de_details_id = #{deDetailsId,jdbcType=INTEGER}
+     WHERE de_details_id = #{id,jdbcType=INTEGER}
   </update>
   <!--获取刚插入的数据的id（要求表的id为自增）-->
   <select id="selectNewestDetailsId" resultType="java.lang.Integer">

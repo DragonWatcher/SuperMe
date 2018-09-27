@@ -111,7 +111,7 @@ public class MeetingDetailsCon {
     @ResponseBody
     @ApiOperation(value="保存修改会议", notes="修改会议的第二步,注意修改的时间秒级单位要为00")
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType="query", name = "deDetailsId", value = "会议详情ID", required = true, dataType = "Integer"),
+            @ApiImplicitParam(paramType="query", name = "id", value = "会议详情ID", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deGrade", value = "会议级别", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deGradeId", value = "会议级别ID", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deRoomId", value = "会议室Id", required = true, dataType = "Integer"),
@@ -124,7 +124,7 @@ public class MeetingDetailsCon {
             @ApiImplicitParam(paramType="query", name = "deReservePhone", value = "预定人电话", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deReserveNumber", value = "预定人数", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deMain", value = "主要人员", required = true, dataType = "String"),
-            @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = false, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "text", value = "会议备注", required = false, dataType = "String"),
     })
     public Map updateMeetingDetails(MeetingDetails meetingDetails, @RequestBody PubTemplate pubTemplate,String deMeetingStartStr,String deMeetingOverStr){
         meetingDetails.setDeMeetingStart(meetingUtils.parse(deMeetingStartStr));
@@ -133,23 +133,23 @@ public class MeetingDetailsCon {
     }
 
     //删除会议详情
-    @RequestMapping(value = "/reserve/manage/deleteMeetingDetails/{deDetailsId}",method = RequestMethod.DELETE)
+    @RequestMapping(value = "/reserve/manage/deleteMeetingDetails/{id}",method = RequestMethod.DELETE)
     @ResponseBody
     @ApiOperation(value="删除预约", notes="删除预约，需要参数会议详情的id")
-    @ApiImplicitParam(paramType="path", name = "deDetailsId", value = "会议详情ID", required = true, dataType = "Integer")
-    public Result deleteMeetingDetails(@PathVariable int deDetailsId){
+    @ApiImplicitParam(paramType="path", name = "id", value = "会议详情ID", required = true, dataType = "Integer")
+    public Result deleteMeetingDetails(@PathVariable int id){
 
-        return meetingDetailsServiceImpl.deleteMeetingDetails(deDetailsId);
+        return meetingDetailsServiceImpl.deleteMeetingDetails(id);
     }
 
     //根据会议详情id查询详情
-    @RequestMapping(value = "MeetingDetails/{deDetailsId}",method = RequestMethod.GET)
+    @RequestMapping(value = "MeetingDetails/{id}",method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value="查看预约", notes="查看预约，需要参数会议详情的id")
-    @ApiImplicitParam(paramType="path", name = "deDetailsId", value = "会议详情ID", required = true, dataType = "Integer")
-    public Map selectMeetingDetails(@PathVariable int deDetailsId){
+    @ApiImplicitParam(paramType="path", name = "id", value = "会议详情ID", required = true, dataType = "Integer")
+    public Map selectMeetingDetails(@PathVariable int id){
         
-        return meetingDetailsServiceImpl.findMeetingDetails(deDetailsId);
+        return meetingDetailsServiceImpl.findMeetingDetails(id);
     }
     //添加会议详情
     @RequestMapping(value = "/reserve/add/selectMeetingDetails",method = RequestMethod.GET)
@@ -176,7 +176,7 @@ public class MeetingDetailsCon {
             @ApiImplicitParam(paramType="query", name = "deReservePhone", value = "预定人电话", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deReserveNumber", value = "预定人数", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "deMain", value = "主要人员", required = true, dataType = "String"),
-            @ApiImplicitParam(paramType="query", name = "deMeetingPostil", value = "会议备注", required = false, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "text", value = "会议备注", required = false, dataType = "String"),
     })
     public JSONObject insertMeetingDetails(MeetingDetails meetingDetails,@RequestBody PubTemplate pubTemplate,String deMeetingStartStr,String deMeetingOverStr){
         meetingDetails.setDeMeetingStart(meetingUtils.parse(deMeetingStartStr));

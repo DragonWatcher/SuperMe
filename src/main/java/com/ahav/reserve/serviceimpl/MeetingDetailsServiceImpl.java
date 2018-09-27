@@ -242,12 +242,12 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
     //根据详情id查询会议详情
     @Override
-    public Map findMeetingDetails(Integer deDetailsId) {
+    public Map findMeetingDetails(Integer id) {
         Map detailsMap = new HashMap<String,Object>();
         Result result = new Result();
-        if(deDetailsId > 0){
+        if(id > 0){
             //当传递
-            MeetingDetails meetingDetails = meetingDetailsMapperImpl.selectByPrimaryKey(deDetailsId);
+            MeetingDetails meetingDetails = meetingDetailsMapperImpl.selectByPrimaryKey(id);
             if(meetingDetails != null){
                 //获得查询会议的名称，并添加到MeetingDetails对象中
                 meetingDetails.setDeRoomName(RoomMapperImpl.selectRoomName(meetingDetails.getDeRoomId()));
@@ -319,7 +319,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
             mDetails.setDeMeetingOver(endTime);
             mDetails.setDeRoomId(deRoomId);
             //查询出不包含当前会议的所有会议
-            mDetails.setDeDetailsId(meetingDetails.getDeDetailsId());
+            mDetails.setId(meetingDetails.getId());
             List<MeetingDetails> meetingDetailsAll = meetingDetailsMapperImpl.byExcludeDetailsIdselectMeetingDetails(mDetails);
             //判断修改的会议时间跟以有的会议时间有没有冲突
             
@@ -369,7 +369,7 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                 int i = meetingDetailsMapperImpl.updateByPrimaryKeySelective(meetingDetails);
                 if(i>0){
                     result.setStatus(200);
-                    MeetingDetails meetingDetails1 = meetingDetailsMapperImpl.selectByPrimaryKey(meetingDetails.getDeDetailsId());
+                    MeetingDetails meetingDetails1 = meetingDetailsMapperImpl.selectByPrimaryKey(meetingDetails.getId());
                     //将会议开始和结束时间转为指定格式的时间
                     meetingDetails1.setStart_date(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingStart()));
                     meetingDetails1.setEnd_date(meetingUtils.transformTimeFormat(meetingDetails1.getDeMeetingOver()));
@@ -412,8 +412,8 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
     //删除会议详情（取消预约）
     @Override
-    public Result deleteMeetingDetails(Integer deDetailsId) {
-        int i = meetingDetailsMapperImpl.deleteByPrimaryKey(deDetailsId);
+    public Result deleteMeetingDetails(Integer id) {
+        int i = meetingDetailsMapperImpl.deleteByPrimaryKey(id);
         Result result = new Result();
         if(i>0){
             result.setStatus(200);
@@ -690,14 +690,14 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
     //删除pub模板
     @Override
-    public Map deletePubTemplate(Integer deDetailsId,String pubTemplate) {
+    public Map deletePubTemplate(Integer id,String pubTemplate) {
         Result result = new Result();
         Map<String,Object> map = new HashMap<String,Object>();
-        int delete = meetingDetailsMapperImpl.deletePubTemplate(deDetailsId, pubTemplate);
+        int delete = meetingDetailsMapperImpl.deletePubTemplate(id, pubTemplate);
         if(delete > 0){
             result.setStatus(200);
             map.put("result",result);
-            MeetingDetails meetingDetails = meetingDetailsMapperImpl.selectByPrimaryKey(deDetailsId);
+            MeetingDetails meetingDetails = meetingDetailsMapperImpl.selectByPrimaryKey(id);
             String dePubTemplate = meetingDetails.getDePubTemplate();
             map.put("pubTemplate",dePubTemplate);
         }else {
@@ -782,10 +782,10 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
     //查看会议当前模板
     @Override
-    public JSONObject findMeetingPubTemplate(int deDetailsId) {
+    public JSONObject findMeetingPubTemplate(int id) {
         JSONObject jsonObject = new JSONObject();
         Result result = new Result();
-        MeetingDetails meetingDetails = meetingDetailsMapperImpl.selectByPrimaryKey(deDetailsId);
+        MeetingDetails meetingDetails = meetingDetailsMapperImpl.selectByPrimaryKey(id);
         if(meetingDetails != null){
             String dePubTemplate = meetingDetails.getDePubTemplate();
             result.setStatus(200);
