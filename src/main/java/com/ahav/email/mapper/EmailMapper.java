@@ -1,10 +1,10 @@
 package com.ahav.email.mapper;
 
-import org.apache.ibatis.annotations.Mapper;
+        import org.apache.ibatis.annotations.Mapper;
 
-import com.ahav.email.pojo.Email;
+        import com.ahav.email.pojo.Email;
 
-import java.util.List;
+        import java.util.List;
 
 @Mapper
 public interface EmailMapper {

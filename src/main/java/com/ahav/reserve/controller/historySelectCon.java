@@ -29,7 +29,7 @@ public class historySelectCon {
     @ResponseBody
     @ApiOperation(value="历史查询", notes="按照查询条件找到相应的信息")
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType="query", name = "deRoomName", value = "会议室名称", required = false, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "deMeetingName", value = "会议名称", required = false, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deMeetingStatus", value = "是否释放", required = false, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deMeetingStartStr", value = "查询开始时间", required = false, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "deMeetingOverStr", value = "查询结束时间", required = false, dataType = "String"),

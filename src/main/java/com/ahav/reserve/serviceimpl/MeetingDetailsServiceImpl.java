@@ -51,10 +51,11 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         SystemResult currentUser = userServiceImpl.getCurrentUser();
         SimpleUser user = (SimpleUser)currentUser.getData();
         int deReserveId = user.getUserId();
+        /*int deReserveId = 18;  //TODO:自测*/
         //TODO:调用接口参数当前操作需要的权限，得到true或false
             /*flag = 调用是否有权限的接口*/
         Boolean flag = CheckPermission.checkPermission("reservation:view:other");
-
+       /* Boolean flag = true; //TODO:自测*/
         //查询出当天所有的会议
         MeetingDetails mDetails =  new MeetingDetails();  //创建查询体
         Date startTime = meetingUtils.getStartTime(new Date());
@@ -98,6 +99,9 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
         List<Room> roomAll = RoomMapperImpl.selectRoomAll();
         initPageMap.put("roomAll",roomAll);
         initPageMap.put("meetingTime",meetingTime);
+        String date1 = "[\n" + "{ \"id\": \"2\", \"start_date\": \"2018-09-25 11:00:00\", \"end_date\": \"2018-09-25 20:00:00\", \"text\": \"French Open\", \"details\": \"Philippe-Chatrier Court\\n Paris, FRA\"},\n" + "    { \"id\": \"3\", \"start_date\": \"2018-09-25 07:00:00\", \"end_date\": \"2018-09-25 11:00:00\", \"text\": \"Aegon Championship\", \"details\": \"The Queens Club\\n London, ENG\"}]";
+        JSONArray date = JSONArray.parseArray(date1);
+        initPageMap.put("data",date);
         /*TODO:调用接口查询设备列表(要求前台要求是一个字符串例1,2,3,5)
         * initPageMap.put("设备列表",设备列表);*/
 
@@ -589,11 +593,12 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
                 String[] split = deDepartmentReservePersonId.split(",");  //将部门预定人的id分割
                 System.out.println(split.length);
                 String [] departmentReservePerson = new String [split.length];
-                for(int i = 0;split.length>i;i++){
+                for(int i = 0;i<split.length;i++){
                     int departmentReservePersonId = Integer.parseInt(split[i]);
                     //TODO:调用方法：根据部门预定人的id查询出部门预定人的名称
                     SimpleUser user = (SimpleUser)userServiceImpl.getUserById(departmentReservePersonId).getData();
-                    departmentReservePerson[i]=user.getTrueName();
+                    
+                    departmentReservePerson[i]=user.getTrueName(); 
                 }
                 his.setDeDepartmentReservePerson(departmentReservePerson);
 

@@ -3,6 +3,7 @@ package com.ahav.task.service.impl;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,9 @@ import com.ahav.task.entity.Query;
 import com.ahav.task.entity.Task;
 import com.ahav.task.service.TaskService;
 import com.ahav.util.GeneralUtils;
+import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 @Service
 public class TaskServiceImpl implements TaskService{
@@ -23,31 +27,55 @@ public class TaskServiceImpl implements TaskService{
 	public TaskMapper taskDao;
 
 	@Override
-	public boolean addTask(Task task) {
+	public JSONObject addTask(Task task) {
+		JSONObject jo = new JSONObject();
 		try {
 			SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd HH:mm");
-			//获取当前系统时间
+			//获取当前系统时间,如：18-09-19 14:00，精确到小时；因为定时任务每小时执行一次
 			long currentTimeMillis = System.currentTimeMillis();
 			String publishTime  = format.format(currentTimeMillis);
+			publishTime = publishTime.substring(0, publishTime.lastIndexOf(":")) + ":00";
 			task.setPublishTime(publishTime);
 //		//获取当前登录用户（这个参数由前端传递过来）
 //		User principal = (User) SecurityUtils.getSubject().getPrincipal();
 //		task.setPublisher(principal.getUsername());
-			//设置任务id：由4位英文字母＋6位数字组成
-			String taskId = GeneralUtils.getString();
-			task.setTaskId(taskId);
 			//设置任务初始状态
 			task.setTaskStatus("进行中");
-			int insert = taskDao.insert(task);
+			Date start = format.parse(task.getStartTime());
+			Date end = format.parse(task.getEndTime());
+			int compareTo = start.compareTo(end);
+			if(compareTo < 0){
+				//start在end之前
+				//判断执行人数，有几人就加入几条数据
+				String executor = task.getExecutor();
+				if(executor.indexOf(",") > 0){
+					//说明executor里面包含","，即执行人有多个
+					String[] split = executor.split(",");
+					for(int i=0; i<split.length; i++){
+						//设置任务id：由4位英文字母＋6位数字组成
+						String taskId = GeneralUtils.getString();
+						task.setTaskId(taskId);
+						task.setExecutor(split[i]);
+						int insert = taskDao.insert(task);
+					}
+				}else{
+					//executor不包含逗号，说明执行人只有一个
+					//设置任务id：由4位英文字母＋6位数字组成
+					String taskId = GeneralUtils.getString();
+					task.setTaskId(taskId);
+					int insert = taskDao.insert(task);
+				}
+			}else{
+				//start在end之后
+				jo.put("msg", "日期有误");
+			}
 			// TODO Auto-generated catch block
 			//发布任务：插入数据库的同时发送邮件
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return false;
 		}
-		return true;
+		return jo;
 	}
 
 	@Override
@@ -55,6 +83,14 @@ public class TaskServiceImpl implements TaskService{
 		Map map = queryToMap(query);
 		List<Task>  tasks = taskDao.findTasks(map);
 		return tasks;
+	}
+	@Override
+	public PageInfo findTasksPages(Query query) {
+		PageHelper.startPage(query.getCurrentPage(), query.getPageSize()); //一定要放在查询之前
+		Map map = queryToMap(query);
+		List<Task>  tasks = taskDao.findTasks(map);
+		PageInfo info = new PageInfo<>(tasks);
+		return info;
 	}
 	
 	//反射工具方法
@@ -110,12 +146,37 @@ public class TaskServiceImpl implements TaskService{
 	@Override
 	public boolean updateTask(Task task) {
 		Task t = taskDao.selectByPrimaryKey(task.getTaskId());
-		t.setAcceptanceResults(task.getAcceptanceResults());
+		if(task.getTaskStatus() != null && !"".equals(task.getTaskStatus())){
+			t.setTaskStatus(task.getTaskStatus());
+		}
+		if(task.getAcceptanceResults() != null && !"".equals(task.getAcceptanceResults())){
+			t.setAcceptanceResults(task.getAcceptanceResults());
+		}
+		if(task.getAcceptanceEvaluate() != null && !"".equals(task.getAcceptanceEvaluate())){
+			t.setAcceptanceEvaluate(task.getAcceptanceEvaluate());
+		}
+		if(task.getFinishResults() != null && !"".equals(task.getFinishResults())){
+			t.setFinishResults(task.getFinishResults());
+		}
+		if(task.getFinishEvaluate() != null && !"".equals(task.getFinishEvaluate())){
+			t.setFinishEvaluate(task.getFinishEvaluate());
+		}
 		int b = taskDao.updateByPrimaryKey(t);
 		if(b == 1){
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void updateTasks() {
+		taskDao.updateTasks();
+	}
+
+	@Override
+	public Task findByTaskId(String taskId) {
+		Task task = taskDao.selectByPrimaryKey(taskId);
+		return task;
 	}
 
 //	@Override

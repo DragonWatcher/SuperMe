@@ -39,6 +39,12 @@ public class Task {
     
     /** 验收评价 */
     private String acceptanceEvaluate;
+    
+    /** 自己的完成情况 **/
+    private String finishResults;
+    
+    /** 自己的完成点评 **/
+    private String finishEvaluate;
 
     public String getTaskId() {
         return taskId;
@@ -142,5 +148,21 @@ public class Task {
 
 	public void setAcceptanceEvaluate(String acceptanceEvaluate) {
 		this.acceptanceEvaluate = acceptanceEvaluate;
+	}
+
+	public String getFinishResults() {
+		return finishResults;
+	}
+
+	public void setFinishResults(String finishResults) {
+		this.finishResults = finishResults;
+	}
+
+	public String getFinishEvaluate() {
+		return finishEvaluate;
+	}
+
+	public void setFinishEvaluate(String finishEvaluate) {
+		this.finishEvaluate = finishEvaluate;
 	}
 }
