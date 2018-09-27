@@ -904,5 +904,24 @@ public class MeetingDetailsServiceImpl implements IMeetingDetailsService {
 
     }
 
+    //根据预定人Id查询当天预订人所预定的会议
+    @Override
+    public JSONObject byDeReserveIdSelectMeetingDetails(Integer deReserveId) {
+        JSONObject jsonObject = new JSONObject();
+        Date currentTime = new Date();
+        Result result = new Result();
+        Date startTime = meetingUtils.getStartTime(currentTime);
+        Date endTime = meetingUtils.getEndTime(currentTime);
+        List<MeetingDetails> meetingDetails = meetingDetailsMapperImpl.byDeReserveIdSelectMeetingDetails(deReserveId, startTime, endTime);
+        if (meetingDetails.size() > 0){
+            result.setStatus(200);
+        }else {
+            result.setStatus(400);
+        }
+        jsonObject.put("meetingDetailsList",meetingDetails);
+        jsonObject.put("result",result);
+        return jsonObject;
+    }
+
 
 }

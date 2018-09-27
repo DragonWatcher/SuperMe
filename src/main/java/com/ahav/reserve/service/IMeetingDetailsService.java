@@ -44,4 +44,6 @@ public interface IMeetingDetailsService {
     Map deletePubTemplate(Integer deDetailsId,String pubTemplate);
     //根据设备列表查询相应的会议详情
     JSONObject byEquipmentListSelectMeetingDetails(String[] equipmentList,Date todayTime);
+    //根据预定人Id查询当天预订人所预定的会议
+    JSONObject byDeReserveIdSelectMeetingDetails(Integer deReserveId);
 }
