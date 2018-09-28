@@ -488,4 +488,10 @@
     SELECT MAX(de_details_id)
     FROM meeting_details
   </select>
+  <!--根据预定人Id查询当天预订人所预定的会议-->
+  <select id="byDeReserveIdSelectMeetingDetails" parameterType="com.ahav.reserve.pojo.MeetingDetails" resultMap="BaseResultMap">
+    SELECT *
+    FROM meeting_details
+    WHERE de_reserve_id = #{deReserveId,jdbcType=INTEGER} AND de_meeting_start BETWEEN #{startTime,jdbcType=TIMESTAMP} AND #{endTime,jdbcType=TIMESTAMP}
+  </select>
 </mapper>

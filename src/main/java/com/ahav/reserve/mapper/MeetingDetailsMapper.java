@@ -48,4 +48,6 @@ public interface MeetingDetailsMapper {
     Integer selectNewestDetailsId();
     //通过时间和所选设备查询符合条件的会议详情
     List<MeetingDetails> byEquipmentListSelectMeetingDetails(@Param("startTime") Date startTime,@Param("endTime") Date endTime,@Param("excludeRoom") List<Integer> excludeRoom);
+    //根据预定人Id查询当天预订人所预定的会议
+    List<MeetingDetails> byDeReserveIdSelectMeetingDetails(@Param("deReserveId") Integer deReserveId,@Param("startTime")Date startTime,@Param("endTime")Date endTime);
 }
