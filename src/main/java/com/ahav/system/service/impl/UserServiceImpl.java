@@ -342,7 +342,7 @@ public class UserServiceImpl implements UserService {
                 }
             }
 
-            return new SystemResult(HttpStatus.OK.value(), "设置头像成功", newProfileName);
+            return new SystemResult(HttpStatus.OK.value(), "设置头像成功", nginxProfileName);
         } else {
             return new SystemResult(HttpStatus.OK.value(), "设置头像失败", Boolean.FALSE);
         }
