@@ -29,7 +29,7 @@ public final class SystemConstant {
     public static final String PAGE_SIZE = "10";
     
     /** 头像访问路径 */
-    public static final String NGINX_PROFILES_PATH = "/html/res/img/userprofiles/";
+    public static final String NGINX_PROFILES_PATH = "/res/img/userprofiles/";
     /** 头像操作路径*/
     public static final String SERVER_PROFILES_PATH = "/root/meeting/userprofiles/";
 }
