@@ -298,33 +298,36 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SystemResult updUserProfile(MultipartFile newProfile) {
-        String root = System.getProperty("user.dir").replace("\\", "/");
-        String profilesPath = root + SystemConstant.STATIC_RES_PATH + SystemConstant.PROFILES_PATH;
-
         if (!newProfile.isEmpty()) {
             // 当前用户
             User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
             String profilePathAndNameDB = userDao.selectUserById(currentUser.getUserId()).getProfilePath();
+            // 新文件名
+            String newProfileName = System.currentTimeMillis() + newProfile.getOriginalFilename();
+            
             // 封装页面可直接访问的图片路径
-            String newProfileName = SystemConstant.PROFILES_PATH + System.currentTimeMillis() + newProfile.getOriginalFilename();
-            // 路径存库
-            currentUser.setProfilePath(newProfileName);
+            String nginxProfileName = SystemConstant.NGINX_PROFILES_PATH + newProfileName;
+            currentUser.setProfilePath(nginxProfileName);
             userDao.updateUserProfilePath(currentUser);
+            
+            // 图片操作路径
+            String serverProfileName = SystemConstant.SERVER_PROFILES_PATH + newProfileName;
             
             // 删除旧的头像图片
             if (profilePathAndNameDB != null || !"".equals(profilePathAndNameDB)) {
-                File oldProfile = new File(root + SystemConstant.STATIC_RES_PATH + profilePathAndNameDB);
+                File oldProfile = new File(serverProfileName);
                 logger.info("删除旧头像：" + oldProfile.getPath());
                 oldProfile.delete();
             }
             
-            // 磁盘保存新图片
+            // 保存新图片
             BufferedOutputStream out = null;
             try {
-                File folder = new File(profilesPath);
+                File folder = new File(SystemConstant.SERVER_PROFILES_PATH);
                 if (!folder.exists())
                     folder.mkdirs();
-                out = new BufferedOutputStream(new FileOutputStream(root + SystemConstant.STATIC_RES_PATH + newProfileName));
+                
+                out = new BufferedOutputStream(new FileOutputStream(serverProfileName));
                 // 写入新文件
                 out.write(newProfile.getBytes());
                 out.flush();
