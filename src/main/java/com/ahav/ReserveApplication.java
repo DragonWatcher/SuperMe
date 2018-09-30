@@ -11,22 +11,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
-@MapperScan("com.ahav.task.dao,com.ahav.reserve.mapper,com.ahav.system.dao")//扫描 mybatis 包
+//@MapperScan("com.ahav.task.dao,com.ahav.reserve.mapper,com.ahav.system.dao")//扫描 mybatis 包
+@MapperScan("com.ahav.system.dao")//扫描 mybatis 包
 public class ReserveApplication {
     private static final Logger logger = LoggerFactory.getLogger(ReserveApplication.class);
 
 	public static void main(String[] args) {
 		SpringApplication.run(ReserveApplication.class, args);
 		logger.info("======================启动完成=====================");
-	}
-
-	@Autowired
-	private RestTemplateBuilder builder;
-	// 使用
-	// RestTemplateBuilder来实例化RestTemplate对象，spring默认已经注入了RestTemplateBuilder实例
-	@Bean
-	public RestTemplate restTemplate() {
-		return builder.build();
 	}
 
 }
