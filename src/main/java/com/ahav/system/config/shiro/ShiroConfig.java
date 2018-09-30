@@ -3,7 +3,6 @@ package com.ahav.system.config.shiro;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SecurityManager;//注意：这个类需要手动导入，不然会报错
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -46,11 +45,6 @@ public class ShiroConfig {
 		
 		//设置未登录拦截处理url
 		shiroFilterFactoryBean.setLoginUrl("/unauth");
-		//设置登录成功跳转页面
-//		shiroFilterFactoryBean.setSuccessUrl("/index");
-		//未授权跳转页面
-//		shiroFilterFactoryBean.setUnauthorizedUrl("/unauth");
-		
 		
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainMap);
 		
