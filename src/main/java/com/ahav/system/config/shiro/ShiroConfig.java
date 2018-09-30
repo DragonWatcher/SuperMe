@@ -38,9 +38,6 @@ public class ShiroConfig {
 		filterChainMap.put("/v2/**", "anon");
 		filterChainMap.put("/swagger-resources/**", "anon");
 
-		filterChainMap.put("/share/**", "anon"); //mfy
-		//filterChainMap.put("/reserve/manage/initReserveManage/**", "anon"); //mfy
-		filterChainMap.put("/test2/**", "anon"); //mfy
 		// authc: 所有的 url 都必须通过认证才可以访问
 		filterChainMap.put("/**", "authc");
 		
